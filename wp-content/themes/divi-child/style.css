@@ -10,3 +10,220 @@
  
 /* =Theme customization starts here
 ------------------------------------------------------- */
+
+/* ---- @FONT-FACE ---- */
+
+/* noto-serif-200 - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 200;
+  src: url('../divi-child/fonts/noto-serif-v33-latin-200.woff2') format('woff2');
+}
+
+/* noto-serif-200italic - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: italic;
+  font-weight: 200;
+  src: url('../divi-child/fonts/noto-serif-v33-latin-200italic.woff2') format('woff2');
+}
+
+/* noto-serif-regular - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../divi-child/fonts/noto-serif-v33-latin-regular.woff2') format('woff2');
+}
+
+/* noto-serif-italic - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../divi-child/fonts/noto-serif-v33-latin-italic.woff2') format('woff2');
+}
+
+/* noto-serif-600 - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../divi-child/fonts/noto-serif-v33-latin-600.woff2') format('woff2');
+}
+
+/* noto-serif-600italic - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: italic;
+  font-weight: 600;
+  src: url('../divi-child/fonts/noto-serif-v33-latin-600italic.woff2') format('woff2');
+}
+
+/* Cachet - Extra Light */
+@font-face {
+  font-display: swap;
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 100;
+  src: url('../divi-child/fonts/CachetPro-ExtraLight.woff2') format('woff2');
+}
+
+/* Cachet - Book */
+@font-face {
+  font-display: swap;
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 200;
+  src: url('../divi-child/fonts/CachetPro-Book.woff2') format('woff2');
+}
+
+/* Cachet - Medium */
+@font-face {
+  font-display: swap;
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 300;
+  src: url('../divi-child/fonts/CachetPro-Meduim.woff2') format('woff2');
+}
+
+/* Cachet - Bold */
+@font-face {
+  font-display: swap;
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../divi-child/fonts/CachetPro-Bold.woff2') format('woff2');
+}
+
+/* Grack - Regular */
+@font-face {
+  font-display: swap;
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../divi-child/fonts/GWGrack-Rg.woff2') format('woff2');
+}
+
+/* Grack - Narrow */
+@font-face {
+  font-display: swap;
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../divi-child/fonts/GWGrack-Nr.woff2') format('woff2');
+}
+
+/* Grack - Condensed */
+@font-face {
+  font-display: swap;
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 300;
+  src: url('../divi-child/fonts/GWGrack-Cn.woff2') format('woff2');
+}
+
+/* Grack - Extra Condensed */
+@font-face {
+  font-display: swap;
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 200;
+  src: url('../divi-child/fonts/GWGrack-ExCn.woff2') format('woff2');
+}
+
+/* Grack - Compressed */
+@font-face {
+  font-display: swap;
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 100;
+  src: url('../divi-child/fonts/GWGrack-Cm.woff2') format('woff2');
+}
+
+
+/* ---- TYPE STYLES ---- */
+
+body {
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: -.15px;
+  color: #636466;
+  line-height: 1.5em;
+}
+
+p {
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: -.15px;
+  color: #636466;
+  line-height: 1.5em;
+}
+
+h1 {
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 40px;
+  letter-spacing: -.15px;
+  line-height: 1.2em;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 100;
+  font-size: 32px;
+  letter-spacing: -.15px;
+  line-height: 1.2em;
+}
+
+h3 {
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -.15px;
+  line-height: 1.2em;
+}
+
+h4 {
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: -.15px;
+  line-height: 1.2em;
+}
+
+h5 {
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: -.15px;
+  line-height: 1.2em;
+  text-transform: capitalize;
+}
+
+h6 {
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 300;
+  font-size: 16px;
+  letter-spacing: -.15px;
+  line-height: 1.2em;
+}
+
