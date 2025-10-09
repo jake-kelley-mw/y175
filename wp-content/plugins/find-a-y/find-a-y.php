@@ -201,4 +201,73 @@ class Find_A_Y_Plugin {
         $result = $importer->preview_import($_FILES['import_file']);
         
         if ($result['success']) {
-            wp_
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result['message']);
+        }
+    }
+    
+    public function ajax_process_import() {
+        check_ajax_referer('find_a_y_admin', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+        
+        $file_path = get_transient('find_a_y_import_file_' . get_current_user_id());
+        
+        if (!$file_path || !file_exists($file_path)) {
+            wp_send_json_error('Import file not found. Please upload again.');
+        }
+        
+        require_once plugin_dir_path(__FILE__) . 'includes/class-import-handler.php';
+        $importer = new Find_A_Y_Import_Handler($this->table_name);
+        
+        $result = $importer->process_import($file_path);
+        
+        delete_transient('find_a_y_import_file_' . get_current_user_id());
+        if (file_exists($file_path)) {
+            unlink($file_path);
+        }
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result['message']);
+        }
+    }
+    
+    public function ajax_find_locations() {
+        check_ajax_referer('find_a_y_search', 'nonce');
+        
+        $zip_code = sanitize_text_field($_POST['zip_code']);
+        
+        if (empty($zip_code)) {
+            wp_send_json_error('Please enter a ZIP code');
+        }
+        
+        require_once plugin_dir_path(__FILE__) . 'includes/class-location-finder.php';
+        $finder = new Find_A_Y_Location_Finder($this->table_name);
+        
+        $results = $finder->find_by_zip($zip_code);
+        
+        if ($results) {
+            wp_send_json_success($results);
+        } else {
+            wp_send_json_error('No locations found near that ZIP code');
+        }
+    }
+    
+    public function render_search_form($atts) {
+        $atts = shortcode_atts(array(
+            'results_limit' => 10,
+            'radius' => 50
+        ), $atts);
+        
+        ob_start();
+        include plugin_dir_path(__FILE__) . 'templates/search-form.php';
+        return ob_get_clean();
+    }
+}
+
+new Find_A_Y_Plugin();
