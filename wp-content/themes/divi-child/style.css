@@ -11,6 +11,20 @@
 /* =Theme customization starts here
 ------------------------------------------------------- */
 
+
+/* Hide the header */
+#secondary-menu { display:none; }
+#main-header { display:none; }
+#page-container { padding-top:0px !important; margin-top:-1px !important }
+#top-header { display: none; }
+
+/* Equalize Column Height */
+.et_pb_equal_columns >.et_pb_column {
+margin-top:auto;
+margin-bottom:auto;
+}
+
+
 /* ---- @FONT-FACE ---- */
 
 /* noto-serif-200 - latin */
@@ -211,11 +225,11 @@ h4 {
 h5 {
   font-family: 'Cachet Pro';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 300;
   font-size: 16px;
   letter-spacing: -.15px;
   line-height: 1.2em;
-  text-transform: capitalize;
+  text-transform: uppercase;
 }
 
 h6 {
@@ -227,3 +241,19 @@ h6 {
   line-height: 1.2em;
 }
 
+.et-menu-nav a {
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: 1px;
+  line-height: 1.2em;
+  text-transform: uppercase;
+}
+
+.ymca-org-link a {
+  background-color: #d8d8d8;
+  padding: 15px;
+  border: solid 1px #000;
+  border-radius: 20px;
+}
