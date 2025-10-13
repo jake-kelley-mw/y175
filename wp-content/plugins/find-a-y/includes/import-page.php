@@ -81,7 +81,7 @@ if (!defined('ABSPATH')) exit;
         </div>
     </div>
     
-    <div id="preview-results" style="display: none;">
+    <div id="preview-results" style="display: none !important;">
         <h2>Import Preview</h2>
         
         <div class="find-a-y-preview-summary">
@@ -166,6 +166,14 @@ if (!defined('ABSPATH')) exit;
     margin-right: 10px;
 }
 
+#upload-progress {
+    display: none !important;
+}
+
+#upload-progress.show {
+    display: block !important;
+}
+
 .progress-bar {
     width: 100%;
     height: 30px;
@@ -187,6 +195,22 @@ if (!defined('ABSPATH')) exit;
     0% { width: 0%; }
     50% { width: 70%; }
     100% { width: 100%; }
+}
+
+#preview-results {
+    display: none !important;
+}
+
+#preview-results.show {
+    display: block !important;
+}
+
+#import-complete {
+    display: none !important;
+}
+
+#import-complete.show {
+    display: block !important;
 }
 
 .find-a-y-preview-summary {
