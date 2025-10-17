@@ -437,14 +437,14 @@ h6 {
 }
 
 .fullscreen-menu-logo img {
-  max-width: 300px;
+  max-width: 250px;
   height: auto;
   display: block;
 }
 
 @media (max-width: 767px) {
   .fullscreen-menu-logo img {
-    max-width: 200px;
+    max-width: 150px !important;
   }
 }
 
