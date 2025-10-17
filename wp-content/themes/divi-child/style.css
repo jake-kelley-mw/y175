@@ -303,6 +303,13 @@ h6 {
   z-index: 10000;
 }
 
+@media (max-width: 768px) {
+  .custom-hamburger-menu {
+    top: 5px;
+    right: 5px;
+  }
+}
+
 /* Hamburger button */
 .hamburger-toggle {
   background: none;
@@ -340,7 +347,7 @@ h6 {
 }
 
 .hamburger-toggle.active .hamburger-line:last-child {
-  transform: rotate(-45deg) translate(8px, -8px);
+  transform: rotate(-45deg) translate(5px, -5px);
   background-color: #fff;
 }
 
@@ -351,8 +358,9 @@ h6 {
   left: 0;
   width: 100%;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.95);
+  background-color: #0060af;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   opacity: 0;
@@ -419,6 +427,26 @@ h6 {
   }
 }
 
+/* Logo in fullscreen menu */
+.fullscreen-menu-logo {
+  margin-bottom: 40px;
+}
+
+.fullscreen-menu-logo a {
+  display: inline-block;
+}
+
+.fullscreen-menu-logo img {
+  max-width: 300px;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .fullscreen-menu-logo img {
+    max-width: 200px;
+  }
+}
 
 
 /* --------  Timeline Styles  -------- */
