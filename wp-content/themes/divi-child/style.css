@@ -241,7 +241,24 @@ h6 {
   line-height: 1.2em;
 }
 
-.et-menu-nav a {
+.timeline-preview h1 {
+  line-height: 1em !important;
+}
+
+.yusa-post-title .et_pb_text_inner {
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 48px;
+  letter-spacing: -.15px;
+  line-height: 1.2em;
+  text-transform: uppercase;
+}
+
+
+/* --------  Menu Styles  -------- */
+
+.et_pb_menu_0_tb_header.et_pb_menu ul li a {
   font-family: 'Grack';
   font-style: normal;
   font-weight: 300;
@@ -249,11 +266,192 @@ h6 {
   letter-spacing: 1px;
   line-height: 1.2em;
   text-transform: uppercase;
+  color: #636466 !important;
 }
 
-.ymca-org-link a {
-  background-color: #d8d8d8;
-  padding: 15px;
-  border: solid 1px #000;
-  border-radius: 20px;
+.et_pb_menu--with-logo .et_pb_menu__menu > nav > ul > li.ymca-org-link > a {
+  font-family: 'Grack' !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 20px !important;
+  letter-spacing: 1px !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  background-color: #e3e3e3 !important;
+  padding: 15px 20px !important;
+  border-radius: 10px !important;
+  color: #636466 !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
+
+.et_pb_menu--with-logo .et_pb_menu__menu > nav > ul > li > a {
+	padding: 0px !important;
+}
+
+/* Hide Divi's default menu completely */
+.et_pb_menu__menu,
+.et_mobile_nav_menu {
+  display: none !important;
+}
+
+/* Custom Hamburger Menu Styles */
+.custom-hamburger-menu {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+
+/* Hamburger button */
+.hamburger-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10001;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.hamburger-toggle:hover {
+  opacity: 0.7;
+}
+
+.hamburger-line {
+  width: 30px;
+  height: 3px;
+  background-color: #000;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+/* Hamburger animation when open */
+.hamburger-toggle.active .hamburger-line:first-child {
+  transform: rotate(45deg) translate(8px, 8px);
+  background-color: #fff;
+}
+
+.hamburger-toggle.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-toggle.active .hamburger-line:last-child {
+  transform: rotate(-45deg) translate(8px, -8px);
+  background-color: #fff;
+}
+
+/* Fullscreen menu overlay */
+.fullscreen-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 10000;
+}
+
+.fullscreen-menu.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Menu list */
+.fullscreen-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.fullscreen-menu-list li {
+  margin: 30px 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fullscreen-menu.active .fullscreen-menu-list li {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger animation for menu items */
+.fullscreen-menu.active .fullscreen-menu-list li:nth-child(1) { transition-delay: 0.1s; }
+.fullscreen-menu.active .fullscreen-menu-list li:nth-child(2) { transition-delay: 0.2s; }
+.fullscreen-menu.active .fullscreen-menu-list li:nth-child(3) { transition-delay: 0.3s; }
+.fullscreen-menu.active .fullscreen-menu-list li:nth-child(4) { transition-delay: 0.4s; }
+
+.fullscreen-menu-list a {
+  color: #fff;
+  text-decoration: none;
+  font-family: 'Grack';
+  font-size: 32px;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: color 0.3s ease;
+  display: inline-block;
+}
+
+.fullscreen-menu-list a:hover {
+  color: #00aeef;
+}
+
+/* Responsive sizing */
+@media (min-width: 768px) {
+  .fullscreen-menu-list a {
+    font-size: 48px;
+  }
+  
+  .fullscreen-menu-list li {
+    margin: 40px 0;
+  }
+}
+
+
+
+/* --------  Timeline Styles  -------- */
+
+.ctl-wrapper .ctl-vertical-wrapper .ctl-arrow {
+	box-shadow: none !important;
+}
+
+.ctl-wrapper .ctl-title a {
+  font-family: 'Grack';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: 2px;
+  line-height: 1.2em;
+  text-transform: uppercase;
+}
+
+.ctl-wrapper .ctl-label-big {
+  font-family: 'Noto Serif' !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  font-size: 24px !important;
+  letter-spacing: -.5px !important;
+}
+
+.ctl-wrapper .ctl-year-text {
+  font-family: 'Grack' !important;
+  font-style: normal !important;
+  font-weight: 200 !important;
+  font-size: 24px !important;
+  letter-spacing: 2px !important;
+  line-height: 1.2em;
+  text-transform: uppercase !important;
+}
+

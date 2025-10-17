@@ -1,0 +1,242 @@
+{
+    "name": "tmdivi/timeline",
+    "d4Shortcode": "tmdivi_timeline",
+    "title": "Timeline",
+    "titles": "Timelines",
+    "category": "module",
+    "attributes": {
+      "module": {
+        "type": "object",
+        "selector": "{{selector}}",
+        "default": {
+          "meta": {
+            "adminLabel": {
+              "desktop": {
+                "value": "Parent Module"
+              }
+            }
+          }
+        },
+        "styleProps": {
+          "border": {
+            "important": true
+          }
+        }
+      },
+      "story_title": {
+        "type": "object",
+        "selector": "{{selector}} .tmdivi-title",
+        "defaultPrintedStyle": {
+          "decoration": {
+            "font": {
+              "font": {
+                "desktop": {
+                  "value": {
+                    "size": "21px",
+                    "lineHeight": "1em",
+                    "weight": "600"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "styleProps": {
+          "font": {
+            "important": {
+              "font": {
+                "desktop": {
+                  "value": {
+                    "color": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "content": {
+        "type": "object",
+        "selector": "{{selector}} .tmdivi-description",
+        "defaultPrintedStyle": {
+          "decoration": {
+            "bodyFont": {
+              "body": {
+                "font": {
+                  "desktop": {
+                    "value": {
+                      "color": "#868686",
+                      "size": "13px",
+                      "lineHeight": "1.6em"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "styleProps": {
+          "bodyFont": {
+            "selectors": {
+              "desktop": {
+                "value": "{{selector}} .tmdivi-description, {{selector}} .tmdivi-description p"
+              }
+            }
+          }
+        }
+      },
+      "label_date": {
+        "type": "object",
+        "selector": "{{selector}} .tmdivi_timeline_story .tmdivi-label-big",
+        "defaultPrintedStyle": {
+          "decoration": {
+            "font": {
+              "font": {
+                "desktop": {
+                  "value": {
+                    "size": "45px",
+                    "lineHeight": "1em",
+                    "weight": "600"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "styleProps": {
+          "font": {
+            "important": {
+              "font": {
+                "desktop": {
+                  "value": {
+                    "color": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "sub_label": {
+        "type": "object",
+        "selector": "{{selector}} .tmdivi_timeline_story .tmdivi-label-small",
+        "defaultPrintedStyle": {
+          "decoration": {
+            "font": {
+              "font": {
+                "desktop": {
+                  "value": {
+                    "size": "45px",
+                    "lineHeight": "1em",
+                    "weight": "600"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "styleProps": {
+          "font": {
+            "important": {
+              "font": {
+                "desktop": {
+                  "value": {
+                    "color": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "label_text": {
+        "type": "object",
+        "selector": "{{selector}} .tmdivi-year-text",
+        "defaultPrintedStyle": {
+          "decoration": {
+            "font": {
+              "font": {
+                "desktop": {
+                  "value": {
+                    "size": "45px",
+                    "lineHeight": "1em",
+                    "weight": "600"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "styleProps": {
+          "font": {
+            "important": {
+              "font": {
+                "desktop": {
+                  "value": {
+                    "color": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "icon": {
+        "type": "object",
+        "selector": "{{selector}} .et-pb-icon",
+        "default": {
+          "innerContent": {
+            "desktop": {
+              "value": {
+                "unicode": "&#x39;",
+                "type": "divi",
+                "weight": "400"
+              }
+            }
+          },
+          "advanced": {
+            "color": {
+              "desktop": {
+                "value": "#ae16f0"
+              }
+            },
+            "size": {
+              "desktop": {
+                "value": "28px"
+              }
+            }
+          }
+        }
+      },
+      "story_background_color": {
+        "type": "object",
+        "selector": "{{selector}} .tmdivi-story .tmdivi-content",
+        "default": {
+          "advanced": {
+              "desktop": {
+                "value": "#ffffff"
+            }
+          }
+        }
+      }
+    },
+    "customCssFields": {
+    "contentContainer": {
+      "subName": "contentContainer",
+      "selectorSuffix": " .example_parent_module__content-container"
+    },
+    "title": {
+      "subName": "title",
+      "selectorSuffix": " .example_parent_module__title"
+    },
+    "content": {
+      "subName": "content",
+      "selectorSuffix": " .example_parent_module__content"
+    },
+    "icon": {
+      "subName": "icon",
+      "selectorSuffix": " .example_parent_module__icon.et-pb-icon"
+    }
+  }
+}
+  

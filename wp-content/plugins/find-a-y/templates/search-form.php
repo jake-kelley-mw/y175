@@ -9,8 +9,7 @@ if (!defined('ABSPATH')) exit;
 
 <div class="find-a-y-search-container">
     <div class="find-a-y-search-form">
-        <h2>Find Your Nearest YMCA</h2>
-        <p>Enter your ZIP code to find YMCA locations near you.</p>
+        <h5>Enter your ZIP code to find YMCA locations near you.</h5>
         
         <form id="ymca-location-search">
             <div class="search-input-group">
