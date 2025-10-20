@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) exit;
 
 <div class="find-a-y-search-container">
     <div class="find-a-y-search-form">
-        <h5>Enter your ZIP code to find YMCA locations near you.</h5>
         
         <form id="ymca-location-search">
             <div class="search-input-group">
@@ -69,7 +68,7 @@ if (!defined('ABSPATH')) exit;
 .search-input-group {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
 }
 
 #ymca-zip-input {
@@ -88,9 +87,14 @@ if (!defined('ABSPATH')) exit;
 
 .find-a-y-submit-btn {
     padding: 15px 30px;
-    font-size: 16px;
-    font-weight: 600;
-    background: #0073aa;
+    font-family: 'Grack';
+    font-style: normal;
+    font-weight: 400 !important;
+    font-size: 24px;
+    letter-spacing: 0px;
+    line-height: 1.2em;
+    text-transform: uppercase;
+    background: #20bdbe !important;
     color: white;
     border: none;
     border-radius: 4px;
@@ -100,7 +104,7 @@ if (!defined('ABSPATH')) exit;
 }
 
 .find-a-y-submit-btn:hover {
-    background: #005a87;
+    background: #006b6b;
 }
 
 .find-a-y-submit-btn:disabled {
@@ -126,7 +130,7 @@ if (!defined('ABSPATH')) exit;
     width: 50px;
     height: 50px;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #0073aa;
+    border-top: 4px solid #006b6b;
     border-radius: 50%;
     margin: 0 auto 20px;
     animation: spin 1s linear infinite;
@@ -227,6 +231,18 @@ if (!defined('ABSPATH')) exit;
     background: #005a87;
 }
 
+.find-a-y-search-form h5 {
+  font-family: 'Noto Serif';
+  font-style: italic;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -.15px;
+  color: #636466;
+  line-height: 1.5em;
+  text-transform: capitalize !important;
+  text-align: center;
+}
+
 @media (max-width: 640px) {
     .search-input-group {
         flex-direction: column;
@@ -243,6 +259,24 @@ if (!defined('ABSPATH')) exit;
     
     .location-distance {
         align-self: flex-start;
+    }
+    
+    .find-a-y-submit-btn {
+        padding: 16px 16px;
+        font-family: 'Grack';
+        font-style: normal;
+        font-weight: 400 !important;
+        font-size: 20px;
+        letter-spacing: 0px;
+        line-height: 1.2em;
+        text-transform: uppercase;
+        background: #20bdbe !important;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.3s;
+        white-space: nowrap;
     }
 }
 </style>

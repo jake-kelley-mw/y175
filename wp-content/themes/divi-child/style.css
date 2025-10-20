@@ -105,7 +105,7 @@ margin-bottom:auto;
   font-family: 'Cachet Pro';
   font-style: normal;
   font-weight: 300;
-  src: url('../divi-child/fonts/CachetPro-Meduim.woff2') format('woff2');
+  src: url('../divi-child/fonts/CachetPro-Medium.woff2') format('woff2');
 }
 
 /* Cachet - Bold */
@@ -241,9 +241,6 @@ h6 {
   line-height: 1.2em;
 }
 
-.timeline-preview h1 {
-  line-height: 1em !important;
-}
 
 .yusa-post-title .et_pb_text_inner {
   font-family: 'Grack';
@@ -253,6 +250,52 @@ h6 {
   letter-spacing: -.15px;
   line-height: 1.2em;
   text-transform: uppercase;
+}
+
+
+/* ---- RESPONSIVE TYPE STYLES ---- */
+
+@media (max-width: 768px) {
+body {
+  font-size: 14px !important;
+}
+
+p {
+  font-size: 14px !important;
+}
+
+h1 {
+  font-size: 36px !important;
+}
+
+h2 {
+  font-size: 26px !important;
+}
+
+h3 {
+  font-size: 20px !important;
+}
+
+h4 {
+  font-size: 16px !important;
+}
+
+h5 {
+  font-size: 14px !important;
+}
+
+h6 {
+  font-size: 14px !important;
+}
+
+.yusa-post-title .et_pb_text_inner {
+  font-size: 36px !important;
+}
+
+	.ymca-LTY h1 {
+      font-size: 48px !important;
+	}
+
 }
 
 
@@ -449,7 +492,42 @@ h6 {
 }
 
 
+/* --------  Video Styles  -------- */
+
+.lyte-title {
+  display: none !important;
+}
+
+/* Hide Lyte video title on mobile devices */
+.ytvideoInfoVideoTitle,
+a.ytvideoInfoVideoTitle {
+    display: none !important;
+}
+
+/* Also hide the container if needed */
+.ytvideoInfoVideoTitleContainer {
+    display: none !important;
+}
+
+/* Additional mobile-specific hiding */
+@media (max-width: 980px) {
+    .lyte a[href*="youtube.com"],
+    .lyte a[target="_blank"] {
+        pointer-events: none;
+    }
+    
+    .lyte a span {
+        display: none !important;
+    }
+}
+
+
 /* --------  Timeline Styles  -------- */
+
+.timeline-preview h1 {
+  line-height: 1em !important;
+}
+
 
 .ctl-wrapper .ctl-vertical-wrapper .ctl-arrow {
 	box-shadow: none !important;
@@ -482,4 +560,7 @@ h6 {
   line-height: 1.2em;
   text-transform: uppercase !important;
 }
+
+
+/* --------  Find a Y Styles inline within plugin files > search-from.php -------- */
 

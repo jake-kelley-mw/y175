@@ -56,3 +56,25 @@ function custom_hamburger_menu_html() {
     <?php
 }
 add_action('wp_body_open', 'custom_hamburger_menu_html');
+
+/* Disable Divi's FitVids script */
+function disable_divi_fitvids() {
+    wp_dequeue_script('fitvids');
+    wp_deregister_script('fitvids');
+}
+add_action('wp_enqueue_scripts', 'disable_divi_fitvids', 100);
+
+/* Alternative method - disable via Divi filter */
+add_filter('et_builder_enable_jquery_body', '__return_false');
+
+/* Force Lyte to use lazy loading on ALL devices including mobile */
+function force_lyte_on_mobile() {
+    add_filter('lyte_mobile_override', '__return_true');
+    add_filter('lyte_opt_mobile', function() { return 'lyte'; });
+    
+    /* Override wp_is_mobile for Lyte only */
+    if (isset($_GET['doing_lyte']) || (function_exists('lyte_parse') && in_the_loop())) {
+        add_filter('wp_is_mobile', '__return_false', 999);
+    }
+}
+add_action('init', 'force_lyte_on_mobile');
