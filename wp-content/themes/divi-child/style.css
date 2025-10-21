@@ -243,14 +243,28 @@ h6 {
 
 
 .yusa-post-title .et_pb_text_inner {
+font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 100;
+  font-size: 24px;
+  letter-spacing: -.65px;
+  line-height: 1.2em;
+  /* text-transform: uppercase; */
+}
+
+.timeline-header h1 {
   font-family: 'Grack';
   font-style: normal;
   font-weight: 500;
-  font-size: 48px;
+  font-size: 40px;
   letter-spacing: -.15px;
-  line-height: 1.2em;
+  line-height: 1em !important;
   text-transform: uppercase;
 }
+
+.ymca-LTY h1 {
+      line-height: 1em !important;
+	}
 
 
 /* ---- RESPONSIVE TYPE STYLES ---- */
@@ -301,6 +315,7 @@ h6 {
 	}
 
 }
+
 
 
 /* --------  Menu Styles  -------- */
