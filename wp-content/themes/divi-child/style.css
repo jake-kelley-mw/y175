@@ -503,18 +503,18 @@ h6 {
 }
 
 /* Hide Lyte video title on mobile devices */
-.ytvideoInfoVideoTitle,
+/* .ytvideoInfoVideoTitle,
 a.ytvideoInfoVideoTitle {
     display: none !important;
-}
+}*/
 
 /* Also hide the container if needed */
-.ytvideoInfoVideoTitleContainer {
+/*.ytvideoInfoVideoTitleContainer {
     display: none !important;
-}
+}*/
 
 /* Additional mobile-specific hiding */
-@media (max-width: 980px) {
+/*@media (max-width: 980px) {
     .lyte a[href*="youtube.com"],
     .lyte a[target="_blank"] {
         pointer-events: none;
@@ -523,7 +523,7 @@ a.ytvideoInfoVideoTitle {
     .lyte a span {
         display: none !important;
     }
-}
+}*/
 
 
 /* --------  Timeline Styles  -------- */
@@ -537,22 +537,24 @@ a.ytvideoInfoVideoTitle {
 	box-shadow: none !important;
 }
 
-.ctl-wrapper .ctl-title a {
+.ctl-wrapper .ctl-title {
   font-family: 'Grack';
   font-style: normal;
   font-weight: 400;
   font-size: 24px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   line-height: 1.2em;
   text-transform: uppercase;
 }
 
 .ctl-wrapper .ctl-label-big {
-  font-family: 'Noto Serif' !important;
-  font-style: normal !important;
-  font-weight: 400 !important;
+  font-family: 'Grack' !important;
+  font-style: normal;
+  font-weight: 300;
   font-size: 24px !important;
-  letter-spacing: -.5px !important;
+  letter-spacing: 1px !important;
+  line-height: 1.2em;
+  text-transform: uppercase;
 }
 
 .ctl-wrapper .ctl-year-text {
@@ -564,6 +566,65 @@ a.ytvideoInfoVideoTitle {
   line-height: 1.2em;
   text-transform: uppercase !important;
 }
+
+.ctl-wrapper {
+	margin: 0 !important;
+}
+
+.ctl-wrapper .ctl-one-sided {
+	padding-left: 0px !important;
+}
+
+@media only screen and (min-width: 768px) {
+	.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-start {
+  left: calc(0px - var(--ctw-line-width) * 3 / 2) !important;
+}
+}
+
+.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-end {
+  left: calc(0px - var(--ctw-line-width) * 3 / 2) !important;
+}
+
+@media only screen and (max-width: 767px) {
+  .ctl-wrapper .ctl-vertical-wrapper .ctl-inner-line, .ctl-wrapper .ctl-vertical-wrapper .ctl-timeline::before {
+  left: calc(0px - var(--ctw-line-width)/ 2);
+}
+}
+
+.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
+	width: auto !important;
+}
+
+@media only screen and (max-width: 767px) {
+	.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
+  		width: 90% !important;
+}
+}
+
+@media only screen and (max-width: 767px) {
+  .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper, .ctl-design-4) .ctl-labels ~ .ctl-arrow {
+	  top: calc(var(--ctw-ibx-size) * var(--ctw-ibx-position) + var(--ctw-ibx-size)/ 3 + (var(--ctw-lbl-big-size) + var(--ctw-lbl-small-size) + var(--ctw-lbl-gap)) - ((var(--ctw-lbl-big-size) + var(--ctw-lbl-small-size) + var(--ctw-lbl-gap)) * var(--ctw-ibx-position)/ 10) + var(--lbl-bd-width) * 2 + var(--ctw-cbx-date-line-height) - 0px) !important;
+}}
+
+@media only screen and (max-width: 767px) {
+  .ctl-wrapper .ctl-vertical-wrapper .ctl-inner-line, .ctl-wrapper .ctl-vertical-wrapper .ctl-timeline::before {
+    left: 5% !important;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .ctl-wrapper .ctl-vertical-wrapper .ctl-end, .ctl-wrapper .ctl-vertical-wrapper .ctl-start {
+    left: 5% !important;
+  }
+}
+
+/*.ymca-home-timeline .ctl-wrapper .ctl-vertical-wrapper .ctl-inner-line  {
+	background-color: #006b6b !important;
+}*/
+
+/*.ymca-home-timeline .ctl-wrapper .ctl-vertical-wrapper .ctl-timeline::before  {
+	background-color: #006b6b !important;
+}*/
 
 
 /* --------  Find a Y Styles inline within plugin files > search-from.php -------- */

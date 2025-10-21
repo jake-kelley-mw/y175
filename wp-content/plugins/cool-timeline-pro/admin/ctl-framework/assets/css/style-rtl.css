@@ -1,0 +1,590 @@
+/**
+ *
+ * ---------------------------------------------------------
+ * ctl FRAMEWORK RTL CSS MAP
+ * ---------------------------------------------------------
+ *
+ * 01. Base
+ *     01. 01. Header
+ *     01. 02. Header Buttons
+ *     01. 03. Navigation
+ *     01. 04. Content
+ *     01. 05. Section
+ *     01. 06. Show All Settings
+ *     01. 07. Search Input
+ *     01. 08. Copyright
+ *     01. 09. Metabox
+ * 02. Fields
+ *     02. 01. Field: typography
+ *     02. 02. Field: checkbox, radio
+ *     02. 03. Field: switcher
+ *     02. 04. Field: upload
+ *     02. 05. Field: group
+ *     02. 06. Field: repeater
+ *     02. 07. Field: help
+ *     02. 08. Field: icon
+ *     02. 09. Field: gallery
+ *     02. 10. Field: sorter
+ *     02. 11. Field: tabbed
+ *     02. 12. Field: media
+ *     02. 13. Field: notice
+ *     02. 14. Field: border, spacing, dimensions
+ *     02. 15. Field: background
+ *     02. 16. Field: spinner
+ *     02. 17. Field: slider
+ *     02. 18. Field: button_set
+ *     02. 19. Field: link_color
+ *     02. 20. Field: color_group
+ *     02. 21. Field: palette
+ *     02. 22. Field: accordion
+ *     02. 23. Field: date
+ *     02. 24. Field: map
+ *     02. 25. Field: sortable
+ *     02. 26. Field: number
+ * 03. Taxonomy
+ * 04. Profile
+ * 05. Nav Menu
+ * 06. Modal
+ * 07. Customizer
+ * 08. Responsive
+ * 09. Others
+ *
+ * ---------------------------------------------------------
+ *
+ */
+/**
+ * 01. Base
+ */
+.ctl-options {
+  margin-left: 20px;
+  margin-right: 0;
+}
+
+/**
+ * 01. 01. Header
+ */
+.ctl-header h1 {
+  float: right;
+}
+.ctl-header fieldset {
+  float: left;
+}
+
+/**
+ * 01. 02. Header Buttons
+ */
+.ctl-buttons {
+  float: left;
+  direction: ltr;
+}
+
+.ctl-header-left {
+  float: right;
+}
+
+.ctl-header-right {
+  float: left;
+}
+
+/**
+ * 01. 03. Navigation
+ */
+.ctl-nav {
+  float: right;
+}
+.ctl-nav ul {
+  clear: right;
+}
+.ctl-nav ul li .ctl-active:after {
+  right: auto;
+  left: 0;
+  border-left-color: #fff;
+  border-right-color: transparent;
+}
+.ctl-nav ul li .ctl-arrow:after {
+  content: "\f053";
+  right: auto;
+  left: 10px;
+}
+.ctl-nav ul li.ctl-tab-expanded .ctl-arrow:after {
+  transform: rotate(-90deg);
+}
+.ctl-nav ul ul li a {
+  padding-right: 25px;
+  padding-left: 15px;
+}
+.ctl-nav ul ul:before {
+  left: auto;
+  right: 15px;
+}
+.ctl-nav .ctl-tab-icon {
+  margin-left: 5px;
+  margin-right: 0;
+}
+
+.ctl-nav-background {
+  left: auto;
+  right: 0;
+}
+
+/**
+ * 01. 04. Content
+ */
+.ctl-content {
+  margin-left: 0;
+  margin-right: 225px;
+}
+
+/**
+ * 01. 05. Section
+ */
+.ctl-sections {
+  float: right;
+}
+
+/**
+ * 01. 06. Show all options
+ */
+.ctl-show-all .ctl-content {
+  margin-right: 0;
+  overflow: hidden;
+}
+
+.ctl-expand-all {
+  float: right;
+  right: auto;
+  left: 40px;
+  margin-right: 0;
+  margin-left: 4px;
+}
+
+/**
+ * 01. 07. Search Input
+ */
+.ctl-search {
+  float: right;
+}
+.ctl-search input {
+  margin: 0 0 0 5px;
+}
+
+/**
+ * 01. 08. Copyright
+ */
+.ctl-copyright {
+  float: right;
+}
+
+/**
+ * 01. 09. Metabox
+ */
+.ctl-metabox {
+  margin: -6px -12px -12px -12px;
+}
+.ctl-metabox .ctl-section-title {
+  padding: 20px;
+}
+
+.ctl-section-title .ctl-section-icon {
+  margin-left: 5px;
+  margin-right: 0;
+}
+
+/**
+ * 02. Fields
+ */
+.ctl-field .ctl-title {
+  float: right;
+}
+.ctl-field .ctl-fieldset {
+  float: left;
+}
+
+.ctl-pseudo-field {
+  padding: 0 0 0 5px !important;
+}
+
+/**
+ * 02. 01. Field: typography
+ */
+.ctl-field-typography select {
+  margin: 0;
+  width: 100%;
+}
+.ctl-field-typography .ctl--blocks-inputs .ctl--blocks {
+  flex-direction: row-reverse;
+}
+.ctl-field-typography .ctl--unit {
+  left: 4px;
+  right: auto;
+}
+
+/**
+ * 02. 02. Field: checkbox, radio
+ */
+.ctl-field-checkbox ul ul li,
+.ctl-field-radio ul ul li {
+  margin-left: 0;
+  margin-right: 8px;
+}
+.ctl-field-checkbox ul ul li:first-child,
+.ctl-field-radio ul ul li:first-child {
+  margin-right: 0;
+}
+.ctl-field-checkbox .ctl--inline-list li,
+.ctl-field-radio .ctl--inline-list li {
+  margin-right: 0;
+  margin-left: 15px;
+}
+.ctl-field-checkbox .ctl--text,
+.ctl-field-radio .ctl--text {
+  margin-left: 0;
+  margin-right: 5px;
+}
+
+/**
+ * 02. 03. Field: switcher
+ */
+.ctl-field-switcher .ctl--switcher {
+  float: right;
+}
+.ctl-field-switcher .ctl--label {
+  float: right;
+  margin-left: 0;
+  margin-right: 5px;
+}
+
+/**
+ * 02. 04. Field: upload
+ */
+.ctl-field-upload .ctl--remove,
+.ctl-field-upload .ctl--button {
+  margin-left: 0;
+  margin-right: 5px;
+}
+
+/**
+ * 02. 05. Field: group
+ */
+.ctl-field-group .ctl-cloneable-title {
+  padding: 15px 10px 15px 65px;
+}
+.ctl-field-group .ctl-cloneable-helper {
+  right: auto;
+  left: 10px;
+}
+
+/**
+ * 02. 06. Field: repeater
+ */
+.ctl-field-repeater .ctl-repeater-helper {
+  border-left: 0;
+  border-right: 1px solid #eee;
+}
+
+/**
+ * 02. 07. Field: help
+ */
+.ctl-help {
+  right: auto;
+  left: 5px;
+}
+
+/**
+ * 02. 08. Field: icon
+ */
+.ctl-field-icon .button {
+  margin-right: 0;
+  margin-left: 5px;
+}
+.ctl-field-icon .ctl-icon-preview i {
+  margin-right: 0;
+  margin-left: 5px;
+}
+
+/**
+ * 02. 09. Field: gallery
+ */
+.ctl-field-gallery ul li {
+  margin-right: 0;
+  margin-left: 5px;
+}
+.ctl-field-gallery .button {
+  margin-right: 0;
+  margin-left: 5px;
+}
+
+/**
+ * 02. 11. Field: tabbed
+ */
+.ctl-field-tabbed .ctl-tabbed-nav .ctl--icon {
+  padding-right: 0;
+  padding-left: 5px;
+}
+.ctl-field-tabbed .ctl-tabbed-nav a {
+  margin-right: 0;
+  margin-left: 5px;
+}
+
+/**
+ * 02. 12. Field: media
+ */
+.ctl-field-media .button {
+  margin-left: 0;
+  margin-right: 7px;
+}
+.ctl-field-media .hidden + .button {
+  margin-right: 0;
+}
+
+/**
+ * 02. 13. Field: notice
+ */
+.ctl-notice {
+  border-left: none;
+  border-right-style: solid;
+  border-right-width: 4px;
+}
+
+/**
+ * 02. 14. Field: border, spacing, dimensions
+ */
+.ctl-field-dimensions .ctl--input,
+.ctl-field-dimensions .ctl-fieldset,
+.ctl-field-spacing .ctl--input,
+.ctl-field-spacing .ctl-fieldset,
+.ctl-field-border .ctl--input,
+.ctl-field-border .ctl-fieldset {
+  direction: ltr;
+}
+.ctl-field-dimensions .ctl--inputs,
+.ctl-field-dimensions .ctl--color,
+.ctl-field-spacing .ctl--inputs,
+.ctl-field-spacing .ctl--color,
+.ctl-field-border .ctl--inputs,
+.ctl-field-border .ctl--color {
+  float: right;
+}
+.ctl-field-dimensions .ctl--color,
+.ctl-field-spacing .ctl--color,
+.ctl-field-border .ctl--color {
+  margin-right: 4px;
+  direction: rtl;
+}
+
+/**
+ * 02. 15. Field: background
+ */
+.ctl-field-background .ctl--block {
+  float: right;
+}
+.ctl-field-background .ctl--select,
+.ctl-field-background .ctl--media {
+  padding-right: 0;
+}
+.ctl-field-background .ctl--title {
+  margin-right: 0;
+  margin-left: 5px;
+}
+
+/**
+ * 02. 16. Field: spinner
+ */
+.ctl-field-spinner .ctl--spin {
+  float: right;
+  direction: ltr;
+}
+
+/**
+ * 02. 17. Field: slider
+ */
+.ctl-field-slider .ctl-slider-ui {
+  direction: ltr;
+  margin-right: 0;
+  margin-left: 15px;
+}
+.ctl-field-slider .ctl--input {
+  direction: ltr;
+}
+
+/**
+ * 02. 18. Field: button_set
+ */
+.ctl-field-button_set .ctl--button-group {
+  float: right;
+}
+
+/**
+ * 02. 19. Field: link_color
+ */
+.ctl-field-link_color .ctl--left {
+  float: right;
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+/**
+ * 02. 20. Field: color_group
+ */
+.ctl-field-color_group .ctl--left {
+  float: right;
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+/**
+ * 02. 21. Field: palette
+ */
+.ctl-field-palette .ctl--palette {
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+/**
+ * 02. 22. Field: accordion
+ */
+.ctl-field-accordion .ctl--icon {
+  margin-right: 0;
+  margin-left: 2px;
+}
+
+/**
+ * 02. 23. Field: date
+ */
+.ctl-field-date .ctl--to {
+  margin-left: 0;
+  margin-right: 7px;
+}
+
+/**
+ * 02. 24. Field: map
+ */
+.ctl-field-map .ctl--map-input:last-child {
+  padding-left: 0;
+  padding-right: 10px;
+}
+
+/**
+ * 02. 25. Field: sortable
+ */
+.ctl-field-sortable .ctl-sortable-helper {
+  border-left: none;
+  border-right: 1px solid #eee;
+}
+
+/**
+ * 02. 26. Field: number
+ */
+.ctl-field-number .ctl--wrap {
+  float: right;
+}
+.ctl-field-number .ctl--unit {
+  left: 4px;
+  right: auto;
+}
+
+/**
+ * 03. Taxonomy
+ */
+.ctl-taxonomy-add-fields {
+  margin-right: 0;
+  margin-left: 30px;
+}
+.ctl-taxonomy-add-fields .ctl-field > .ctl-fieldset > .ctl-help {
+  left: -5px;
+  right: auto;
+}
+
+.ctl-taxonomy-edit-fields {
+  margin-right: 0;
+  margin-left: 35px;
+}
+.ctl-taxonomy-edit-fields .ctl-field > .ctl-fieldset > .ctl-help {
+  right: auto;
+  left: -5px;
+}
+
+/**
+ * 04. Profile
+ */
+.ctl-profile-options > h2 > .fa {
+  padding-right: 0;
+  padding-left: 7px;
+}
+.ctl-profile-options > .ctl-field > .ctl-fieldset > .ctl-help {
+  left: -5px;
+  right: auto;
+}
+
+/**
+ * 05. Nav Menu
+ */
+.ctl-nav-menu-options > .ctl-fields {
+  margin-left: 0;
+  margin-right: -10px;
+}
+
+.ctl-nav-menu-title {
+  padding-left: 14px;
+  padding-right: 12px;
+}
+
+.ctl-nav-menu-icon {
+  margin-right: 0;
+  margin-left: 5px;
+}
+
+/**
+ * 06. Modal
+ */
+.ctl-modal-content .ctl-field {
+  padding: 15px 15px 15px 30px;
+}
+
+.ctl-modal-title {
+  padding: 0 16px 0 36px;
+}
+
+.ctl-modal-close {
+  right: auto;
+  left: 0;
+}
+
+/**
+ * 07. Customizer
+ */
+.control-section .ctl-field .ctl-fieldset {
+  margin-right: 0;
+}
+
+/**
+ * 08. Responsive
+ */
+@media only screen and (max-width: 1200px) {
+  .ctl-metabox .ctl-field .ctl-fieldset {
+    margin-left: 0;
+  }
+}
+@media only screen and (max-width: 782px) {
+  .ctl .ctl-fieldset,
+  .ctl .ctl-content {
+    margin-right: 0;
+  }
+}
+/**
+ * 09. Others
+ */
+.ctl-field .ctl--transparent-slider {
+  margin-left: 0;
+  margin-right: 2px;
+}
+.ctl-field .ctl--transparent-slider .ui-slider-handle {
+  margin: 0 -11px;
+}
+.ctl-field .ctl--transparent-offset {
+  background-position: center right;
+}
+.ctl-field .ctl--transparent-text {
+  right: auto;
+  left: 10px;
+}

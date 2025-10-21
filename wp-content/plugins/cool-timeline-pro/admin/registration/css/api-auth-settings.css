@@ -1,0 +1,49 @@
+.ctp-notice-red {
+    color: red;
+    font-weight: bold;
+}
+.ctp-notice-green {
+    color: green;
+    font-weight: bold;
+}
+.license-warning.notice-error {
+    background: #fffcda;
+}
+
+span.ctp-renew-support-notice{
+  font-weight: 700;
+  color:red;
+}
+.form-table td p.cool-license-a {
+  margin: 0 0 15px;
+}
+h4.cool-license-q {
+  margin: 0;
+}
+/* Loading spinner for 'uninstall license' button */
+.ctp-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+.ctp-loading:after {
+    content: " ";
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 5px solid #d02424;
+    border-color: #f7931a transparent #c40000 transparent;
+    animation: ctp-loading 1.2s linear infinite;
+}
+  @keyframes ctp-loading {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* End of loading spinner css */

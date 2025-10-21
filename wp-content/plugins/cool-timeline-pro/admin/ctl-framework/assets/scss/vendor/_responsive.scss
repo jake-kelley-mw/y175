@@ -1,0 +1,166 @@
+/**
+ * 12. Responsive
+ */
+@media only screen and (max-width:1200px){
+
+  .ctl-metabox{
+
+    .ctl-field{
+
+      .ctl-title{
+        float: none;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .ctl-fieldset{
+        float: none;
+        width: 100%;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width:782px){
+
+  .ctl-header-inner{
+    text-align: center;
+
+    h1{
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+
+  .ctl-form-result{
+    float: none;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .ctl-search,
+  .ctl-header-right,
+  .ctl-header-left{
+    width: 100%;
+  }
+
+  .ctl-search{
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .ctl-footer{
+    text-align: center;
+  }
+
+  .ctl-buttons{
+    float: none;
+  }
+
+  .ctl-copyright{
+    float: none;
+    margin-top: 10px;
+  }
+
+  .ctl-nav,
+  .ctl-expand-all,
+  .ctl-reset-section,
+  .ctl-nav-background{
+    display: none !important;
+  }
+
+  .ctl-nav-normal + .ctl-content{
+    margin-left: 0;
+  }
+
+  .ctl-section-title,
+  .ctl-section{
+    display: block !important;
+  }
+
+  .ctl-field{
+
+    .ctl-title{
+      float: none;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .ctl-fieldset{
+      float: none;
+      width: 100%;
+    }
+  }
+
+  .ctl-field-color{
+
+    .button.wp-picker-clear{
+      padding: 0 8px;
+      line-height: 2.14285714;
+      min-height: 32px;
+    }
+  }
+
+  .ctl-modal-inner{
+    width: 350px;
+    height: 400px;
+  }
+
+  .ctl-modal-content{
+    height: 237px;
+  }
+
+  .ctl-icon-dialog{
+
+    .ctl-modal-inner{
+      width: 305px;
+      height: 380px;
+    }
+
+    .ctl-modal-content{
+      height: 267px;
+    }
+  }
+
+  .ctl-modal-icon{
+
+    .ctl-modal-inner{
+      width: 330px;
+      height: 385px;
+    }
+
+    .ctl-modal-content{
+      height: 252px;
+    }
+  }
+
+  .ctl-profile-options,
+  .ctl-taxonomy-edit-fields{
+
+    > .ctl-field{
+
+      > .ctl-title{
+        float: none;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      > .ctl-fieldset{
+        float: none;
+        width: 100%;
+      }
+    }
+  }
+
+  .ctl-nav-menu-options{
+
+    > .ctl-fields{
+      margin-left: -10px;
+      margin-right: -10px;
+
+      > .ctl-field{
+        padding: 10px;
+      }
+    }
+  }
+}

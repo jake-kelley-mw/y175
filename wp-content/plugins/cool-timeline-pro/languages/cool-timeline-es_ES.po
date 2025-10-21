@@ -1,0 +1,1086 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Cool Timeline Pro\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-29 03:56+0000\n"
+"PO-Revision-Date: 2023-09-29 04:25+0000\n"
+"Last-Translator: \n"
+"Language-Team: Spanish (Spain)\n"
+"Language: es_ES\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.6; wp-6.3.1\n"
+"X-Domain: cool-timeline"
+
+#: admin/class-cool-vc-addon.php:250
+msgid " eg(stories,our-history)"
+msgstr "ej.(cuentos,nuestra-historia)"
+
+#: includes/shortcodes/class-ctl-helpers.php:413
+msgid " Loading"
+msgstr "Cargando"
+
+#: includes/shortcodes/class-ctl-helpers.php:369
+msgid " of "
+msgstr "de"
+
+#: includes/shortcodes/class-ctl-helpers.php:370
+msgid " Page "
+msgstr "Página"
+
+#: admin/class-cool-vc-addon.php:633
+msgid "*This Options Is Not For Default Design. (Check Demo Here)"
+msgstr ""
+"*Estas opciones no son para el diseño predeterminado. (Consulte la "
+"demostración aquí)"
+
+#: admin/class-cool-vc-addon.php:245
+msgid "Add categories slug for filters"
+msgstr "Agregar categorías slug para filtros"
+
+#: admin/ctl-framework/fields/gallery/gallery.php:25
+msgid "Add Gallery"
+msgstr "Agregar galería"
+
+#: admin/ctl-framework/fields/icon/icon.php:25
+#: admin/ctl-framework/fields/icon/icon.php:60
+msgid "Add Icon"
+msgstr "Agregar icono"
+
+#: admin/ctl-framework/fields/link/link.php:25
+msgid "Add Link"
+msgstr "Añadir enlace"
+
+#: admin/class-cool-timeline-posttype.php:50
+#: admin/ctl-framework/classes/shortcode-options.class.php:219
+#: admin/ctl-framework/fields/group/group.php:28
+msgid "Add New"
+msgstr "Agregar nuevo"
+
+#: admin/class-cool-timeline-posttype.php:132
+msgid "Add New Item"
+msgstr "Agregar ítem nuevo"
+
+#: admin/class-cool-timeline-posttype.php:49
+msgid "Add New Story"
+msgstr "Agregar nueva historia"
+
+#: admin/class-cool-timeline-posttype.php:137
+msgid "Add or remove items"
+msgstr "Agregar o eliminar elementos"
+
+#: admin/class-cool-vc-addon.php:259 admin/class-cool-vc-addon.php:263
+#: admin/class-cool-vc-addon.php:793 admin/class-cool-vc-addon.php:797
+msgid "Advance Settings Tab"
+msgstr "Pestaña de configuración avanzada"
+
+#: admin/class-cool-vc-addon.php:344 admin/class-cool-vc-addon.php:877
+msgid "Ajax Load More"
+msgstr "Ajax Cargar más"
+
+#: includes/shortcodes/class-ctl-helpers.php:242
+msgid "All"
+msgstr "Todo"
+
+#: admin/class-cool-timeline-posttype.php:128
+msgid "All Items"
+msgstr "Todos los artículos"
+
+#: admin/ctl-framework/fields/typography/typography.php:188
+msgid "All Small Caps"
+msgstr "Todas las versalitas"
+
+#: admin/class-cool-vc-addon.php:532 admin/class-cool-vc-addon.php:978
+msgid "Animations Effect"
+msgstr "Efecto de animaciones"
+
+#: admin/ctl-framework/fields/group/group.php:58
+#: admin/ctl-framework/fields/group/group.php:113
+msgid "Are you sure to delete this item?"
+msgstr "¿Estás seguro de eliminar este elemento?"
+
+#: admin/ctl-framework/classes/admin-options.class.php:518
+#: admin/ctl-framework/classes/admin-options.class.php:641
+msgid "Are you sure to reset this section options?"
+msgstr "¿Estás seguro de restablecer las opciones de esta sección?"
+
+#: admin/ctl-framework/classes/admin-options.class.php:519
+#: admin/ctl-framework/classes/admin-options.class.php:642
+msgid "Are you sure you want to reset all settings to default values?"
+msgstr ""
+"¿Está seguro de que desea restablecer todas las configuraciones a los "
+"valores predeterminados?"
+
+#: admin/ctl-framework/classes/setup.class.php:607
+msgid "Are you sure?"
+msgstr "¿Está seguro?"
+
+#: admin/class-cool-vc-addon.php:274 admin/class-cool-vc-addon.php:808
+msgid "ASC"
+msgstr "ASC"
+
+#: admin/class-cool-vc-addon.php:486 admin/class-cool-vc-addon.php:643
+msgid "Autoplay Stories settings ?"
+msgstr "¿Configuración de Historias de reproducción automática?"
+
+#: admin/ctl-framework/fields/typography/typography.php:105
+msgid "Backup Font Family"
+msgstr "Familia de fuentes de respaldo"
+
+#: admin/class-cool-vc-addon.php:428
+msgid "Bottom"
+msgstr "Abajo"
+
+#: admin/ctl-framework/classes/metabox-options.class.php:280
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: admin/ctl-framework/fields/typography/typography.php:200
+msgid "Capitalize"
+msgstr "Capitalizar"
+
+#: admin/class-cool-timeline-posttype.php:127
+msgid "Categories"
+msgstr "Categorías"
+
+#: admin/class-cool-vc-addon.php:717
+msgid "category"
+msgstr "categoría"
+
+#: admin/class-cool-vc-addon.php:726
+msgid "Category Specific Timeline (Add category(s) slug - comma separated)"
+msgstr ""
+"Cronología específica de la categoría (Agregar barra de categoría(s), "
+"separada por comas)"
+
+#: admin/class-cool-vc-addon.php:429
+#: admin/ctl-framework/fields/typography/typography.php:172
+msgid "Center"
+msgstr "Centro"
+
+#: admin/class-cool-vc-addon.php:452 admin/class-cool-vc-addon.php:921
+msgid "Center Line Filling In Timeline Stories. By default Is False"
+msgstr ""
+"Línea central completando historias de línea de tiempo. Por defecto es falso"
+
+#: admin/class-cool-timeline-posttype.php:138
+msgid "Choose from the most used"
+msgstr "Elige entre los más usados"
+
+#: admin/ctl-framework/fields/gallery/gallery.php:27
+msgid "Clear"
+msgstr "Claro"
+
+#: admin/class-cool-timeline-posttype.php:197
+msgctxt "column name"
+msgid "Story Category"
+msgstr "Categoría de historia"
+
+#: admin/class-cool-timeline-posttype.php:196
+msgctxt "column name"
+msgid "Story Title"
+msgstr "Título de la historia"
+
+#: admin/class-cool-vc-addon.php:120 admin/class-cool-vc-addon.php:610
+msgid "Compact Layout"
+msgstr "Diseño compacto"
+
+#: admin/class-cool-vc-addon.php:472 admin/class-cool-vc-addon.php:941
+msgid "Content Length"
+msgstr "largancia de contenido"
+
+#: admin/class-cool-vc-addon.php:704
+msgid "Content Post type"
+msgstr "Tipo de publicación de contenido"
+
+#: admin/class-cool-vc-addon.php:579
+msgid "Cool Content Timeline"
+msgstr "Cronología de contenido interesante"
+
+#. Author of the plugin
+msgid "Cool Plugins"
+msgstr "Complementos geniales"
+
+#: admin/class-cool-vc-addon.php:94
+msgid "Cool Timeline"
+msgstr "Línea de tiempo genial"
+
+#: admin/class-cool-vc-addon.php:88
+msgid "Cool Timeline Default"
+msgstr "Valor predeterminado de línea de tiempo genial"
+
+#. Name of the plugin
+msgid "Cool Timeline Pro"
+msgstr "Línea de tiempo genial Pro"
+
+#. Description of the plugin
+msgid ""
+"Cool Timeline Pro, #1 WordPress timeline plugin to showcase your life story "
+"or your company history in a vertical or horizontal timeline format. You can "
+"also create a content timeline using your blog-posts or any post-type."
+msgstr ""
+"Cool Timeline Pro, el complemento de línea de tiempo número uno de WordPress "
+"para mostrar la historia de su vida o la historia de su empresa en un "
+"formato de línea de tiempo vertical u horizontal. También puede crear una "
+"línea de tiempo de contenido utilizando las publicaciones de su blog o "
+"cualquier tipo de publicación."
+
+#: admin/class-cool-timeline-posttype.php:48
+msgid "Cool Timeline Stories"
+msgstr "Historias interesantes de la línea de tiempo"
+
+#: admin/class-cool-timeline-posttype.php:68
+msgid "cool-timeline"
+msgstr "línea de tiempo genial"
+
+#: admin/class-cool-vc-addon.php:247
+msgid "cool-timieline"
+msgstr "línea de tiempo genial"
+
+#: admin/class-cool-vc-addon.php:580
+msgid "Create Blog Posts Timeline"
+msgstr "Crear línea de tiempo de publicaciones de blog"
+
+#: admin/class-cool-vc-addon.php:166
+msgid "Create Category Specific Timeline (By Default - All Categories)"
+msgstr ""
+"Crear una línea de tiempo específica de una categoría (de forma "
+"predeterminada: todas las categorías)"
+
+#: admin/class-cool-vc-addon.php:151
+msgid "Create Light, Dark or Colorful Timeline"
+msgstr "Crea una línea de tiempo clara, oscura o colorida"
+
+#: admin/class-cool-vc-addon.php:696
+msgid "Create Light, Dark or Colorful Timeline."
+msgstr "Crea una línea de tiempo clara, oscura o colorida."
+
+#: admin/class-cool-vc-addon.php:89
+msgid "Create Stories Timeline"
+msgstr "Crear línea de tiempo de historias"
+
+#: admin/class-cool-vc-addon.php:313 admin/class-cool-vc-addon.php:847
+msgid "Custom Date Format"
+msgstr "Formato de fecha personalizado"
+
+#: admin/class-cool-vc-addon.php:183
+msgid "Custom Order Number"
+msgstr "Número de pedido personalizado"
+
+#: admin/ctl-framework/fields/typography/typography.php:295
+msgid "Custom Style"
+msgstr "Estilo personalizado"
+
+#: admin/ctl-framework/fields/typography/typography.php:362
+msgid "Custom Web Fonts"
+msgstr "Fuentes web personalizadas"
+
+#: admin/class-cool-vc-addon.php:149 admin/class-cool-vc-addon.php:694
+msgid "dark"
+msgstr "oscuro"
+
+#: admin/ctl-framework/fields/typography/typography.php:217
+msgid "Dashed"
+msgstr "discontinuo"
+
+#: admin/class-cool-vc-addon.php:298 admin/class-cool-vc-addon.php:832
+msgid "Date Formats"
+msgstr "Formatos de fecha"
+
+#: admin/class-cool-vc-addon.php:147 admin/class-cool-vc-addon.php:343
+#: admin/class-cool-vc-addon.php:692 admin/class-cool-vc-addon.php:876
+#: admin/ctl-framework/fields/typography/typography.php:119
+#: admin/ctl-framework/fields/typography/typography.php:132
+#: admin/ctl-framework/fields/typography/typography.php:145
+#: admin/ctl-framework/fields/typography/typography.php:160
+#: admin/ctl-framework/fields/typography/typography.php:176
+#: admin/ctl-framework/fields/typography/typography.php:189
+#: admin/ctl-framework/fields/typography/typography.php:203
+#: admin/ctl-framework/fields/typography/typography.php:221
+msgid "Default"
+msgstr "Por defecto"
+
+#: admin/class-cool-vc-addon.php:182
+msgid "Default (Date Based)"
+msgstr "Predeterminado (basado en fecha)"
+
+#: admin/class-cool-vc-addon.php:608
+msgid "Default Layout (Vertical Both side)"
+msgstr "Diseño predeterminado (vertical en ambos lados)"
+
+#: admin/ctl-framework/classes/admin-options.class.php:241
+#: admin/ctl-framework/classes/admin-options.class.php:257
+msgid "Default settings restored."
+msgstr "Se restauró la configuración predeterminada."
+
+#: admin/class-cool-vc-addon.php:273 admin/class-cool-vc-addon.php:807
+msgid "DESC"
+msgstr "DESC"
+
+#: admin/class-cool-vc-addon.php:290 admin/class-cool-vc-addon.php:824
+msgid "Display Icons In Timeline Stories. By default Is Dot."
+msgstr "Mostrar iconos en historias de línea de tiempo. Por defecto es Dot."
+
+#: admin/class-cool-vc-addon.php:955
+msgid "Display Post Meta?"
+msgstr "¿Mostrar meta de publicación?"
+
+#: admin/class-cool-vc-addon.php:458 admin/class-cool-vc-addon.php:927
+msgid "Display read more?"
+msgstr "Mostrar ¿leer más?"
+
+#: admin/class-cool-vc-addon.php:223 admin/class-cool-vc-addon.php:621
+msgid "Display Stories Blocks/Columns"
+msgstr "Mostrar bloques/columnas de historias"
+
+#: admin/class-cool-vc-addon.php:707
+msgid ""
+"Don't Change This If You Are Creating Blog Posts Timeline or Define Content "
+"Type Of Your Timeline Like:- Posts"
+msgstr ""
+"No cambie esto si está creando una línea de tiempo de publicaciones de blog "
+"o define el tipo de contenido de su línea de tiempo como: - Publicaciones"
+
+#: admin/class-cool-vc-addon.php:718
+msgid ""
+"Don't Change This If You Are Creating Blog Posts Timeline or Define Content "
+"Type Taxonomy."
+msgstr ""
+"No cambie esto si está creando una línea de tiempo de publicaciones de blog "
+"o define una taxonomía de tipos de contenido."
+
+#: admin/class-cool-vc-addon.php:329 admin/class-cool-vc-addon.php:863
+msgid "Dot"
+msgstr "Punto"
+
+#: admin/ctl-framework/fields/typography/typography.php:216
+msgid "Dotted"
+msgstr "Punteado"
+
+#: admin/ctl-framework/fields/typography/typography.php:215
+msgid "Double"
+msgstr "Doble"
+
+#: admin/ctl-framework/fields/gallery/gallery.php:26
+msgid "Edit Gallery"
+msgstr "Editar galería"
+
+#: admin/class-cool-timeline-posttype.php:133
+msgid "Edit Item"
+msgstr "Editar artículo"
+
+#: admin/ctl-framework/fields/link/link.php:26
+msgid "Edit Link"
+msgstr "Editar enlace"
+
+#: admin/class-cool-timeline-posttype.php:52
+msgid "Edit Story"
+msgstr "Editar historia"
+
+#: admin/class-cool-vc-addon.php:359 admin/class-cool-vc-addon.php:893
+msgid "Enable category filters ?"
+msgstr "¿Habilitar filtros de categorías?"
+
+#: admin/ctl-framework/classes/admin-options.class.php:169
+msgid "Error while saving the changes."
+msgstr "Error al guardar los cambios."
+
+#: admin/ctl-framework/fields/group/group.php:47
+msgid "Error: Field ID conflict."
+msgstr "Error: conflicto de ID de campo."
+
+#: admin/ctl-framework/functions/actions.php:72
+#: admin/ctl-framework/functions/actions.php:110
+msgid "Error: Invalid key."
+msgstr "Error: clave no válida."
+
+#: admin/ctl-framework/classes/shortcode-options.class.php:256
+#: admin/ctl-framework/functions/actions.php:16
+#: admin/ctl-framework/functions/actions.php:68
+#: admin/ctl-framework/functions/actions.php:106
+#: admin/ctl-framework/functions/actions.php:141
+#: admin/ctl-framework/functions/actions.php:170
+msgid "Error: Invalid nonce verification."
+msgstr "Error: verificación nonce no válida."
+
+#: admin/ctl-framework/functions/actions.php:174
+msgid "Error: Invalid term ID."
+msgstr "Error: ID de término no válido."
+
+#: admin/ctl-framework/functions/actions.php:114
+msgid "Error: The response is not a valid JSON response."
+msgstr "Error: la respuesta no es una respuesta JSON válida."
+
+#: admin/ctl-framework/functions/actions.php:180
+msgid "Error: You do not have permission to do that."
+msgstr "Error: No tienes permiso para hacer eso."
+
+#: admin/class-cool-vc-addon.php:446 admin/class-cool-vc-addon.php:489
+#: admin/class-cool-vc-addon.php:646 admin/class-cool-vc-addon.php:916
+msgid "False"
+msgstr "FALSO"
+
+#: admin/ctl-framework/classes/setup.class.php:779
+#: admin/ctl-framework/classes/setup.class.php:783
+msgid "Field not found!"
+msgstr "¡Campo no encontrado!"
+
+#: admin/ctl-framework/fields/typography/typography.php:284
+msgid "Font Color"
+msgstr "Color de fuente"
+
+#: admin/ctl-framework/fields/typography/typography.php:96
+msgid "Font Family"
+msgstr "Familia tipográfica"
+
+#: admin/ctl-framework/fields/typography/typography.php:233
+msgid "Font Size"
+msgstr "Tamaño de fuente"
+
+#: admin/ctl-framework/fields/typography/typography.php:130
+msgid "Font Style"
+msgstr "Estilo de fuente"
+
+#: admin/ctl-framework/fields/typography/typography.php:184
+msgid "Font Variant"
+msgstr "Variante de fuente"
+
+#: admin/ctl-framework/fields/date/date.php:36
+#: admin/ctl-framework/fields/datetime/datetime.php:41
+msgid "From"
+msgstr "De"
+
+#: admin/class-cool-vc-addon.php:201 admin/class-cool-vc-addon.php:767
+msgid "Full Text"
+msgstr "Texto completo"
+
+#: admin/class-cool-vc-addon.php:103 admin/class-cool-vc-addon.php:107
+#: admin/class-cool-vc-addon.php:594 admin/class-cool-vc-addon.php:598
+msgid "General Settings Tab"
+msgstr "Pestaña de configuración general"
+
+#: admin/ctl-framework/fields/typography/typography.php:388
+msgid "Google Web Fonts"
+msgstr "Fuentes web de Google"
+
+#: admin/class-cool-vc-addon.php:288 admin/class-cool-vc-addon.php:397
+#: admin/class-cool-vc-addon.php:413 admin/class-cool-vc-addon.php:462
+#: admin/class-cool-vc-addon.php:822 admin/class-cool-vc-addon.php:931
+#: admin/class-cool-vc-addon.php:959
+msgid "Hide"
+msgstr "Esconder"
+
+#: admin/class-cool-vc-addon.php:611
+msgid "Horizontal Layout"
+msgstr "Diseño horizontal"
+
+#: admin/class-cool-vc-addon.php:630
+msgid "Horizontal Layout (This option only for content timeline)"
+msgstr ""
+"Diseño horizontal (esta opción solo para la línea de tiempo del contenido)"
+
+#: admin/class-cool-vc-addon.php:118
+msgid "Horizontal Timeline"
+msgstr "Línea de tiempo horizontal"
+
+#. URI of the plugin
+#. Author URI of the plugin
+msgid "http://coolplugins.net/"
+msgstr ""
+
+#: admin/notices/admin-notices.php:239
+msgid "I already rated it"
+msgstr "ya lo califiqué"
+
+#: admin/class-cool-vc-addon.php:330 admin/class-cool-vc-addon.php:864
+msgid "Icon"
+msgstr "Icono"
+
+#: admin/class-cool-vc-addon.php:326 admin/class-cool-vc-addon.php:860
+msgid "Icons"
+msgstr "Iconos"
+
+#: admin/ctl-framework/fields/typography/typography.php:170
+msgid "Inherit"
+msgstr "Heredar"
+
+#: admin/ctl-framework/fields/typography/typography.php:175
+msgid "Initial"
+msgstr "Inicial"
+
+#: includes/shortcodes/class-ctl-ajax-handler.php:110
+#: includes/shortcodes/class-ctl-ajax-handler.php:191
+msgid "Invalid security token sent."
+msgstr "Se envió un token de seguridad no válido."
+
+#: admin/class-cool-timeline-posttype.php:143
+msgid "Items list"
+msgstr "Lista de artículos"
+
+#: admin/class-cool-timeline-posttype.php:144
+msgid "Items list navigation"
+msgstr "Navegación por la lista de artículos"
+
+#: admin/ctl-framework/fields/typography/typography.php:174
+msgid "Justify"
+msgstr "Justificar"
+
+#: admin/class-cool-vc-addon.php:426
+#: admin/ctl-framework/fields/typography/typography.php:171
+msgid "Left"
+msgstr "Izquierda"
+
+#: admin/ctl-framework/fields/typography/typography.php:257
+msgid "Letter Spacing"
+msgstr "Espaciado de letras"
+
+#: admin/class-cool-vc-addon.php:148 admin/class-cool-vc-addon.php:693
+msgid "Light"
+msgstr "Luz"
+
+#: admin/class-cool-vc-addon.php:443 admin/class-cool-vc-addon.php:912
+msgid "Line Filling"
+msgstr "Relleno de línea"
+
+#: admin/ctl-framework/fields/typography/typography.php:245
+msgid "Line Height"
+msgstr "Altura de la línea"
+
+#: admin/ctl-framework/fields/typography/typography.php:220
+msgid "Line-through"
+msgstr "Línea directa"
+
+#: admin/ctl-framework/fields/typography/typography.php:144
+#: admin/ctl-framework/fields/typography/typography.php:145
+msgid "Load Extra Styles"
+msgstr "Cargar estilos adicionales"
+
+#: includes/shortcodes/class-ctl-helpers.php:413
+msgid "Load More"
+msgstr "Carga más"
+
+#: admin/ctl-framework/fields/typography/typography.php:202
+msgid "Lowercase"
+msgstr "Minúsculas"
+
+#: admin/class-cool-vc-addon.php:968
+msgid "Meta Key"
+msgstr "Meta clave"
+
+#: admin/class-cool-timeline-posttype.php:131
+msgid "New Item Name"
+msgstr "Nuevo nombre del artículo"
+
+#: admin/class-cool-timeline-posttype.php:51
+msgid "New Story"
+msgstr "Nueva historia"
+
+#: admin/class-cool-vc-addon.php:331 admin/class-cool-vc-addon.php:362
+#: admin/class-cool-vc-addon.php:865 admin/class-cool-vc-addon.php:896
+msgid "No"
+msgstr "No"
+
+#: admin/ctl-framework/classes/admin-options.class.php:617
+#: admin/ctl-framework/classes/metabox-options.class.php:262
+#: admin/ctl-framework/functions/actions.php:41
+#: admin/ctl-framework/fields/button_set/button_set.php:62
+#: admin/ctl-framework/fields/checkbox/checkbox.php:86
+#: admin/ctl-framework/fields/radio/radio.php:80
+#: admin/ctl-framework/fields/select/select.php:118
+msgid "No data available."
+msgstr "Datos no disponibles."
+
+#: admin/class-cool-timeline-posttype.php:142
+msgid "No items"
+msgstr "No hay artículos"
+
+#: admin/ctl-framework/classes/setup.class.php:610
+msgid "No results found."
+msgstr "No se han encontrado resultados."
+
+#: admin/ctl-framework/fields/typography/typography.php:199
+#: admin/ctl-framework/fields/typography/typography.php:213
+msgid "None"
+msgstr "Ninguno"
+
+#: admin/ctl-framework/fields/typography/typography.php:186
+msgid "Normal"
+msgstr "Normal"
+
+#: admin/class-cool-timeline-posttype.php:141
+msgid "Not Found"
+msgstr "Extraviado"
+
+#: admin/class-cool-timeline-posttype.php:56
+msgid "Not found"
+msgstr "Extraviado"
+
+#: admin/class-cool-timeline-posttype.php:57
+msgid "Not found in Trash"
+msgstr "No encontrado en la Papelera"
+
+#: admin/notices/admin-notices.php:240
+msgid "Not Interested"
+msgstr "No interesado"
+
+#: admin/ctl-framework/fields/media/media.php:65
+msgid "Not selected"
+msgstr "No seleccionado"
+
+#: admin/class-cool-vc-addon.php:882
+msgid "Note:-Ajax Load More Is Not Available For Horizontal layout."
+msgstr "Nota: -Ajax Load More no está disponible para diseño horizontal."
+
+#: admin/class-cool-vc-addon.php:901
+msgid "Note:-Please add value in Taxonomy field before using it."
+msgstr "Nota: -Agregue valor en el campo Taxonomía antes de usarlo."
+
+#: admin/class-cool-vc-addon.php:345 admin/class-cool-vc-addon.php:878
+#: admin/ctl-framework/fields/switcher/switcher.php:24
+msgid "Off"
+msgstr "Apagado"
+
+#: admin/ctl-framework/fields/switcher/switcher.php:23
+msgid "On"
+msgstr "En"
+
+#: admin/class-cool-vc-addon.php:609
+msgid "One Side Layout (Vertical one sided)"
+msgstr "Diseño de un lado (vertical de un lado)"
+
+#: admin/ctl-framework/classes/setup.class.php:711
+msgid "Oops! Not allowed."
+msgstr "¡Ups! No permitido."
+
+#: admin/class-cool-vc-addon.php:270 admin/class-cool-vc-addon.php:804
+msgid "Order"
+msgstr "Orden"
+
+#: admin/ctl-framework/fields/typography/typography.php:219
+msgid "Overline"
+msgstr "sobrelínea"
+
+#: admin/class-cool-vc-addon.php:340 admin/class-cool-vc-addon.php:873
+msgid "Pagination ?"
+msgstr "¿Paginación?"
+
+#: admin/class-cool-timeline-posttype.php:129
+msgid "Parent Item"
+msgstr "Artículo principal"
+
+#: admin/class-cool-timeline-posttype.php:47
+#: admin/class-cool-timeline-posttype.php:130
+msgid "Parent Item:"
+msgstr "Artículo principal:"
+
+#: admin/ctl-framework/classes/setup.class.php:608
+#, php-format
+msgid "Please enter %s or more characters"
+msgstr "Por favor ingrese %s o más caracteres"
+
+#: admin/ctl-framework/functions/validate.php:14
+#: admin/ctl-framework/functions/validate.php:86
+msgid "Please enter a valid email address."
+msgstr "Por favor, introduce una dirección de correo electrónico válida."
+
+#: admin/ctl-framework/functions/validate.php:32
+#: admin/ctl-framework/functions/validate.php:106
+msgid "Please enter a valid number."
+msgstr "Por favor ingrese un número valido."
+
+#: admin/ctl-framework/functions/validate.php:68
+#: admin/ctl-framework/functions/validate.php:146
+msgid "Please enter a valid URL."
+msgstr "Por favor introduzca un URL válido."
+
+#: admin/class-cool-timeline-posttype.php:139
+msgid "Popular Items"
+msgstr "Artículos populares"
+
+#: admin/class-cool-vc-addon.php:706
+msgid "post"
+msgstr "correo"
+
+#: admin/class-cool-timeline-posttype.php:43
+msgctxt "Post Type General Name"
+msgid "Timeline Stories"
+msgstr "Historias de la línea de tiempo"
+
+#: admin/class-cool-timeline-posttype.php:44
+msgctxt "Post Type Singular Name"
+msgid "Timeline Stories"
+msgstr "Historias de la línea de tiempo"
+
+#: includes/shortcodes/class-ctl-helpers.php:107
+#: includes/shortcodes/class-ctl-settings.php:89
+msgid "Read More"
+msgstr "Leer más"
+
+#: admin/ctl-framework/fields/media/media.php:31
+#: admin/ctl-framework/fields/upload/upload.php:25
+msgid "Remove"
+msgstr "Eliminar"
+
+#: admin/ctl-framework/fields/icon/icon.php:26
+msgid "Remove Icon"
+msgstr "Eliminar icono"
+
+#: admin/ctl-framework/fields/link/link.php:27
+msgid "Remove Link"
+msgstr "Remover enlace"
+
+#: admin/ctl-framework/classes/admin-options.class.php:519
+#: admin/ctl-framework/classes/admin-options.class.php:642
+#: admin/ctl-framework/classes/metabox-options.class.php:279
+msgid "Reset"
+msgstr "Reiniciar"
+
+#: admin/ctl-framework/classes/admin-options.class.php:519
+#: admin/ctl-framework/classes/admin-options.class.php:642
+msgid "Reset All"
+msgstr "Resetear todo"
+
+#: admin/ctl-framework/classes/admin-options.class.php:518
+#: admin/ctl-framework/classes/admin-options.class.php:641
+msgid "Reset Section"
+msgstr "Restablecer sección"
+
+#: admin/class-cool-vc-addon.php:427
+#: admin/ctl-framework/fields/typography/typography.php:173
+msgid "Right"
+msgstr "Bien"
+
+#: admin/ctl-framework/fields/typography/typography.php:368
+msgid "Safe Web Fonts"
+msgstr "Fuentes web seguras"
+
+#: admin/ctl-framework/classes/admin-options.class.php:517
+#: admin/ctl-framework/classes/admin-options.class.php:640
+msgid "Save"
+msgstr "Ahorrar"
+
+#: admin/ctl-framework/classes/admin-options.class.php:517
+#: admin/ctl-framework/classes/admin-options.class.php:640
+msgid "Saving..."
+msgstr "Ahorro..."
+
+#: admin/class-cool-timeline-posttype.php:140
+msgid "Search Items"
+msgstr "Buscar elementos"
+
+#: admin/class-cool-timeline-posttype.php:55
+msgid "Search Story"
+msgstr "Buscar historia"
+
+#: admin/ctl-framework/classes/admin-options.class.php:514
+#: admin/ctl-framework/fields/icon/icon.php:64
+msgid "Search..."
+msgstr "Buscar..."
+
+#: admin/ctl-framework/classes/setup.class.php:609
+msgid "Searching..."
+msgstr "Buscando..."
+
+#: admin/class-cool-vc-addon.php:378
+msgid "Select"
+msgstr "Seleccionar"
+
+#: admin/ctl-framework/fields/typography/typography.php:97
+msgid "Select a font"
+msgstr "Seleccione una fuente"
+
+#: includes/shortcodes/class-ctl-helpers.php:228
+msgid "SELECT CATEGORY"
+msgstr "SELECCIONA UNA CATEGORÍA"
+
+#: admin/class-cool-vc-addon.php:624
+msgid "Select no of items"
+msgstr "Seleccione no de artículos"
+
+#: admin/class-cool-vc-addon.php:226
+msgid "Select number of items"
+msgstr "Seleccione número de artículos"
+
+#: admin/class-cool-vc-addon.php:163
+msgid "Select Stories Category"
+msgstr "Seleccionar categoría de historias"
+
+#: admin/class-cool-vc-addon.php:124 admin/class-cool-vc-addon.php:615
+msgid "Select your timeline layout "
+msgstr "Seleccione el diseño de su línea de tiempo"
+
+#: admin/class-cool-timeline-posttype.php:136
+msgid "Separate items with commas"
+msgstr "Separar elementos con comas"
+
+#: admin/ctl-framework/classes/admin-options.class.php:328
+msgid "Settings saved."
+msgstr "Ajustes guardados."
+
+#: admin/ctl-framework/classes/admin-options.class.php:229
+msgid "Settings successfully imported."
+msgstr "La configuración se importó correctamente."
+
+#: admin/class-cool-vc-addon.php:287 admin/class-cool-vc-addon.php:396
+#: admin/class-cool-vc-addon.php:414 admin/class-cool-vc-addon.php:461
+#: admin/class-cool-vc-addon.php:821 admin/class-cool-vc-addon.php:930
+#: admin/class-cool-vc-addon.php:958
+msgid "Show"
+msgstr "Espectáculo"
+
+#: admin/ctl-framework/classes/admin-options.class.php:512
+msgid "show all settings"
+msgstr "mostrar todas las configuraciones"
+
+#: admin/class-cool-vc-addon.php:185
+msgid "Show either date or custom label/text along with timeline stories."
+msgstr ""
+"Muestre la fecha o la etiqueta/texto personalizado junto con las historias "
+"de la línea de tiempo."
+
+#: admin/class-cool-vc-addon.php:778
+msgid "Show number of posts"
+msgstr "Mostrar número de publicaciones"
+
+#: admin/class-cool-vc-addon.php:212
+msgid "Show number of Stories"
+msgstr "Mostrar número de historias"
+
+#: admin/class-cool-vc-addon.php:503
+msgid "Slideshow Speed"
+msgstr "Velocidad de presentación de diapositivas"
+
+#: admin/ctl-framework/fields/typography/typography.php:187
+msgid "Small Caps"
+msgstr "Letras minúsculas"
+
+#: admin/ctl-framework/fields/typography/typography.php:214
+msgid "Solid"
+msgstr "Sólido"
+
+#: includes/shortcodes/class-ctl-ajax-handler.php:166
+#: includes/shortcodes/class-ctl-layout-manager.php:143
+msgid "Sorry,You have not added any story yet"
+msgstr "Lo sentimos, todavía no has añadido ninguna historia."
+
+#: admin/class-cool-vc-addon.php:284 admin/class-cool-vc-addon.php:818
+msgid "Stories Date?"
+msgstr "¿Fecha de historias?"
+
+#: admin/class-cool-vc-addon.php:197 admin/class-cool-vc-addon.php:763
+msgid "Story Content"
+msgstr "Contenido de la historia"
+
+#: admin/class-cool-timeline-posttype.php:201
+msgid "Story Custom Label"
+msgstr "Etiqueta personalizada de historia"
+
+#: admin/class-cool-timeline-posttype.php:202
+msgid "Story Custom Order"
+msgstr "Orden personalizado de la historia"
+
+#: admin/class-cool-timeline-posttype.php:198
+msgid "Story Date"
+msgstr "Fecha de la historia"
+
+#: admin/ctl-framework/fields/typography/typography.php:158
+msgid "Subset"
+msgstr "Subconjunto"
+
+#: admin/class-cool-vc-addon.php:200 admin/class-cool-vc-addon.php:766
+msgid "Summary"
+msgstr "Resumen"
+
+#: admin/class-cool-vc-addon.php:737
+msgid "Tag Specific Timeline (Add Category Slug)"
+msgstr "Línea de tiempo específica de etiqueta (Agregar barra de categoría)"
+
+#: admin/class-cool-timeline-posttype.php:125
+msgctxt "Taxonomy General Name"
+msgid "Categories"
+msgstr "Categorías"
+
+#: admin/class-cool-vc-addon.php:715
+msgid "Taxonomy Name "
+msgstr "Nombre de taxonomía"
+
+#: admin/class-cool-timeline-posttype.php:126
+msgctxt "Taxonomy Singular Name"
+msgid "Category"
+msgstr "Categoría"
+
+#: admin/ctl-framework/fields/typography/typography.php:168
+msgid "Text Align"
+msgstr "Texto alineado"
+
+#: admin/ctl-framework/fields/typography/typography.php:211
+msgid "Text Decoration"
+msgstr "Decoración de texto"
+
+#: admin/ctl-framework/fields/typography/typography.php:197
+msgid "Text Transform"
+msgstr "Transformación de texto"
+
+#: admin/ctl-framework/functions/validate.php:50
+#: admin/ctl-framework/functions/validate.php:126
+msgid "This field is required."
+msgstr "Este campo es obligatorio."
+
+#: admin/class-cool-vc-addon.php:235
+msgid "This options is not for default desgin."
+msgstr "Esta opción no es para el diseño predeterminado."
+
+#: admin/class-cool-vc-addon.php:179
+msgid "Timeline Based On"
+msgstr "Línea de tiempo basada en"
+
+#: admin/class-cool-vc-addon.php:130 admin/class-cool-vc-addon.php:675
+msgid "Timeline Designs"
+msgstr "Diseños de línea de tiempo"
+
+#: admin/class-cool-vc-addon.php:114 admin/class-cool-vc-addon.php:605
+msgid "Timeline Layout"
+msgstr "Diseño de línea de tiempo"
+
+#: admin/class-cool-timeline-posttype.php:69
+msgid "Timeline Post Type Description"
+msgstr "Descripción del tipo de publicación en la línea de tiempo"
+
+#: admin/class-cool-vc-addon.php:144 admin/class-cool-vc-addon.php:689
+msgid "Timeline skin"
+msgstr "Piel de línea de tiempo"
+
+#: admin/class-cool-vc-addon.php:660
+msgid "Timeline Starting From Story e.g(2)"
+msgstr "Línea de tiempo a partir de la historia, por ejemplo (2)"
+
+#: admin/class-cool-vc-addon.php:517
+msgid "Timeline Starting from Story e.g(2)"
+msgstr "Línea de tiempo a partir de la historia, por ejemplo (2)"
+
+#: admin/class-cool-timeline-posttype.php:45
+#: admin/class-cool-timeline-posttype.php:46
+msgid "Timeline Stories"
+msgstr "Historias de la línea de tiempo"
+
+#: admin/class-cool-vc-addon.php:301 admin/class-cool-vc-addon.php:835
+msgid "Timeline Stories dates custom formats"
+msgstr "Historias de línea de tiempo fechas formatos personalizados"
+
+#: admin/class-cool-vc-addon.php:276 admin/class-cool-vc-addon.php:810
+msgid "Timeline Stories order like:- DESC(2017-1900) , ASC(1900-2017)"
+msgstr ""
+"Las historias de la línea de tiempo se ordenan como: - DESC (2017-1900), ASC "
+"(1900-2017)"
+
+#: admin/class-cool-vc-addon.php:547
+msgid "Timeline Title"
+msgstr "Título de la línea de tiempo"
+
+#: admin/ctl-framework/fields/date/date.php:37
+#: admin/ctl-framework/fields/datetime/datetime.php:42
+msgid "To"
+msgstr "A"
+
+#: admin/class-cool-vc-addon.php:447 admin/class-cool-vc-addon.php:490
+#: admin/class-cool-vc-addon.php:647 admin/class-cool-vc-addon.php:915
+msgid "True"
+msgstr "Verdadero"
+
+#: admin/class-cool-timeline-posttype.php:134
+msgid "Update Item"
+msgstr "Actualizar elemento"
+
+#: admin/ctl-framework/classes/metabox-options.class.php:280
+msgid "update post"
+msgstr "actualizar publicación"
+
+#: admin/class-cool-timeline-posttype.php:53
+msgid "Update Story"
+msgstr "Actualizar historia"
+
+#: admin/ctl-framework/fields/media/media.php:30
+#: admin/ctl-framework/fields/upload/upload.php:24
+msgid "Upload"
+msgstr "Subir"
+
+#: admin/ctl-framework/fields/typography/typography.php:201
+msgid "Uppercase"
+msgstr "Mayúsculas"
+
+#: includes/shortcodes/class-ctl-helpers.php:135
+msgctxt "Used before category names."
+msgid "Categories"
+msgstr "Categorías"
+
+#: includes/shortcodes/class-ctl-helpers.php:150
+msgctxt "Used before tag names."
+msgid "Tags"
+msgstr "Etiquetas"
+
+#: includes/shortcodes/class-ctl-helpers.php:130
+#: includes/shortcodes/class-ctl-helpers.php:146
+msgctxt "Used between list items, there is a space after the comma."
+msgid ", "
+msgstr ","
+
+#: admin/class-cool-vc-addon.php:117
+msgid "Vertical Both side"
+msgstr "Vertical Ambos lados"
+
+#: admin/class-cool-vc-addon.php:119
+msgid "Vertical one sided"
+msgstr "Vertical de un lado"
+
+#: admin/class-cool-timeline-posttype.php:135
+msgid "View Item"
+msgstr "Ver ítem"
+
+#: admin/class-cool-timeline-posttype.php:54
+msgid "View Story"
+msgstr "Ver historia"
+
+#: admin/ctl-framework/fields/typography/typography.php:218
+msgid "Wavy"
+msgstr "Ondulado"
+
+#: admin/ctl-framework/fields/typography/typography.php:269
+msgid "Word Spacing"
+msgstr "Espaciado de palabras"
+
+#: admin/class-cool-vc-addon.php:393
+msgid "Year Label Setting"
+msgstr "Configuración de etiqueta de año"
+
+#: admin/class-cool-vc-addon.php:423
+msgid "Year Navigation Position"
+msgstr "Año Posición de Navegación"
+
+#: admin/class-cool-vc-addon.php:410
+msgid "Year Navigation Setting"
+msgstr "Configuración de navegación del año"
+
+#: admin/class-cool-vc-addon.php:363 admin/class-cool-vc-addon.php:897
+msgid "Yes"
+msgstr "Sí"
+
+#: admin/class-cool-vc-addon.php:217 admin/class-cool-vc-addon.php:783
+msgid "You Can Show Pagination After These Posts In Vertical Timeline."
+msgstr ""
+"Puede mostrar la paginación después de estas publicaciones en la línea de "
+"tiempo vertical."
+
+#: admin/ctl-framework/fields/group/group.php:146
+msgid "You cannot add more."
+msgstr "No puedes agregar más."
+
+#: admin/ctl-framework/fields/group/group.php:147
+msgid "You cannot remove more."
+msgstr "No puedes eliminar más."
+
+#: admin/ctl-framework/classes/admin-options.class.php:510
+msgid "You have unsaved changes, save your changes!"
+msgstr "Tienes cambios sin guardar, ¡guarda tus cambios!"

@@ -1,0 +1,60 @@
+/**
+ * 08. Nav Menu
+ */
+.ctl-nav-menu-options{
+  clear: both;
+  float: left;
+  width: 100%;
+
+  > .ctl-fields{
+    margin-left: -10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+
+    > .ctl-field{
+      padding: 12px 14px 12px 12px;
+
+      .ctl-title{
+        float: none;
+        width: 100%;
+        margin-bottom: 5px;
+      }
+
+      .ctl-fieldset{
+        float: none;
+        width: 100%;
+      }
+    }
+  }
+
+  .ctl-field-text input{
+    width: 100%;
+  }
+
+  .ctl-field-notice .ctl-notice{
+    padding: 15px;
+  }
+}
+
+.ctl-nav-menu-title{
+  padding: 12px 14px 12px 12px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+
+  &:first-child{
+    border-top: 0;
+  }
+
+  h4{
+    margin: 0;
+    padding: 0;
+    color: #23282d;
+  }
+}
+
+.ctl-nav-menu-icon{
+  margin-right: 5px;
+}
