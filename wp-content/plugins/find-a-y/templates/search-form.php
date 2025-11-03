@@ -148,7 +148,11 @@ if (!defined('ABSPATH')) exit;
 .results-heading {
     font-size: 24px;
     margin-bottom: 20px;
-    color: #333;
+    color: #ffffffff;
+    text-align: center;
+    text-transform: uppercase !important;
+    letter-spacing: .5px !important;
+    font-weight: 400 !important;
 }
 
 .ymca-location-card {
@@ -175,18 +179,25 @@ if (!defined('ABSPATH')) exit;
 .location-name {
     font-size: 20px;
     font-weight: 600;
-    color: #0073aa;
+    color: #20bdbe;
     margin: 0;
+    text-transform: uppercase !important;
+    letter-spacing: .5px !important;
+    font-weight: 400 !important;
 }
 
 .location-distance {
-    background: #0073aa;
+    font-family: 'Grack';
+    font-style: normal;
+    font-weight: 300;
+    background: #20bdbe;
     color: white;
     padding: 5px 12px;
     border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 16px;
     white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .location-address {
@@ -210,12 +221,18 @@ if (!defined('ABSPATH')) exit;
 .location-link {
     display: inline-block;
     padding: 10px 20px;
-    background: #f0f0f0;
+    background: #ebebebff;
     color: #333;
     text-decoration: none;
     border-radius: 4px;
     font-weight: 500;
     transition: background 0.3s;
+    font-family: 'Grack';
+    font-style: normal;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 16px;
 }
 
 .location-link:hover {
@@ -223,12 +240,12 @@ if (!defined('ABSPATH')) exit;
 }
 
 .location-link.primary {
-    background: #0073aa;
+    background: #20bdbe;
     color: white;
 }
 
 .location-link.primary:hover {
-    background: #005a87;
+    background: #20bdbe;
 }
 
 .find-a-y-search-form h5 {

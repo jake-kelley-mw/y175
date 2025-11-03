@@ -57,6 +57,24 @@ function custom_hamburger_menu_html() {
 }
 add_action('wp_body_open', 'custom_hamburger_menu_html');
 
+// Add header logo
+function custom_header_logo() {
+    $logo_url = home_url('/wp-content/uploads/2025/09/y-175-horizontal_K_4Web.webp');
+    $home_url = home_url('/');
+    ?>
+    <div class="custom-header-logo">
+        <a href="<?php echo esc_url($home_url); ?>">
+            <img src="<?php echo esc_url($logo_url); ?>" alt="YMCA 175 Logo">
+        </a>
+    </div>
+    <?php
+}
+add_action('wp_body_open', 'custom_header_logo');
+
+
+
+// ---------- Video Optimizations ---------- 
+
 /* Disable Divi's FitVids script */
 function disable_divi_fitvids() {
     wp_dequeue_script('fitvids');
@@ -67,14 +85,27 @@ add_action('wp_enqueue_scripts', 'disable_divi_fitvids', 100);
 /* Alternative method - disable via Divi filter */
 add_filter('et_builder_enable_jquery_body', '__return_false');
 
-/* Force Lyte to use lazy loading on ALL devices including mobile */
-function force_lyte_on_mobile() {
-    add_filter('lyte_mobile_override', '__return_true');
-    add_filter('lyte_opt_mobile', function() { return 'lyte'; });
+/* Force WP YouTube Lyte to work on mobile devices */
+add_filter('lyte_do_mobile', '__return_true');
+
+
+
+
+// ---------- CACHING IMPLEMENTATION ---------- 
+
+// Set cache headers for video files on Pantheon
+add_filter('wp_headers', 'set_video_cache_headers', 10, 2);
+function set_video_cache_headers($headers, $wp) {
+    $request_uri = $_SERVER['REQUEST_URI'];
     
-    /* Override wp_is_mobile for Lyte only */
-    if (isset($_GET['doing_lyte']) || (function_exists('lyte_parse') && in_the_loop())) {
-        add_filter('wp_is_mobile', '__return_false', 999);
+    // Check if this is a video file request
+    if (preg_match('/\.(mp4|webm)$/i', $request_uri)) {
+        $headers['Cache-Control'] = 'public, max-age=2592000, immutable';
+        $headers['Expires'] = gmdate('D, d M Y H:i:s', time() + 2592000) . ' GMT';
+        
+        // Remove conflicting headers
+        unset($headers['Pragma']);
     }
+    
+    return $headers;
 }
-add_action('init', 'force_lyte_on_mobile');
