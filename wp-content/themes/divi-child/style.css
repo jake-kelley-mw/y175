@@ -676,86 +676,62 @@ a.ytvideoInfoVideoTitle {
   text-transform: uppercase !important;
 }
 
-.ctl-wrapper {
-	margin: 0 !important;
+@media only screen and (min-width: 768px) {
+	.ctl-wrapper {
+	    margin: 0 !important;
+    }
+
+    .ctl-wrapper .ctl-one-sided {
+	    padding-left: 0px !important;
+    }
+    .ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-end, .ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-start {
+      left: calc(300px - var(--ctw-line-width) * 203 / 2) !important;
+    }
 }
 
-.ctl-wrapper .ctl-one-sided {
-	padding-left: 0px !important;
+.ctl-wrapper .ctl-vertical-wrapper.dark-skin:not(.ctl-design-3) .ctl-content {
+  border: unset !important;
+  margin-top: -25px;
+}
+
+@media only screen and (max-width: 767px) {
+  .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-labels {
+    margin: 0px 5px 20px 0 !important;
+    padding-bottom: 20px !important; 
+  }
+  .ctl-wrapper .ctl-vertical-wrapper .ctl-story {
+    margin-bottom: 50px !important;
+  }
+  .ctl-wrapper .ctl-title {
+  font-size: 18px;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
+    width: 100% !important;
+  }
 }
 
 @media only screen and (min-width: 768px) {
-	.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-start {
-  left: calc(0px - var(--ctw-line-width) * 3 / 2) !important;
+	.ctl-wrapper .ctl-media a img {
+  max-width: 400px;
+  padding: 12px 15px 15px 15px !important;
+}
+
+.ctl-description {
+  display: flex;
+  flex-wrap: wrap;
+  width: 70% !important;
+}
+
+.ctl-media {
+  display: flex;
+  flex-wrap: wrap;
+  width: 30% !important;
 }
 }
 
-.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-end {
-  left: calc(0px - var(--ctw-line-width) * 3 / 2) !important;
-}
-
-@media only screen and (max-width: 767px) {
-  .ctl-wrapper .ctl-vertical-wrapper .ctl-inner-line, .ctl-wrapper .ctl-vertical-wrapper .ctl-timeline::before {
-  left: calc(0px - var(--ctw-line-width)/ 2);
-}
-}
-
-.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
-	width: auto !important;
-}
-
-@media only screen and (max-width: 767px) {
-	.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
-  		width: 85% !important;
-}
-}
-
-@media only screen and (max-width: 767px) {
-  .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper, .ctl-design-4) .ctl-labels ~ .ctl-arrow {
-	  top: calc(var(--ctw-ibx-size) * var(--ctw-ibx-position) + var(--ctw-ibx-size)/ 3 + (var(--ctw-lbl-big-size) + var(--ctw-lbl-small-size) + var(--ctw-lbl-gap)) - ((var(--ctw-lbl-big-size) + var(--ctw-lbl-small-size) + var(--ctw-lbl-gap)) * var(--ctw-ibx-position)/ 10) + var(--lbl-bd-width) * 2 + var(--ctw-cbx-date-line-height) - 0px) !important;
-}}
-
-@media only screen and (max-width: 767px) {
-  .ctl-wrapper .ctl-vertical-wrapper .ctl-inner-line, .ctl-wrapper .ctl-vertical-wrapper .ctl-timeline::before {
-    left: 5.6% !important;
-  }
-}
-
-@media only screen and (max-width: 767px) {
-  .ctl-wrapper .ctl-vertical-wrapper .ctl-end {
-    left: 5% !important;
-  }
-}
-
-@media only screen and (max-width: 767px) {
-  /* Lock down icon box size on mobile */
-  .ctl-wrapper {
-    --ctw-ibx-size: 40px;
-    --ctw-line-width: 3px;
-  }
-  
-  /* Override dot positioning with fixed calculation */
-  .ctl-wrapper .ctl-vertical-wrapper .ctl-icondot,
-  .ctl-wrapper .ctl-vertical-wrapper .ctl-story.ctl-story-left .ctl-icondot {
-    left: 0px !important;
-    margin-left: -11vw !important;
-    position: absolute !important;
-    margin-top: 8px;
-  }
-  
-  /* Ensure the timeline line is also fixed */
-  .ctl-wrapper .ctl-vertical-wrapper .ctl-line {
-    left: 20px !important;
-  }
-}
-
-/*.ymca-home-timeline .ctl-wrapper .ctl-vertical-wrapper .ctl-inner-line  {
-	background-color: #006b6b !important;
-}*/
-
-/*.ymca-home-timeline .ctl-wrapper .ctl-vertical-wrapper .ctl-timeline::before  {
-	background-color: #006b6b !important;
-}*/
 
 
 /* --------  Find a Y Styles inline within plugin files > search-from.php -------- */
