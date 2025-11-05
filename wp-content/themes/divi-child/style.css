@@ -694,44 +694,6 @@ a.ytvideoInfoVideoTitle {
   margin-top: -25px;
 }
 
-@media only screen and (max-width: 767px) {
-  .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-labels {
-    margin: 0px 5px 20px 0 !important;
-    padding-bottom: 20px !important; 
-  }
-  .ctl-wrapper .ctl-vertical-wrapper .ctl-story {
-    margin-bottom: 50px !important;
-  }
-  .ctl-wrapper .ctl-title {
-  font-size: 18px;
-  }
-}
-
-@media only screen and (min-width: 769px) {
-  .ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
-    width: 100% !important;
-  }
-}
-
-@media only screen and (min-width: 768px) {
-	.ctl-wrapper .ctl-media a img {
-  max-width: 400px;
-  padding: 12px 15px 15px 15px !important;
-}
-
-.ctl-description {
-  display: flex;
-  flex-wrap: wrap;
-  width: 70% !important;
-}
-
-.ctl-media {
-  display: flex;
-  flex-wrap: wrap;
-  width: 30% !important;
-}
-}
-
 .timeline-buttons {
   font-family: 'Cachet Pro';
   font-style: normal;
@@ -743,6 +705,54 @@ a.ytvideoInfoVideoTitle {
   flex-wrap: wrap;
 }
 
+@media only screen and (max-width: 767px) {
+  .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-labels {
+    margin: 0px 5px 20px 0 !important;
+    padding-bottom: 20px !important; 
+  }
+  
+  .ctl-wrapper .ctl-vertical-wrapper .ctl-story {
+    margin-bottom: 50px !important;
+  }
+
+  .ctl-wrapper .ctl-title {
+  font-size: 18px;
+  }
+
+  .timeline-buttons {
+    font-family: 'Cachet Pro';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: -1px;
+    line-height: 1.2em;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
+    width: 100% !important;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+    .ctl-wrapper .ctl-media a img {
+      max-width: 400px;
+      padding: 12px 15px 15px 15px !important;
+    }
+
+    .ctl-description {
+      display: flex;
+      flex-wrap: wrap;
+      width: 70% !important;
+    }
+
+    .ctl-media {
+      display: flex;
+      flex-wrap: wrap;
+      width: 30% !important;
+    }
+}
 
 
 /* --------  Find a Y Styles inline within plugin files > search-from.php -------- */

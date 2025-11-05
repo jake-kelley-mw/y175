@@ -357,8 +357,8 @@
     .y175-timeline-dot {
         width: 12px;
         height: 12px;
-        margin-top: 5px;
-        box-shadow: 0 0 0 3px rgb(255, 255, 255);
+        margin-top: 9px;
+        box-shadow: 0 0 0 2px rgb(255, 255, 255);
     }
     
     .y175-timeline-line {
@@ -398,9 +398,10 @@
     }
     
     .y175-entry-featured .y175-timeline-dot {
-        width: 16px;
-        height: 16px;
-        box-shadow: 0 0 0 3px rgb(255, 255, 255);
+        width: 12px;
+        height: 12px;
+        box-shadow: 0 0 0 2px rgb(255, 255, 255);
+        margin-top: 9px;
     }
     
     /* Images and copy adjustments */
