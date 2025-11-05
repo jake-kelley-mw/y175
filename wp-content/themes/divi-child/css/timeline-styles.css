@@ -1,0 +1,505 @@
+/**
+ * YMCA 175 Timeline Styles
+ * File location: /code/wp-content/themes/divi-child/css/timeline-styles.css
+ */
+
+/* Timeline Container */
+.y175-timeline-wrapper {
+    position: relative;
+    padding: 80px 0;
+}
+
+.y175-timeline-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0px;
+}
+
+/* Timeline Entry */
+.y175-timeline-entry {
+    margin-bottom: 0;
+    position: relative;
+    padding-bottom: 100px;
+}
+
+.y175-timeline-entry:last-child {
+    padding-bottom: 0;
+}
+
+/* Only shorten line on last child if it's not a Small entry
+.y175-timeline-entry:last-child:not(.y175-entry-small) .y175-timeline-line {
+    height: 30px;
+} */
+
+/* Grid Layout */
+.y175-timeline-grid {
+    display: grid;
+    grid-template-columns: 25% 60px 1fr;
+    gap: 0;
+    align-items: start;
+    position: relative;
+    min-height: 300px;
+}
+
+/* Left Column - Sticky Date/Title */
+.y175-timeline-left {
+    padding-right: 40px;
+    position: relative;
+}
+
+/* Left Column - Sticky Date/Title */
+.y175-timeline-left {
+    padding-right: 0;
+    position: relative;
+}
+
+.y175-sticky-content {
+    position: -webkit-sticky !important; /* Safari */
+    position: sticky !important;
+    top: 100px !important; /* Adjust based on your header height */
+    z-index: 10;
+}
+
+/* Override any Divi overflow issues */
+.y175-timeline-wrapper,
+.y175-timeline-container,
+.y175-timeline-entry,
+.y175-timeline-grid {
+    overflow: visible !important;
+}
+
+.y175-date {
+    font-family: 'Grack';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 26px !important;
+    letter-spacing: .5px;
+    line-height: 1.2em;
+    text-transform: uppercase;
+    color: white;
+    background: #c6168d;
+    padding: 10px 60px 10px 20px;
+    margin-bottom: 10px;
+    margin-right: -30px;
+    border-radius: 8px 0px 0px 8px
+}
+
+.y175-title {
+    font-family: 'Grack';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 26px !important;
+    letter-spacing: .5px;
+    line-height: 1.2em;
+    text-transform: uppercase;
+    color: #5c2e91;
+    padding: 0px;
+}
+
+.y175-entry-small .y175-title {
+    display: none;
+}
+
+/* Hide mobile title on desktop */
+.y175-title-mobile {
+    display: none;
+}
+
+/* Center Timeline Line */
+.y175-timeline-center {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    min-height: inherit;
+}
+
+.y175-timeline-line {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: calc(100% + 100px);
+    background: #c6168d;
+}
+
+.y175-timeline-entry:first-child .y175-timeline-line {
+    top: 0px;
+    height: calc(100% + 90px);
+}
+
+.y175-timeline-dot {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background: #92278f;
+    border-radius: 50%;
+    margin-top: 15px;
+    z-index: 1000;
+    box-shadow: 0 0 0 4px rgb(255, 255, 255);
+}
+
+/* Right Column - Content */
+.y175-timeline-right {
+    padding-left: 0px;
+}
+
+.y175-content-wrapper {
+    position: relative;
+}
+
+/* Copy Text */
+.y175-copy {
+    font-family: 'Cachet Pro';
+    font-style: normal;
+    font-weight: 100;
+    font-size: 22px;
+    letter-spacing: -.15px;
+    line-height: 1.2em;
+    color: #000;
+}
+
+/* Images */
+.y175-images {
+    margin-bottom: 20px;
+}
+
+.y175-timeline-image {
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.y175-timeline-image {
+    max-height: 650px;
+}
+
+.y175-timeline-image:last-child {
+    margin-bottom: 0;
+}
+
+/* Entry Type: Regular - Grey Background */
+.y175-entry-regular .y175-content-wrapper {
+    background: #eaeaea;
+    padding: 40px;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.y175-entry-regular .y175-content-wrapper::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 15px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 8px 10px 0;
+    border-color: transparent #eaeaea transparent transparent;
+}
+
+/* Regular entry - image on left */
+.y175-entry-regular .y175-images {
+    margin-bottom: 0;
+}
+
+/* Regular entry - text on right */
+.y175-entry-regular .y175-copy {
+    margin-bottom: 0;
+}
+
+/* Entry Type: Small - Compact with Grey Background */
+.y175-entry-small .y175-timeline-grid {
+    min-height: 150px;
+}
+
+.y175-entry-small .y175-content-wrapper {
+    background: #eaeaea;
+    padding: 25px 30px;
+    border-radius: 6px;
+}
+
+.y175-entry-small .y175-content-wrapper::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 15px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 8px 8px 0;
+    border-color: transparent #eaeaea transparent transparent;
+}
+
+/* Entry Type: Featured - No Background */
+.y175-entry-featured .y175-timeline-grid {
+    min-height: 400px;
+}
+
+.y175-entry-featured .y175-content-wrapper {
+    background: transparent;
+    padding: 0;
+}
+
+.y175-entry-featured .y175-timeline-dot {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background: #92278f;
+    border-radius: 50%;
+    margin-top: 15px;
+    z-index: 1000;
+    box-shadow: 0 0 0 4px rgb(255, 255, 255);
+}
+
+.y175-entry-featured .y175-copy {
+    font-family: 'Cachet Pro';
+    font-style: normal;
+    font-weight: 100;
+    font-size: 32px;
+    letter-spacing: -.15px;
+    line-height: 1.2em !important;
+}
+
+/* Tablet Responsive */
+@media (max-width: 968px) {
+    .y175-timeline-grid {
+        grid-template-columns: 100px 40px 1fr;
+    }
+    
+    .y175-timeline-left {
+        padding-right: 20px;
+    }
+    
+    .y175-timeline-right {
+        padding-left: 20px;
+    }
+    
+    .y175-date {
+        font-size: 22px !important;
+    }
+    
+    .y175-title {
+        font-size: 22px !important;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .y175-timeline-wrapper {
+        padding: 40px 0;
+    }
+    
+    .y175-timeline-grid {
+        grid-template-columns: 20% 20px 1fr;
+        gap: 0;
+    }
+    
+    .y175-timeline-entry {
+        padding-bottom: 50px;
+    }
+    
+    .y175-timeline-entry:last-child {
+        padding-bottom: 0;
+    }
+    
+    /* Left column - Only show year on mobile */
+    .y175-timeline-left {
+        padding-right: 10px;
+    }
+    
+    .y175-sticky-content {
+        position: sticky;
+        top: 60px; /* Reduced for mobile */
+    }
+    
+    .y175-date {
+        font-size: 18px !important;
+        margin-bottom: 5px;
+        color: white;
+        background: #c6168d;
+        padding: 5px 10px;
+        margin-right: -18px;
+        font-weight: 300;
+        letter-spacing: 1px;
+    }
+    
+    /* Hide desktop title, show mobile title */
+    .y175-title-desktop {
+        display: none;
+    }
+    
+    .y175-title-mobile {
+        display: block;
+        margin-bottom: 15px;
+        font-family: 'Grack';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 20px !important;
+        letter-spacing: .5px;
+        line-height: 1.2em;
+        text-transform: uppercase;
+        color: #5c2e91;
+    }
+    
+    /* Center timeline - smaller on mobile */
+    .y175-timeline-center {
+        padding: 0 5px;
+    }
+    
+    .y175-timeline-dot {
+        width: 12px;
+        height: 12px;
+        margin-top: 5px;
+        box-shadow: 0 0 0 3px rgb(255, 255, 255);
+    }
+    
+    .y175-timeline-line {
+        width: 1px;
+        top: -50px;
+        height: calc(100% + 50px);
+    }
+    
+    .y175-timeline-entry:first-child .y175-timeline-line {
+        top: 5px;
+        height: calc(100% + 45px);
+    }
+    
+    /* Right column */
+    .y175-timeline-right {
+        padding-left: 10px;
+    }
+    
+    /* Adjust grey backgrounds for mobile */
+    .y175-entry-regular .y175-content-wrapper,
+    .y175-entry-small .y175-content-wrapper {
+        padding: 20px;
+    }
+    
+    /* Stack Regular entry content on mobile */
+    .y175-entry-regular .y175-content-wrapper {
+        display: block;
+    }
+    
+    .y175-entry-regular .y175-images {
+        margin-bottom: 15px;
+    }
+    
+    .y175-entry-regular .y175-content-wrapper::before,
+    .y175-entry-small .y175-content-wrapper::before {
+        display: none; /* Remove arrow on mobile */
+    }
+    
+    .y175-entry-featured .y175-timeline-dot {
+        width: 16px;
+        height: 16px;
+        box-shadow: 0 0 0 3px rgb(255, 255, 255);
+    }
+    
+    /* Images and copy adjustments */
+    .y175-images {
+        margin-bottom: 15px;
+    }
+    
+    .y175-copy {
+        font-size: 14px;
+        line-height: 1.2em;
+        font-family: 'Noto Serif';
+        font-style: normal;
+        font-weight: 400;
+    }
+    
+    .y175-entry-featured .y175-copy {
+        font-size: 14px;
+        font-family: 'Noto Serif';
+        font-style: normal;
+        font-weight: 400;
+    }
+}
+
+/* Very small mobile screens */
+@media (max-width: 480px) {
+    .y175-timeline-container {
+        padding: 0px;
+    }
+    
+    .y175-timeline-grid {
+        grid-template-columns: 20% 15px 1fr;
+    }
+    
+    .y175-date {
+        font-size: 16px !important;
+        font-weight: 300;
+        letter-spacing: 1px;
+
+    }
+}
+
+/**
+ * Timeline Sticky Diagnostic & Fix CSS
+ * Add this to the END of your timeline-styles.css temporarily
+ */
+
+/* Force all Divi containers to allow sticky */
+.et_pb_section,
+.et_pb_row,
+.et_pb_column,
+.et_pb_module,
+.et_pb_code_inner,
+.et_pb_text_inner {
+    overflow: visible !important;
+    /* height: auto !important; */
+    min-height: auto !important;
+    max-height: none !important;
+    /* transform: none !important; */
+    will-change: auto !important;
+}
+
+/* Alternative sticky approach - using fixed positioning */
+@supports not (position: sticky) {
+    .y175-sticky-content {
+        position: fixed !important;
+        top: 80px !important;
+    }
+}
+
+/* Nuclear option - completely override Divi structure */
+.y175-timeline-left {
+    position: relative !important;
+    height: 100% !important;
+}
+
+.y175-sticky-content {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 80px !important;
+    z-index: 999 !important;
+}
+
+/* Ensure timeline wrapper has enough height */
+.y175-timeline-wrapper {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.y175-timeline-container {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.y175-timeline-entry {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.y175-timeline-grid {
+    position: relative !important;
+    overflow: visible !important;
+}

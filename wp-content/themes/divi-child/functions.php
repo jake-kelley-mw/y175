@@ -109,3 +109,45 @@ function set_video_cache_headers($headers, $wp) {
     
     return $headers;
 }
+
+function extend_acf_datepicker_year_range() {
+    ?>
+    <script type="text/javascript">
+    (function($) {
+        acf.add_filter('date_picker_args', function(args, field) {
+            args.yearRange = '-200:+10';
+            args.changeYear = true;
+            return args;
+        });
+    })(jQuery);
+    </script>
+    <?php
+}
+add_action('acf/input/admin_footer', 'extend_acf_datepicker_year_range');
+
+
+// ---------- YMCA 175 Timeline ---------- 
+
+// Include timeline function
+require_once get_stylesheet_directory() . '/inc/timeline-function.php';
+
+// Enqueue timeline styles and scripts
+function y175_timeline_assets() {
+    // Always load the CSS
+    wp_enqueue_style(
+        'y175-timeline-styles',
+        get_stylesheet_directory_uri() . '/css/timeline-styles.css',
+        array(),
+        '1.0.1'
+    );
+    
+    // Add the sticky fix JavaScript
+    wp_enqueue_script(
+        'y175-timeline-sticky',
+        get_stylesheet_directory_uri() . '/js/timeline-sticky.js',
+        array('jquery'),
+        '1.0.0',
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'y175_timeline_assets');
