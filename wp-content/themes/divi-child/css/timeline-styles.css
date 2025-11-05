@@ -6,7 +6,7 @@
 /* Timeline Container */
 .y175-timeline-wrapper {
     position: relative;
-    padding: 80px 0;
+    padding: 0px;
 }
 
 .y175-timeline-container {
@@ -30,6 +30,10 @@
 .y175-timeline-entry:last-child:not(.y175-entry-small) .y175-timeline-line {
     height: 30px;
 } */
+
+.y175-1800s h1 {
+    text-transform: none !important;
+}
 
 /* Grid Layout */
 .y175-timeline-grid {
@@ -294,7 +298,7 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .y175-timeline-wrapper {
-        padding: 40px 0;
+        padding: 0px;
     }
     
     .y175-timeline-grid {

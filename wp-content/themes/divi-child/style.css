@@ -724,7 +724,7 @@ a.ytvideoInfoVideoTitle {
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
-    letter-spacing: -1px;
+    letter-spacing: -1px !important;
     line-height: 1.2em;
   }
 }
