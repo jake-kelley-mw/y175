@@ -422,10 +422,10 @@
     }
     
     .y175-entry-featured .y175-copy {
-        font-size: 14px;
-        font-family: 'Noto Serif';
+        font-size: 18px;
+        font-family: 'Cachet Pro';
         font-style: normal;
-        font-weight: 400;
+        font-weight: 100;
     }
 }
 
@@ -446,6 +446,88 @@
 
     }
 }
+
+/* -------------- Homepage Timeline Styles -------------- */
+
+.timeline-preview h3 {
+    font-weight: 600 !important;
+}
+
+.homepage-timeline .y175-title {
+    font-family: 'Grack';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 26px !important;
+    letter-spacing: .5px;
+    line-height: 1.2em;
+    text-transform: uppercase;
+    color: #006b6b;
+    padding: 0px;
+}
+
+.homepage-timeline .y175-entry-featured .y175-copy {
+    color: #006b6b;
+}
+
+.homepage-timeline .y175-date{
+    background: #006b6b;
+}
+
+.homepage-timeline .y175-timeline-line {
+    background: #006b6b;
+}
+
+.homepage-timeline .y175-entry-featured .y175-timeline-dot {
+    background: #006b6b;
+    box-shadow: 0 0 0 4px rgb(32, 189, 190);
+}
+
+.timeline-1900 .y175-timeline-dot {
+    background: #92278f;
+    box-shadow: 0 0 0 4px rgb(92, 46, 145);
+}
+
+.timeline-1900 .y175-entry-featured .y175-timeline-dot {
+    background: #c6168d;
+    box-shadow: 0 0 0 4px rgb(92, 46, 145);
+}
+
+.timeline-1900 .y175-title {
+    color: #fff;
+}
+
+.timeline-1900 .y175-entry-featured .y175-copy {
+    color: #fff;
+}
+
+.timeline-1900 .y175-copy {
+    color: #fff;
+}
+
+.timeline-1900 .y175-entry-regular .y175-content-wrapper{
+    background: #92278f;
+}
+
+.timeline-1900 .y175-entry-regular .y175-content-wrapper::before {
+    border-color: transparent #92278f transparent transparent;
+}
+
+.timeline-1900 .y175-entry-small .y175-content-wrapper{
+    background: #92278f;
+}
+
+.timeline-1900 .y175-entry-small .y175-content-wrapper::before {
+    border-color: transparent #92278f transparent transparent;
+}
+
+
+@media (max-width: 768px) {
+    .timeline-preview h3 {
+        font-size: 16px !important;
+    }
+}
+
+
 
 /**
  * Timeline Sticky Diagnostic & Fix CSS

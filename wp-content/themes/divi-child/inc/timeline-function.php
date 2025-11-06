@@ -11,6 +11,8 @@ function y175_render_timeline($atts = array()) {
     // Parse shortcode attributes
     $atts = shortcode_atts(array(
         'featured' => false,
+        'class' => '',      // New: custom CSS class
+        'century' => '',    // New: filter by century (e.g., "1800")
     ), $atts);
     
     // Query timeline posts ordered by date
@@ -23,26 +25,63 @@ function y175_render_timeline($atts = array()) {
         'meta_type' => 'DATE'
     );
     
+    // Build meta query array
+    $meta_query = array();
+    
     // If featured is true, only show featured items
     if ($atts['featured']) {
-        $args['meta_query'] = array(
-            array(
-                'key' => 'feature_this_timeline_entry_on_the_homepage',
-                'value' => '1',
-                'compare' => '='
-            )
+        $meta_query[] = array(
+            'key' => 'feature_this_timeline_entry_on_the_homepage',
+            'value' => '1',
+            'compare' => '='
         );
     }
     
+    // Add meta query if we have any conditions
+    if (!empty($meta_query)) {
+        $args['meta_query'] = $meta_query;
+    }
+    
+    // Get posts with featured filter applied
     $timeline_posts = get_posts($args);
+    
+    // If century is specified, filter the results by century
+    if (!empty($atts['century']) && !empty($timeline_posts)) {
+        $filtered_posts = array();
+        foreach ($timeline_posts as $post) {
+            $date = get_field('y175-timeline-date', $post->ID);
+            if ($date) {
+                // Convert "November 6, 2025" to year
+                $year = date('Y', strtotime($date));
+                $post_century = substr($year, 0, 2); // Get first 2 digits (18, 19, 20, etc.)
+                
+                // Check if this post belongs to the requested century
+                if ($post_century == substr($atts['century'], 0, 2)) {
+                    $filtered_posts[] = $post;
+                }
+            }
+        }
+        
+        if (empty($filtered_posts)) {
+            return '<p>No timeline entries found for the ' . $atts['century'] . 's.</p>';
+        }
+        
+        $timeline_posts = $filtered_posts;
+    }
     
     if (empty($timeline_posts)) {
         return '<p>No timeline entries found.</p>';
     }
     
+    // Build wrapper classes
+    $wrapper_classes = 'y175-timeline-wrapper';
+    if (!empty($atts['class'])) {
+        $wrapper_classes .= ' ' . esc_attr($atts['class']);
+    }
+    
     ob_start();
     ?>
-    <div class="y175-timeline-wrapper">
+    <div class="<?php echo $wrapper_classes; ?>">
         <div class="y175-timeline-container">
             <?php 
             foreach ($timeline_posts as $post) : 
