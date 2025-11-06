@@ -86,7 +86,6 @@ jQuery(document).ready(function($) {
             resultsHTML += '</div>';
             
             resultsHTML += '<div class="location-address">';
-            resultsHTML += '<strong>Address:</strong><br>';
             resultsHTML += location.address + '<br>';
             if (location.address2) {
                 resultsHTML += location.address2 + '<br>';
