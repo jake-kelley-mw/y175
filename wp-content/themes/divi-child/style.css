@@ -595,6 +595,16 @@ body.home .custom-hamburger-menu {
   position: absolute;
 }
 
+/* Add outbound link icon after ymca.org link */
+.fullscreen-menu-list a[target="_blank"]::after,
+.fullscreen-menu-list a[href*="ymca.org"]::after {
+  content: "↗︎";
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 48px;
+  vertical-align: baseline;
+}
+
 
 
 /* --------  Tab Section Background  -------- */

@@ -19,7 +19,7 @@
 .y175-timeline-entry {
     margin-bottom: 0;
     position: relative;
-    padding-bottom: 100px;
+    padding-bottom: 150px;
 }
 
 .y175-timeline-entry:last-child {
@@ -121,11 +121,11 @@
 
 .y175-timeline-line {
     position: absolute;
-    top: -100px;
+    top: -150px;
     left: 50%;
     transform: translateX(-50%);
     width: 2px;
-    height: calc(100% + 100px);
+    height: calc(100% + 150px);
     background: #c6168d;
 }
 
@@ -275,7 +275,7 @@
 /* Tablet Responsive */
 @media (max-width: 968px) {
     .y175-timeline-grid {
-        grid-template-columns: 100px 40px 1fr;
+        grid-template-columns: 130px 40px 1fr;
     }
     
     .y175-timeline-left {
@@ -288,11 +288,19 @@
     
     .y175-date {
         font-size: 22px !important;
+        margin-right: -40px;
     }
     
     .y175-title {
-        font-size: 22px !important;
-    }
+        font-family: 'Grack';
+        font-style: normal;
+        font-weight: 300;
+        font-size: 26px !important;
+        letter-spacing: .5px;
+        line-height: 1.2em;
+        text-transform: uppercase;
+        padding: 0px;
+}
 }
 
 /* Mobile Responsive */
@@ -307,7 +315,7 @@
     }
     
     .y175-timeline-entry {
-        padding-bottom: 50px;
+        padding-bottom: 80px;
     }
     
     .y175-timeline-entry:last-child {
@@ -367,8 +375,8 @@
     
     .y175-timeline-line {
         width: 1px;
-        top: -50px;
-        height: calc(100% + 50px);
+        top: -80px;
+        height: calc(100% + 80px);
     }
     
     .y175-timeline-entry:first-child .y175-timeline-line {
