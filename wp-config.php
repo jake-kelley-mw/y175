@@ -73,6 +73,12 @@ if ( ! defined( 'WP_DEBUG' ) ) {
 	define('WP_DEBUG', false);
 }
 
+
+// Exclude Find a Y pages from caching
+if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'find-a-y') !== false) {
+    define('DONOTCACHEPAGE', true);
+}
+
 /* That's all, stop editing! Happy Pressing. */
 
 

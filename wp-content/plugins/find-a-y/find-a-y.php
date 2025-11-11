@@ -18,6 +18,7 @@ class Find_A_Y_Plugin {
         $this->table_name = $wpdb->prefix . 'ymca_locations';
         
         register_activation_hook(__FILE__, array($this, 'activate'));
+        add_action('init', array($this, 'prevent_ajax_caching'));
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_scripts'));
@@ -26,6 +27,8 @@ class Find_A_Y_Plugin {
         add_action('wp_ajax_preview_ymca_import', array($this, 'ajax_preview_import'));
         add_action('wp_ajax_process_ymca_import', array($this, 'ajax_process_import'));
         add_action('wp_ajax_save_google_api_key', array($this, 'ajax_save_api_key'));
+        add_action('wp_ajax_get_find_a_y_nonce', array($this, 'ajax_get_nonce'));
+        add_action('wp_ajax_nopriv_get_find_a_y_nonce', array($this, 'ajax_get_nonce'));
         add_shortcode('find_a_y', array($this, 'render_search_form'));
     }
     
@@ -34,6 +37,12 @@ class Find_A_Y_Plugin {
         flush_rewrite_rules();
     }
     
+    public function prevent_ajax_caching() {
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            header('Cache-Control: no-cache, must-revalidate, max-age=0');
+        }
+    }
+
     private function create_database_table() {
         global $wpdb;
         
@@ -182,6 +191,12 @@ class Find_A_Y_Plugin {
         update_option('find_a_y_google_api_key', $api_key);
         
         wp_send_json_success('API key saved');
+    }
+
+    public function ajax_get_nonce() {
+        wp_send_json_success(array(
+            'nonce' => wp_create_nonce('find_a_y_search')
+        ));
     }
     
     public function ajax_preview_import() {
