@@ -232,7 +232,7 @@ jQuery(document).ready(function($) {
     }
     
     function showError(message) {
-        $('.search-error').text(message).slideDown();
+        $('.search-error').html(message).slideDown();
     }
     
     function hideError() {

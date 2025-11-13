@@ -243,7 +243,7 @@ h6 {
 
 
 .yusa-post-title .et_pb_text_inner {
-font-family: 'Cachet Pro';
+  font-family: 'Cachet Pro';
   font-style: normal;
   font-weight: 100;
   font-size: 24px;
@@ -270,6 +270,15 @@ font-family: 'Cachet Pro';
   color: #000 !important;
 }
 
+a.y175-footer-link {
+  font-family: 'Cachet Pro' !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 16px !important;
+  letter-spacing: -.15px !important;
+  line-height: 1.2em !important;
+  text-transform: uppercase;
+}
 
 /* ---- RESPONSIVE TYPE STYLES ---- */
 
@@ -542,8 +551,8 @@ font-family: 'Cachet Pro';
   padding: 12px 0;
 }
 
-/* White background bar on non-homepage pages - sticky to top */
-body:not(.home)::before {
+/* White background bar on ALL pages - sticky to top */
+body::before {
   content: '';
   position: fixed;
   top: 0;
@@ -556,8 +565,8 @@ body:not(.home)::before {
 }
 
 /* Ensure logo and hamburger are above the white bar */
-body:not(.home) .custom-header-logo,
-body:not(.home) .custom-hamburger-menu {
+.custom-header-logo,
+.custom-hamburger-menu {
   z-index: 10000;
 }
 
@@ -587,12 +596,6 @@ body:has(.fullscreen-menu.active) .custom-header-logo {
   body:not(.home)::before {
     height: 55px;
   }
-}
-
-/* Make logo and hamburger NOT sticky on homepage only */
-body.home .custom-header-logo,
-body.home .custom-hamburger-menu {
-  position: absolute;
 }
 
 /* Add outbound link icon after ymca.org link */

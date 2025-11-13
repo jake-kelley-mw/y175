@@ -253,30 +253,31 @@ class Find_A_Y_Plugin {
     }
     
     public function ajax_find_locations() {
-        check_ajax_referer('find_a_y_search', 'nonce');
-        
-        $zip_code = sanitize_text_field($_POST['zip_code']);
-        
-        if (empty($zip_code)) {
-            wp_send_json_error('Please enter a ZIP code');
-        }
-        
-        require_once plugin_dir_path(__FILE__) . 'includes/class-location-finder.php';
-        $finder = new Find_A_Y_Location_Finder($this->table_name);
-        
-        $results = $finder->find_by_zip($zip_code);
-        
-        if ($results) {
-            wp_send_json_success($results);
-        } else {
-            wp_send_json_error('No locations found near that ZIP code');
-        }
+    check_ajax_referer('find_a_y_search', 'nonce');
+    
+    $zip_code = sanitize_text_field($_POST['zip_code']);
+    
+    if (empty($zip_code)) {
+        wp_send_json_error('Please enter a ZIP code');
     }
+    
+    require_once plugin_dir_path(__FILE__) . 'includes/class-location-finder.php';
+    $finder = new Find_A_Y_Location_Finder($this->table_name);
+    
+    // Search for max 5 locations within 25 miles
+    $results = $finder->find_by_zip($zip_code, 5, 25);
+    
+    if ($results) {
+        wp_send_json_success($results);
+    } else {
+        wp_send_json_error('We cannot find a Y within 25 miles of your location. Visit <a href="https://www.ymca.org" target="_blank" rel="noopener">ymca.org</a> for more info.');
+    }
+}
     
     public function render_search_form($atts) {
         $atts = shortcode_atts(array(
-            'results_limit' => 10,
-            'radius' => 50
+            'results_limit' => 5,
+            'radius' => 25
         ), $atts);
         
         ob_start();
