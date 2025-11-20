@@ -224,7 +224,10 @@ function get_origThumbURL() {
     if ( ! $invalid ) {
         $_needle_ok = false;
         foreach( array( 'ytimg.com','youtube.com','youtu.be' ) as $_needle ) {
-            if ( str_ends_in( $origThumbDomain, $_needle ) ) {
+            // the orginal thumb URL has to be from one of the 
+            // youtube domains with either an exact match or with a
+            // substring-end-match with at least .domain.suffix
+            if ( $_needle === $origThumbDomain || str_ends_in( $origThumbDomain, '.'.$_needle ) ) {
                 $_needle_ok = true;
                 break;
             }

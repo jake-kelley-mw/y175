@@ -186,11 +186,11 @@ p {
 }
 
 h1 {
-  font-family: 'Grack';
+  font-family: 'Cachet Pro';
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   font-size: 40px;
-  letter-spacing: -.15px;
+  letter-spacing: -1px;
   line-height: 1.2em;
   text-transform: uppercase;
 }
@@ -199,17 +199,17 @@ h2 {
   font-family: 'Cachet Pro';
   font-style: normal;
   font-weight: 100;
-  font-size: 32px;
+  font-size: 36px;
   letter-spacing: -.15px;
   line-height: 1.2em;
 }
 
 h3 {
-  font-family: 'Grack';
+  font-family: 'Cachet Pro';
   font-style: normal;
   font-weight: 400;
   font-size: 24px;
-  letter-spacing: -.15px;
+  letter-spacing: -1px;
   line-height: 1.2em;
 }
 
@@ -218,7 +218,7 @@ h4 {
   font-style: normal;
   font-weight: 300;
   font-size: 20px;
-  letter-spacing: -.15px;
+  letter-spacing: -1px;
   line-height: 1.2em;
 }
 
@@ -227,7 +227,7 @@ h5 {
   font-style: normal;
   font-weight: 300;
   font-size: 16px;
-  letter-spacing: -.15px;
+  letter-spacing: -.5px;
   line-height: 1.2em;
   text-transform: uppercase;
 }
@@ -237,7 +237,7 @@ h6 {
   font-style: normal;
   font-weight: 300;
   font-size: 16px;
-  letter-spacing: -.15px;
+  letter-spacing: -.5px;
   line-height: 1.2em;
 }
 
@@ -247,27 +247,19 @@ h6 {
   font-style: normal;
   font-weight: 100;
   font-size: 24px;
-  letter-spacing: -.65px;
+  letter-spacing: -.5px;
   line-height: 1.2em;
   /* text-transform: uppercase; */
 }
 
 .timeline-header h1 {
-  font-family: 'Grack';
+  font-family: 'Cachet Pro';
   font-style: normal;
-  font-weight: 500;
-  font-size: 40px;
-  letter-spacing: -.15px;
-  line-height: 1em !important;
+  font-weight: 400;
+  font-size: 72px;
+  letter-spacing: -2px;
+  line-height: .8em !important;
   text-transform: uppercase;
-}
-
-.ymca-LTY h1 {
-      line-height: 1em !important;
-	}
-
-.ymca-p-k p{
-  color: #000 !important;
 }
 
 a.y175-footer-link {
@@ -292,11 +284,11 @@ a.y175-footer-link {
   }
 
   h1 {
-    font-size: 36px !important;
+    font-size: 46px !important;
   }
 
   h2 {
-    font-size: 26px !important;
+    font-size: 32px !important;
   }
 
   h3 {
@@ -334,7 +326,7 @@ a.y175-footer-link {
 /* --------  Menu Styles  -------- */
 
 .et_pb_menu_0_tb_header.et_pb_menu ul li a {
-  font-family: 'Grack';
+  font-family: 'Cachet Pro';
   font-style: normal;
   font-weight: 300;
   font-size: 20px;
@@ -345,7 +337,7 @@ a.y175-footer-link {
 }
 
 .et_pb_menu--with-logo .et_pb_menu__menu > nav > ul > li.ymca-org-link > a {
-  font-family: 'Grack' !important;
+  font-family: 'Cachet Pro' !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 20px !important;
@@ -433,7 +425,7 @@ a.y175-footer-link {
   left: 0;
   width: 100%;
   height: 100vh;
-  background-color: #0060af;
+  background-color: #000000;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -478,23 +470,24 @@ a.y175-footer-link {
 .fullscreen-menu-list a {
   color: #fff;
   text-decoration: none;
-  font-family: 'Grack';
-  font-size: 32px;
-  font-weight: 300;
+  font-family: 'Cachet Pro';
+  font-size: 56px;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: -1px;
   transition: color 0.3s ease;
   display: inline-block;
+  line-height: 1em;
 }
 
 .fullscreen-menu-list a:hover {
-  color: #00aeef;
+  color: #636466;
 }
 
 /* Responsive sizing */
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .fullscreen-menu-list a {
-    font-size: 48px;
+    font-size: 24px;
   }
   
   .fullscreen-menu-list li {
@@ -577,8 +570,18 @@ body:has(.fullscreen-menu.active) .custom-header-logo {
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
+/* Add outbound link icon after ymca.org link */
+.fullscreen-menu-list a[target="_blank"]::after,
+.fullscreen-menu-list a[href*="ymca.org"]::after {
+  content: "➜";
+  display: inline-block;
+  margin-left: 20px;
+  font-size: 48px;
+  vertical-align: baseline;
+}
+
 /* Responsive adjustments */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .custom-header-logo img {
     height: 32px;
   }
@@ -596,16 +599,15 @@ body:has(.fullscreen-menu.active) .custom-header-logo {
   body:not(.home)::before {
     height: 55px;
   }
-}
 
-/* Add outbound link icon after ymca.org link */
-.fullscreen-menu-list a[target="_blank"]::after,
-.fullscreen-menu-list a[href*="ymca.org"]::after {
-  content: "↗︎";
-  display: inline-block;
-  margin-left: 10px;
-  font-size: 48px;
-  vertical-align: baseline;
+  .fullscreen-menu-list a[target="_blank"]::after,
+  .fullscreen-menu-list a[href*="ymca.org"]::after {
+    content: "➜";
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 24px;
+    vertical-align: baseline;
+  }
 }
 
 
@@ -622,6 +624,15 @@ body:has(.fullscreen-menu.active) .custom-header-logo {
 
 .lyte-title {
   display: none !important;
+}
+
+.lyte-wrapper {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+.lyte {
+  border-radius: 12px;
 }
 
 /* Hide Lyte video title on mobile devices */
@@ -660,7 +671,7 @@ a.ytvideoInfoVideoTitle {
 }
 
 .ctl-wrapper .ctl-title {
-  font-family: 'Grack';
+  font-family: 'Cachet Pro';
   font-style: normal;
   font-weight: 400;
   font-size: 24px;
@@ -670,7 +681,7 @@ a.ytvideoInfoVideoTitle {
 }
 
 .ctl-wrapper .ctl-label-big {
-  font-family: 'Grack' !important;
+  font-family: 'Cachet Pro' !important;
   font-style: normal;
   font-weight: 300;
   font-size: 24px !important;
@@ -680,7 +691,7 @@ a.ytvideoInfoVideoTitle {
 }
 
 .ctl-wrapper .ctl-year-text {
-  font-family: 'Grack' !important;
+  font-family: 'Cachet Pro' !important;
   font-style: normal !important;
   font-weight: 200 !important;
   font-size: 24px !important;
@@ -826,7 +837,7 @@ a.ytvideoInfoVideoTitle {
 }
 
 .submit-button p {
-  font-family: 'Grack' !important;
+  font-family: 'Cachet Pro' !important;
   font-weight: 500 !important;
   text-transform: uppercase !important;
 
@@ -917,4 +928,61 @@ textarea {
 
 .y175-npltp-hero-1 img {
   filter: drop-shadow(#0000008c 0px 0px 20px);
+}
+
+.ymca-LTY .et_pb_text_inner {
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 130px;
+  letter-spacing: -5px;
+  line-height: .8em !important;
+  text-transform: uppercase;
+  text-shadow: 0 0 50px rgb(32, 189, 190);
+	}
+
+.ymca-p-k .et_pb_text_inner {
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 100;
+  font-size: 36px;
+  letter-spacing: -.25px;
+  line-height: 1.2em;
+  color: #ffffff !important;
+  margin-bottom: 20px;
+}
+
+.y175-hero-body1 .et_pb_text_inner {
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: -.15px;
+  color: #ffffff;
+  line-height: 1.5em;
+}
+
+.et_pb_column_0_tb_body {
+  z-index: 200;
+}
+
+.gradient-overlay .et_pb_image_wrap {
+  position: relative;
+}
+
+.gradient-overlay .et_pb_image_wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(76deg, rgb(32, 189, 190) 0%, rgba(0, 0, 0, 0) 100%);
+  z-index: 1;
+}
+
+@media only screen and (max-width: 1080px) {
+  .ymca-LTY .et_pb_text_inner {
+    font-size: 100px;
+	}
 }
