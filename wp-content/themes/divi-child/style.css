@@ -288,7 +288,7 @@ a.y175-footer-link {
   }
 
   h2 {
-    font-size: 32px !important;
+    font-size: 28px !important;
   }
 
   h3 {
@@ -984,5 +984,129 @@ textarea {
 @media only screen and (max-width: 1080px) {
   .ymca-LTY .et_pb_text_inner {
     font-size: 100px;
+    letter-spacing: -3px;
 	}
+}
+
+@media only screen and (max-width: 767px) {
+  .ymca-LTY .et_pb_text_inner {
+    font-size: 42px;
+    letter-spacing: -1px;
+	}
+
+  .ymca-p-k .et_pb_text_inner {
+    font-size: 28px;
+  }
+}
+
+/* Two columns that stay side-by-side */
+@media (max-width: 767px) {
+  .no-stack-mobile .et_pb_column {
+    width: 50% !important; /* Adjust based on number of columns */
+    float: left !important;
+    margin-right: 0 !important;
+  }
+  
+  /* For 2 columns */
+  .no-stack-mobile .et_pb_column_1_2 {
+    width: 50% !important;
+  }
+  
+  /* For 3 columns */
+  .no-stack-mobile .et_pb_column_1_3 {
+    width: 33.33% !important;
+  }
+  
+  /* For 4 columns */
+  .no-stack-mobile .et_pb_column_1_4 {
+    width: 25% !important;
+  }
+}
+
+/* Add custom class to modules that should go full-width: mobile-breakout */
+
+@media (max-width: 767px) {
+  .mobile-breakout {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(-50vw + 0%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    position: relative;
+  }
+  
+  /* For image modules specifically */
+  .mobile-breakout.et_pb_image {
+    width: 100vw !important;
+  }
+  
+  /* For video modules */
+  .mobile-breakout.et_pb_video {
+    width: 100vw !important;
+  }
+  
+  /* For text modules */
+  .mobile-breakout.et_pb_text {
+    width: 100vw !important;
+    padding-left: 5vw !important;
+    padding-right: 5vw !important;
+  }
+
+  .mobile-breakout2 {
+    width: 90vw !important;
+    margin-left: 0;
+    margin-right: 0;
+    position: relative;
+  }
+}
+
+/* Add custom class to the ROW: reorder-modules-mobile */
+
+@media (max-width: 767px) {
+  .reorder-modules-mobile {
+    display: grid !important;
+    grid-template-columns: 50% 50% !important;
+    grid-auto-flow: dense !important; /* This fills gaps automatically */
+  }
+  
+  .reorder-modules-mobile .et_pb_column {
+    display: contents !important;
+  }
+  
+  /* Order classes */
+  .mobile-order-1 { order: 1 !important; }
+  .mobile-order-2 { order: 2 !important; }
+  .mobile-order-3 { order: 3 !important; }
+  .mobile-order-4 { order: 4 !important; }
+  .mobile-order-5 { order: 5 !important; }
+  .mobile-order-6 { order: 6 !important; }
+  
+  /* Full width items span both columns */
+  .reorder-modules-mobile .et_pb_module {
+    grid-column: span 2 !important;
+  }
+  
+  /* Half-width items span one column */
+  .reorder-modules-mobile .mobile-half {
+    grid-column: span 1 !important;
+  }
+  
+  .reorder-modules-mobile .mobile-half .et_pb_image_wrap {
+    width: 100% !important;
+  }
+}
+
+
+.story-submit-home p {
+  color: white !important;
+  font-style: italic !important;
+  letter-spacing: -.75px;
+  font-size: 20px !important;
+  line-height: 1em;
+  font-weight: 600;
+}
+
+.story-submit-home h3 {
+  font-weight: 300;
+  line-height: 1em;
+  padding-bottom: 0px;
 }

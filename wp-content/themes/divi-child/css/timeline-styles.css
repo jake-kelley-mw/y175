@@ -490,6 +490,23 @@
     box-shadow: 0 0 0 4px rgb(32, 189, 190);
 }
 
+.homepage-timeline .y175-timeline-dot {
+    background: #006b6b;
+    box-shadow: 0 0 0 4px rgb(32, 189, 190);
+}
+
+.homepage-timeline .y175-entry-regular .y175-content-wrapper{
+    background: #006b6b;
+}
+
+.homepage-timeline .y175-entry-regular .y175-content-wrapper::before {
+  border-color: transparent #006b6b transparent transparent;
+}
+
+.homepage-timeline .y175-copy {
+    color: #fff;
+}
+
 .timeline-1900 .y175-timeline-dot {
     background: #92278f;
     box-shadow: 0 0 0 4px rgb(92, 46, 145);
