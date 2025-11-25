@@ -258,7 +258,7 @@ h6 {
   font-weight: 400;
   font-size: 72px;
   letter-spacing: -2px;
-  line-height: .8em !important;
+  line-height: 1em !important;
   text-transform: uppercase;
 }
 
@@ -596,7 +596,7 @@ body:has(.fullscreen-menu.active) .custom-header-logo {
     padding: 7px 0;
   }
   
-  body:not(.home)::before {
+  body::before {
     height: 55px;
   }
 
@@ -664,7 +664,6 @@ a.ytvideoInfoVideoTitle {
 .timeline-preview h1 {
   line-height: 1em !important;
 }
-
 
 .ctl-wrapper .ctl-vertical-wrapper .ctl-arrow {
 	box-shadow: none !important;
@@ -751,9 +750,13 @@ a.ytvideoInfoVideoTitle {
     letter-spacing: -1px !important;
     line-height: 1.2em;
   }
+
+  .timeline-anchor-head h1 {
+  font-size: 32px !important;
+}
 }
 
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: 768px) {
   .ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
     width: 100% !important;
   }
@@ -781,8 +784,19 @@ a.ytvideoInfoVideoTitle {
 
 /* --------  Find a Y Styles inline within plugin files > search-from.php -------- */
 
+.zip-code-text p {
+    color: white !important;
+    font-style: italic;
+    letter-spacing: -0.2px;
+    font-size: 24px !important;
+    line-height: 1.2em;
+  }
 
-
+@media only screen and (max-width: 767px) {
+  .zip-code-text p {
+    font-size: 20px !important;
+  }
+}
 
 /* --------  Share Your Y Story Form Styles -------- */
 .y175-share-row {
@@ -996,6 +1010,7 @@ textarea {
 
   .ymca-p-k .et_pb_text_inner {
     font-size: 28px;
+    margin-top: 20px;
   }
 }
 
@@ -1011,7 +1026,22 @@ textarea {
   .no-stack-mobile .et_pb_column_1_2 {
     width: 50% !important;
   }
+
+  .no-stack-mobile .et_pb_column.hero-top-left-col {
+    width: 60% !important;
+  }
   
+  .no-stack-mobile .et_pb_column.hero-top-right-col {
+    width: 100% !important;
+    margin-left: -60% !important;
+    margin-bottom: -20% !important;
+  }
+
+  .gradient-overlay .et_pb_image_wrap img {
+    height: 350px;
+    object-fit: cover;
+  }
+
   /* For 3 columns */
   .no-stack-mobile .et_pb_column_1_3 {
     width: 33.33% !important;
@@ -1093,6 +1123,66 @@ textarea {
   .reorder-modules-mobile .mobile-half .et_pb_image_wrap {
     width: 100% !important;
   }
+
+  /* Grid positioning for masonry layout */
+  .reorder-modules-mobile .grid-left-tall { 
+    display: grid;
+    grid-column: 1 !important; 
+    grid-row: 1 / 3 !important;
+    margin-right: 1.5vw;
+  }
+
+  .reorder-modules-mobile .grid-right-top {
+    display: grid;
+    grid-column: 2 !important; 
+    grid-row: 1 !important;
+    margin-left: 1.5vw;
+  }
+
+  .reorder-modules-mobile .grid-right-bottom {
+    display: grid;
+    grid-column: 2 !important; 
+    grid-row: 2 !important;
+    margin-left: 1.5vw;
+  }
+
+  .grid-left-tall .et_pb_image_wrap img {
+    height: 100%;
+    width: 100% !important;
+    object-fit: cover;
+  }
+
+  .grid-right-top .et_pb_image_wrap img {
+    width: 100% !important;
+    object-fit: cover;
+    height: auto; 
+  }
+
+  .grid-right-bottom .et_pb_image_wrap img {
+    width: 100% !important;
+    object-fit: cover;
+    height: auto; 
+  }
+
+  .gradient-overlay .et_pb_image_wrap img {
+  max-width: 100%;
+  height: auto;
+  max-height: 800px;
+  object-fit: cover;
+}
+
+  /* Increase hero overlap on mobile */
+  .overlap-row .et_pb_column_0 {
+    width: 100% !important;
+    padding-right: 0 !important;
+    z-index: 2;
+  }
+  
+  .overlap-row .et_pb_column_1 {
+    width: 85% !important;
+    margin-left: -60% !important; /* More aggressive overlap */
+    margin-top: 50px !important; /* Position it lower to overlap better */
+  }
 }
 
 
@@ -1110,3 +1200,5 @@ textarea {
   line-height: 1em;
   padding-bottom: 0px;
 }
+
+

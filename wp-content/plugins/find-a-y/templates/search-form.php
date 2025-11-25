@@ -280,11 +280,11 @@ if (!defined('ABSPATH')) exit;
     
     .find-a-y-submit-btn {
         padding: 16px 16px;
-        font-family: 'Grack';
+        font-family: 'Cachet Pro';
         font-style: normal;
         font-weight: 400 !important;
         font-size: 20px;
-        letter-spacing: 0px;
+        letter-spacing: -1px;
         line-height: 1.2em;
         text-transform: uppercase;
         background: #20bdbe !important;
