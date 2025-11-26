@@ -266,10 +266,11 @@
 .y175-entry-featured .y175-copy {
     font-family: 'Cachet Pro';
     font-style: normal;
-    font-weight: 100;
+    font-weight: 200;
     font-size: 32px;
     letter-spacing: -1px;
     line-height: 1.2em !important;
+    color: #5c2e91;
 }
 
 /* Tablet Responsive */
@@ -548,7 +549,7 @@
 
 @media (max-width: 767px) {
     .timeline-preview h3 {
-        font-size: 16px !important;
+        font-size: 20px !important;
     }
 
     .homepage-timeline .y175-entry-regular .y175-title {
