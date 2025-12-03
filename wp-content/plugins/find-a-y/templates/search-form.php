@@ -151,7 +151,7 @@ if (!defined('ABSPATH')) exit;
     color: #ffffffff;
     text-align: center;
     text-transform: uppercase !important;
-    letter-spacing: .5px !important;
+    letter-spacing: -.5px !important;
     font-weight: 400 !important;
 }
 
@@ -164,11 +164,6 @@ if (!defined('ABSPATH')) exit;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.ymca-location-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
 .location-header {
     display: flex;
     justify-content: space-between;
@@ -177,27 +172,27 @@ if (!defined('ABSPATH')) exit;
 }
 
 .location-name {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
     color: #20bdbe;
     margin: 0;
     text-transform: uppercase !important;
-    letter-spacing: .5px !important;
+    letter-spacing: -.5px !important;
     font-weight: 400 !important;
 }
 
 .location-distance {
-    font-family: 'Grack';
+    font-family: 'Cachet Pro';
     font-style: normal;
-    font-weight: 300;
+    font-weight: 400;
     background: #20bdbe;
     color: white;
     padding: 5px 12px;
-    border-radius: 20px;
+    border-radius: 4px;
     font-size: 16px;
     white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: -.5px;
 }
 
 .location-address {
@@ -225,13 +220,12 @@ if (!defined('ABSPATH')) exit;
     color: #333;
     text-decoration: none;
     border-radius: 4px;
-    font-weight: 500;
     transition: background 0.3s;
-    font-family: 'Grack';
+    font-family: 'Cachet Pro';
     font-style: normal;
-    font-weight: 300;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: -.5px;
     font-size: 16px;
 }
 
