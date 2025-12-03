@@ -942,7 +942,7 @@ textarea {
   filter: drop-shadow(#0000008c 0px 0px 20px);
 }
 
-.ymca-LTY .et_pb_text_inner {
+.ymca-LTY .et_pb_text_inner p {
   font-family: 'Cachet Pro';
   font-style: normal;
   font-weight: 400;
@@ -951,6 +951,8 @@ textarea {
   line-height: .8em !important;
   text-transform: uppercase;
   text-shadow: 0 0 50px rgb(32, 189, 190);
+  color: #fff;
+  word-wrap: normal;
 	}
 
 .ymca-p-k .et_pb_text_inner {
@@ -993,16 +995,31 @@ textarea {
   z-index: 1;
 }
 
+@media only screen and (max-width: 1255px) {
+  .ymca-LTY .et_pb_text_inner p {
+    font-size: 115px;
+    letter-spacing: -3px;
+	}
+}
+
 @media only screen and (max-width: 1080px) {
-  .ymca-LTY .et_pb_text_inner {
+  .ymca-LTY .et_pb_text_inner p {
     font-size: 100px;
     letter-spacing: -3px;
 	}
 }
 
+@media only screen and (max-width: 989px) {
+  .ymca-LTY .et_pb_text_inner p {
+    font-size: 80px;
+    letter-spacing: -2px;
+    text-shadow: 0 0 10px rgb(32, 189, 190);
+	}
+}
+
 @media only screen and (max-width: 767px) {
-  .ymca-LTY .et_pb_text_inner {
-    font-size: 42px;
+  .ymca-LTY .et_pb_text_inner p {
+    font-size: 42px !important;
     letter-spacing: -1px;
 	}
 
@@ -1013,7 +1030,7 @@ textarea {
 }
 
 /* Two columns that stay side-by-side */
-@media (max-width: 767px) {
+@media (max-width: 1080px) {
   .no-stack-mobile .et_pb_column {
     width: 50% !important; /* Adjust based on number of columns */
     float: left !important;
@@ -1053,7 +1070,7 @@ textarea {
 
 /* Add custom class to modules that should go full-width: mobile-breakout */
 
-@media (max-width: 767px) {
+@media (max-width: 1080px) {
   .mobile-breakout {
     width: 100vw !important;
     max-width: 100vw !important;
@@ -1089,7 +1106,7 @@ textarea {
 
 /* Add custom class to the ROW: reorder-modules-mobile */
 
-@media (max-width: 767px) {
+@media (max-width: 1080px) {
   .reorder-modules-mobile {
     display: grid !important;
     grid-template-columns: 50% 50% !important;
