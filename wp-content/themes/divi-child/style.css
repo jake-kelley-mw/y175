@@ -571,8 +571,7 @@ body:has(.fullscreen-menu.active) .custom-header-logo {
 }
 
 /* Add outbound link icon after ymca.org link */
-.fullscreen-menu-list a[target="_blank"]::after,
-.fullscreen-menu-list a[href*="ymca.org"]::after {
+.fullscreen-menu-list li.ymca-org-link a::after {
   content: "➜";
   display: inline-block;
   margin-left: 20px;
@@ -600,8 +599,7 @@ body:has(.fullscreen-menu.active) .custom-header-logo {
     height: 55px;
   }
 
-  .fullscreen-menu-list a[target="_blank"]::after,
-  .fullscreen-menu-list a[href*="ymca.org"]::after {
+  .fullscreen-menu-list li.ymca-org-link a::after {
     content: "➜";
     display: inline-block;
     margin-left: 10px;
