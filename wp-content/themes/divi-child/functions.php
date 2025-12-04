@@ -13,6 +13,25 @@ function dt_enqueue_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'dt_enqueue_styles' );
 
+/**
+ * Auto-bust browser cache for stylesheets when files are modified
+ */
+function auto_version_css($src, $handle) {
+    if (strpos($src, get_stylesheet_directory_uri()) !== false) {
+        $file_path = str_replace(
+            get_stylesheet_directory_uri(),
+            get_stylesheet_directory(),
+            preg_replace('/\?.*/', '', $src)
+        );
+        if (file_exists($file_path)) {
+            $src = add_query_arg('ver', filemtime($file_path), $src);
+        }
+    }
+    return $src;
+}
+add_filter('style_loader_src', 'auto_version_css', 10, 2);
+
+
 // Enqueue hamburger menu script
 function custom_hamburger_menu_script() {
     wp_enqueue_script(
