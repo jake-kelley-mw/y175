@@ -241,9 +241,8 @@ class ET_Core_SupportCenter {
 
 		// Add extra User Role capabilities needed for Remote Access to work with 3rd party software
 		add_filter( 'add_et_support_standard_capabilities', array( $this, 'support_user_extra_caps_standard' ), 10, 1 );
-		add_filter( 'add_et_support_elevated_capabilities', array( $this, 'support_user_extra_caps_elevated' ), 10, 1 );
 
-		// Make sure that our Support Account's roles are set up
+		// Make sure that our Support Account's role is set up.
 		add_filter( 'add_et_builder_role_options', array( $this, 'support_user_add_role_options' ), 10, 1 );
 
 		// On Multisite installs, grant `unfiltered_html` capabilities to the Support User
@@ -818,8 +817,13 @@ class ET_Core_SupportCenter {
 	 * @since 4.4.7
 	 */
 	public function dismiss_support_center_card_via_ajax() {
-
+		// Verify nonce.
 		et_core_security_check( 'manage_options', 'support_center', 'nonce' );
+
+		// If the user is an ET Support User, kill the request.
+		if ( $this->is_support_user() ) {
+			wp_die();
+		}
 
 		$response = array();
 
@@ -1986,8 +1990,8 @@ class ET_Core_SupportCenter {
 			return;
 		}
 
-		// Define user roles that will be used to control ET Support User permissions
-		$this->support_user_create_roles();
+		// Define user role that will be used to control ET Support User permissions.
+		$this->support_user_create_role();
 
 		$token = $this->support_user_generate_token();
 
@@ -2004,6 +2008,7 @@ class ET_Core_SupportCenter {
 			'last_name'    => 'Support',
 			'display_name' => 'Elegant Themes Support',
 			'role'         => 'et_support',
+			'locale'       => 'en_US',
 		) );
 
 		if ( is_wp_error( $user_id ) ) {
@@ -2024,14 +2029,15 @@ class ET_Core_SupportCenter {
 	}
 
 	/**
-	 * Define both Standard and Elevated roles for the Divi Support user
+	 * Define Standard role for the Divi Support user
 	 *
+	 * @since ?? Removed definition for the Divi Support 'elevated' role
 	 * @since 3.22 Added filters to extend the list of capabilities for the ET Support User
 	 * @since 3.20
 	 */
-	public function support_user_create_roles() {
-		// Make sure old versions of these roles do not exist
-		$this->support_user_remove_roles();
+	public function support_user_create_role() {
+		// Make sure old version of this role does not exist.
+		$this->support_user_remove_role();
 
 		// Divi Support :: Standard
 		$standard_capabilities = array(
@@ -2106,28 +2112,11 @@ class ET_Core_SupportCenter {
 			'manage_woocommerce'                 => true,
 		);
 
-		// Divi Support :: Elevated
-		$elevated_capabilities = array_merge( $standard_capabilities, array(
-			'activate_plugins' => true,
-			'delete_plugins'   => true,
-			'delete_themes'    => true,
-			'edit_plugins'     => true,
-			'edit_themes'      => true,
-			'install_plugins'  => true,
-			'install_themes'   => true,
-			'switch_themes'    => true,
-			'update_plugins'   => true,
-			'update_themes'    => true,
-		) );
-
 		// Filters to allow other code to extend the list of capabilities
 		$additional_standard = apply_filters( 'add_et_support_standard_capabilities', array() );
-		$additional_elevated = apply_filters( 'add_et_support_elevated_capabilities', array() );
 
 		// Apply filter capabilities to our definitions
 		$standard_capabilities = array_merge( $additional_standard, $standard_capabilities );
-		// Just like Elevated gets all of Standard's capabilities, it also inherits Standard's filter caps
-		$elevated_capabilities = array_merge( $additional_standard, $additional_elevated, $elevated_capabilities );
 
 		// Create the standard ET Support role
 		add_role( 'et_support', 'ET Support', $standard_capabilities );
@@ -2135,30 +2124,23 @@ class ET_Core_SupportCenter {
 		foreach ( $standard_capabilities as $cap ) {
 			$et_support_role->add_cap( $cap );
 		}
-		// Create the elevated ET Support role
-		add_role( 'et_support_elevated', 'ET Support - Elevated', $elevated_capabilities );
-		$et_support_elevated_role = get_role( 'et_support_elevated' );
-		foreach ( $elevated_capabilities as $cap ) {
-			$et_support_elevated_role->add_cap( $cap );
-		}
 	}
 
 	/**
-	 * Remove our Standard and Elevated Support roles
+	 * Remove our Standard Support role
 	 *
+	 * @since ?? No longer attempt to remove the defunct Divi Support 'elevated' role
 	 * @since 3.20
 	 */
-	public function support_user_remove_roles() {
+	public function support_user_remove_role() {
 		// Divi Support :: Standard
 		remove_role( 'et_support' );
-
-		// Divi Support :: Elevated
-		remove_role( 'et_support_elevated' );
 	}
 
 	/**
 	 * Set the ET Support User's role
 	 *
+	 * @since ?? Removed the 'et_support_elevated' role; using 'administrator' instead
 	 * @since 3.20
 	 *
 	 * @param string $role
@@ -2172,8 +2154,8 @@ class ET_Core_SupportCenter {
 			case 'et_support':
 				$support_user->set_role( 'et_support' );
 				break;
-			case 'et_support_elevated':
-				$support_user->set_role( 'et_support_elevated' );
+			case 'administrator':
+				$support_user->set_role( 'administrator' );
 				break;
 			case '':
 			default:
@@ -2483,7 +2465,7 @@ class ET_Core_SupportCenter {
 			return new WP_Error( 'get_user_data', esc_html__( 'Cannot get the support account data. Try to regenerate token again.', 'et-core' ) );
 		}
 
-		$this->support_user_remove_roles();
+		$this->support_user_remove_role();
 
 		$this->support_user_remove_site_id();
 
@@ -2538,6 +2520,7 @@ class ET_Core_SupportCenter {
 	 */
 	function is_support_user( $user_id = null ) {
 		$user_id = $user_id ? (int) $user_id : get_current_user_id();
+
 		if ( ! $user_id ) {
 			return false;
 		}
@@ -2548,24 +2531,24 @@ class ET_Core_SupportCenter {
 			return false;
 		}
 
+		$is_et_support_username = $this->support_user_account_name === $user->user_login;
+
+		// First, check the username, if it's not a match, then this is not the ET Support User.
+		if ( ! $is_et_support_username ) {
+			return false;
+		}
+
 		// Gather this user's associated role(s).
-		$user_roles      = (array) $user->roles;
-		$user_is_support = false;
+		$user_roles             = (array) $user->roles;
+		$is_et_support          = in_array( 'et_support', $user_roles, true );
+		$is_et_support_elevated = in_array( 'administrator', $user_roles, true ) && $is_et_support_username;
 
-		// First, check the username.
-		if ( ! $this->support_user_account_name === $user->user_login ) {
-			return $user_is_support;
+		// Determine whether this user is the ET Support User.
+		if ( $is_et_support || $is_et_support_elevated ) {
+			return true;
 		}
 
-		// Determine whether this user has the ET Support User role.
-		if ( in_array( 'et_support', $user_roles, true ) ) {
-			$user_is_support = true;
-		}
-		if ( in_array( 'et_support_elevated', $user_roles, true ) ) {
-			$user_is_support = true;
-		}
-
-		return $user_is_support;
+		return false;
 	}
 
 	/**
@@ -2617,8 +2600,13 @@ class ET_Core_SupportCenter {
 	}
 
 	function support_user_update_via_ajax() {
-		// Verify nonce
+		// Verify nonce.
 		et_core_security_check( 'manage_options', 'support_center', 'nonce' );
+
+		// If the user is an ET Support User, kill the request.
+		if ( $this->is_support_user() ) {
+			wp_die();
+		}
 
 		// Get POST data
 		$support_update = sanitize_text_field( $_POST['support_update'] );
@@ -2654,7 +2642,8 @@ class ET_Core_SupportCenter {
 			}
 		}
 		if ( 'elevate' === $support_update ) {
-			$this->support_user_set_role( 'et_support_elevated' );
+			$this->support_user_set_role( 'administrator' );
+
 			$response['message'] = esc_html__(
 				'ET Support User role has been elevated.',
 				'et-core'
@@ -2912,13 +2901,10 @@ class ET_Core_SupportCenter {
 	 * @since 3.20
 	 */
 	public function add_support_center() {
-
 		$is_current_user_et_support = 0;
-		if ( in_array( 'et_support', wp_get_current_user()->roles ) ) {
+
+		if ( $this->is_support_user() ) {
 			$is_current_user_et_support = 1;
-		}
-		if ( in_array( 'et_support_elevated', wp_get_current_user()->roles ) ) {
-			$is_current_user_et_support = 2;
 		}
 
 		// Conditionally Display Divi Hosting Card
@@ -2993,10 +2979,11 @@ class ET_Core_SupportCenter {
 						} else {
 
 							if ( is_object( $support_account ) && property_exists( $support_account, 'roles' ) ) {
-								if ( in_array( 'et_support', $support_account->roles ) ) {
+								if ( in_array( 'et_support', $support_account->roles, true ) ) {
 									$is_et_support_user_active = 1;
 								}
-								if ( in_array( 'et_support_elevated', $support_account->roles ) ) {
+
+								if ( in_array( 'administrator', $support_account->roles, true ) ) {
 									$is_et_support_user_active = 2;
 								}
 							}

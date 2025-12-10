@@ -286,7 +286,7 @@ if ( ! function_exists( 'et_core_get_theme_info' ) ) :
 			}
 		}
 
-		return $theme_info->display( $key );
+		return $theme_info->get( $key );
 	}
 endif;
 
@@ -765,7 +765,10 @@ function et_core_setup( $deprecated = '' ) {
 	define( 'ET_CORE_TEXTDOMAIN', 'et-core' );
 	define( 'ET_CORE_TYPE', $type );
 
-	load_theme_textdomain( 'et-core', ET_CORE_PATH . 'languages/' );
+	add_action( 'init', function() {
+		load_theme_textdomain( 'et-core', ET_CORE_PATH . 'languages/' );
+	});
+
 	et_core_maybe_set_updated();
 	et_new_core_setup();
 

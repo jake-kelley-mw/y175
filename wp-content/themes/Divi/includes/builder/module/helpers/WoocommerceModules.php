@@ -659,9 +659,9 @@ class ET_Builder_Module_Helper_Woocommerce_Modules {
 
 		if ( '' !== $custom_icon || '' !== $custom_icon_tablet || '' !== $custom_icon_phone ) {
 			$outer_wrapper_attrs['data-button-class']       = esc_attr( $this_class->get_button_classname() );
-			$outer_wrapper_attrs['data-button-icon']        = esc_attr( et_pb_process_font_icon( $custom_icon ) );
-			$outer_wrapper_attrs['data-button-icon-tablet'] = esc_attr( et_pb_process_font_icon( $custom_icon_tablet ) );
-			$outer_wrapper_attrs['data-button-icon-phone']  = esc_attr( et_pb_process_font_icon( $custom_icon_phone ) );
+			$outer_wrapper_attrs['data-button-icon']        = esc_attr( html_entity_decode( et_pb_process_font_icon( $custom_icon ), ENT_QUOTES, 'UTF-8' ) );
+			$outer_wrapper_attrs['data-button-icon-tablet'] = esc_attr( html_entity_decode( et_pb_process_font_icon( $custom_icon_tablet ), ENT_QUOTES, 'UTF-8' ) );
+			$outer_wrapper_attrs['data-button-icon-phone']  = esc_attr( html_entity_decode( et_pb_process_font_icon( $custom_icon_phone ), ENT_QUOTES, 'UTF-8' ) );
 		}
 
 		return $outer_wrapper_attrs;
@@ -1356,7 +1356,7 @@ class ET_Builder_Module_Helper_Woocommerce_Modules {
 				continue;
 			}
 
-			$attrs[ $attr_name ] = esc_attr( et_pb_process_font_icon( $attr_value ) );
+			$attrs[ $attr_name ] = esc_attr( html_entity_decode( et_pb_process_font_icon( $attr_value ), ENT_QUOTES, 'UTF-8' ) );
 		}
 
 		return $attrs;

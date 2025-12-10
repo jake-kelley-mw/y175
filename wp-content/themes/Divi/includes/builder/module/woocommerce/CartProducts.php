@@ -1342,7 +1342,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 				continue;
 			}
 
-			$attrs[ $attr_name ] = esc_attr( et_pb_process_font_icon( $attr_value ) );
+			$attrs[ $attr_name ] = esc_attr( html_entity_decode( et_pb_process_font_icon( $attr_value ), ENT_QUOTES, 'UTF-8' ) );
 		}
 
 		return $attrs;

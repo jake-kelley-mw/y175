@@ -1,4 +1,16 @@
-### version 4.27.4 ( updated 11-25-2024 )
+version 4.27.5 ( updated 12-04-2025 )
+- Fixed Shop module not properly filtering products by custom taxonomy terms when "Use Current Page" was enabled.
+- Fixed RankMath's sitemap generation produced errors when Blurb modules used icons.
+- Changed elegant_themes_support elevated role to administrator.
+- Fixed an issue with WordPress 6.7 where the "Disable translations" no longer worked.
+- Fixed Divi 4 to Divi 5 gradient conversion for custom modules with individual gradient color fields.
+- Fixed "Notice: Function _load_textdomain_just_in_time was called incorrectly." error in WordPress 6.7+.
+- Fixed Divi Settings menu and icon are not displayed in edit post page.
+- Fixed issue where the page is immediately jump to the bottom when user click on Divi Layout block area.
+- Fixed Scroll Down icon displaying as broken characters in Fullwidth Header module after WordPress 6.9 update.
+- Fixed button icons displaying as broken characters across multiple modules after WordPress 6.9 update. Also fixes overlay icons in Image, Portfolio, Blog, Gallery, WooCommerce, Video, and Testimonial modules.
+
+version 4.27.4 ( updated 11-25-2024 )
 - Fixed issue where image with lazy loading enabled are distorted on WordPress 6.7.
 	* includes/builder/core.php
 

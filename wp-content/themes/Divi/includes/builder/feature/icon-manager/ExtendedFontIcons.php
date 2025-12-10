@@ -289,7 +289,7 @@ if ( ! function_exists( 'et_pb_extended_process_font_icon' ) ) {
 	 * @return string
 	 */
 	function et_pb_extended_process_font_icon( $icon ) {
-		return et_pb_maybe_extended_icon( $icon ) ? et_pb_get_extended_font_icon_value( $icon, true ) : esc_attr( et_pb_process_font_icon( $icon ) );
+		return et_pb_maybe_extended_icon( $icon ) ? et_pb_get_extended_font_icon_value( $icon, true ) : esc_attr( html_entity_decode( et_pb_process_font_icon( $icon ), ENT_QUOTES, 'UTF-8' ) );
 	}
 }
 

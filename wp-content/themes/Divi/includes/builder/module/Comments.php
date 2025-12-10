@@ -589,12 +589,12 @@ class ET_Builder_Module_Comments extends ET_Builder_Module {
 			$comments_content,
 			$this->module_classname( $render_slug ),
 			$this->module_id(),
-			'' !== $comments_custom_icon ? sprintf( ' data-icon="%1$s"', esc_attr( et_pb_process_font_icon( $comments_custom_icon ) ) ) : '',
+			'' !== $comments_custom_icon ? sprintf( ' data-icon="%1$s"', esc_attr( html_entity_decode( et_pb_process_font_icon( $comments_custom_icon ), ENT_QUOTES, 'UTF-8' ) ) ) : '',
 			$video_background, // #5
 			$parallax_image_background,
 			et_core_esc_previously( $data_background_layout ),
-			'' !== $comments_custom_icon_tablet ? sprintf( ' data-icon-tablet="%1$s"', esc_attr( et_pb_process_font_icon( $comments_custom_icon_tablet ) ) ) : '',
-			'' !== $comments_custom_icon_phone ? sprintf( ' data-icon-phone="%1$s"', esc_attr( et_pb_process_font_icon( $comments_custom_icon_phone ) ) ) : '',
+			'' !== $comments_custom_icon_tablet ? sprintf( ' data-icon-tablet="%1$s"', esc_attr( html_entity_decode( et_pb_process_font_icon( $comments_custom_icon_tablet ), ENT_QUOTES, 'UTF-8' ) ) ) : '',
+			'' !== $comments_custom_icon_phone ? sprintf( ' data-icon-phone="%1$s"', esc_attr( html_entity_decode( et_pb_process_font_icon( $comments_custom_icon_phone ), ENT_QUOTES, 'UTF-8' ) ) ) : '',
 			$multi_view_data_attr, // #10
 			et_core_esc_previously( $this->background_pattern() ), // #11
 			et_core_esc_previously( $this->background_mask() ) // #12

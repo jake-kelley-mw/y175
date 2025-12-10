@@ -920,9 +920,9 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 
 				$button_rel = $this->props['button_rel'];
 
-				$icon_attr        = $button_icon ? et_pb_process_font_icon( $custom_icon ) : '';
-				$icon_attr_tablet = $button_icon_tablet ? et_pb_process_font_icon( $custom_icon_tablet ) : '';
-				$icon_attr_phone  = $button_icon_phone ? et_pb_process_font_icon( $custom_icon_phone ) : '';
+				$icon_attr        = $button_icon ? html_entity_decode( et_pb_process_font_icon( $custom_icon ), ENT_QUOTES, 'UTF-8' ) : '';
+				$icon_attr_tablet = $button_icon_tablet ? html_entity_decode( et_pb_process_font_icon( $custom_icon_tablet ), ENT_QUOTES, 'UTF-8' ) : '';
+				$icon_attr_phone  = $button_icon_phone ? html_entity_decode( et_pb_process_font_icon( $custom_icon_phone ), ENT_QUOTES, 'UTF-8' ) : '';
 
 				$html = sprintf(
 					'

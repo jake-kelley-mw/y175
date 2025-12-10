@@ -21647,7 +21647,7 @@ class ET_Builder_Element {
 		}
 		$data_icon = $use_data_icon ? sprintf(
 			' data-icon="%1$s"',
-			esc_attr( et_pb_process_font_icon( $args['custom_icon'] ) )
+			esc_attr( html_entity_decode( et_pb_process_font_icon( $args['custom_icon'] ), ENT_QUOTES, 'UTF-8' ) )
 		) : '';
 
 		$use_data_icon_tablet = '' !== $args['custom_icon_tablet'] && 'on' === $args['button_custom'];
@@ -21656,7 +21656,7 @@ class ET_Builder_Element {
 		}
 		$data_icon_tablet = $use_data_icon_tablet ? sprintf(
 			' data-icon-tablet="%1$s"',
-			esc_attr( et_pb_process_font_icon( $args['custom_icon_tablet'] ) )
+			esc_attr( html_entity_decode( et_pb_process_font_icon( $args['custom_icon_tablet'] ), ENT_QUOTES, 'UTF-8' ) )
 		) : '';
 
 		$use_data_icon_phone = '' !== $args['custom_icon_phone'] && 'on' === $args['button_custom'];
@@ -21665,7 +21665,7 @@ class ET_Builder_Element {
 		}
 		$data_icon_phone = $use_data_icon_phone ? sprintf(
 			' data-icon-phone="%1$s"',
-			esc_attr( et_pb_process_font_icon( $args['custom_icon_phone'] ) )
+			esc_attr( html_entity_decode( et_pb_process_font_icon( $args['custom_icon_phone'] ), ENT_QUOTES, 'UTF-8' ) )
 		) : '';
 
 		// Render button.
