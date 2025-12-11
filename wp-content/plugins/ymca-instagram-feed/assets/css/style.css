@@ -9,7 +9,7 @@
 .ymca-ig-feed {
     display: grid;
     grid-template-columns: repeat(var(--ymca-ig-columns, 4), 1fr);
-    gap: 4px;
+    gap: 15px;
     max-width: 100%;
 }
 
@@ -21,6 +21,7 @@
     overflow: hidden;
     background-color: #f0f0f0;
     text-decoration: none;
+    border-radius: 12px;
 }
 
 /* Post Image */
@@ -100,13 +101,23 @@
     .ymca-ig-feed {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    /* Hover Overlay */
+    .ymca-ig-feed__overlay {
+        display: none;
+    }
+
+    .ymca-ig-feed__item:hover .ymca-ig-feed__image,
+    .ymca-ig-feed__item:focus .ymca-ig-feed__image {
+        transform: none;
+    }
 }
 
 /* Responsive: Small Mobile */
 @media (max-width: 480px) {
     .ymca-ig-feed {
         grid-template-columns: repeat(2, 1fr);
-        gap: 2px;
+        gap: 10px;
     }
     
     .ymca-ig-feed__icon {
@@ -119,9 +130,9 @@
         height: 18px;
     }
     
-    .ymca-ig-feed__overlay {
+    /* .ymca-ig-feed__overlay {
         padding: 10px;
-    }
+    } */
     
     .ymca-ig-feed__caption {
         font-size: 11px;
