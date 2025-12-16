@@ -71,9 +71,52 @@ class YMCA_Instagram_Feed {
         // Cron hook for refreshing feed
         add_action( 'ymca_ig_feed_cron_refresh', array( $this, 'cron_refresh_feed' ) );
 
+        // REST API endpoint for external cron (Pantheon)
+        add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+
         // Schedule cron on plugin activation
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+    }
+
+    /**
+     * Register REST API routes
+     */
+    public function register_rest_routes() {
+        register_rest_route( 'ymca-ig-feed/v1', '/refresh', array(
+            'methods'             => 'GET',
+            'callback'            => array( $this, 'rest_refresh_feed' ),
+            'permission_callback' => array( $this, 'verify_refresh_token' ),
+        ) );
+    }
+
+    /**
+     * Verify the refresh token for REST API
+     */
+    public function verify_refresh_token( $request ) {
+        $options = get_option( 'ymca_ig_feed_settings', array() );
+        $stored_token = isset( $options['cron_token'] ) ? $options['cron_token'] : '';
+        
+        // If no token set, deny access
+        if ( empty( $stored_token ) ) {
+            return false;
+        }
+
+        $provided_token = $request->get_param( 'token' );
+        return hash_equals( $stored_token, $provided_token );
+    }
+
+    /**
+     * REST API callback to refresh feed
+     */
+    public function rest_refresh_feed( $request ) {
+        $cache = new YMCA_IG_Feed_Cache();
+        $result = $cache->refresh();
+
+        return new WP_REST_Response( array(
+            'success' => $result,
+            'time'    => current_time( 'mysql' ),
+        ), $result ? 200 : 500 );
     }
 
     /**

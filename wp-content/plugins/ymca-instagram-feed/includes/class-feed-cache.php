@@ -91,6 +91,9 @@ class YMCA_IG_Feed_Cache {
         // Update last refresh time
         update_option( 'ymca_ig_feed_last_refresh', current_time( 'mysql' ) );
 
+        // Clear page caches so fresh content is served
+        $this->clear_page_cache();
+
         $this->log( sprintf( 
             'Cache refreshed: %d posts fetched, %d posts after filtering.',
             count( $posts ),
@@ -105,7 +108,29 @@ class YMCA_IG_Feed_Cache {
      */
     public function clear() {
         delete_transient( $this->cache_key );
+        $this->clear_page_cache();
         $this->log( 'Cache cleared.' );
+    }
+
+    /**
+     * Clear page/edge caches (Pantheon, other hosts)
+     * Call this after updating the feed to ensure fresh content is served
+     */
+    public function clear_page_cache() {
+        // Clear Pantheon edge cache
+        if ( function_exists( 'pantheon_wp_clear_edge_all' ) ) {
+            pantheon_wp_clear_edge_all();
+            $this->log( 'Pantheon edge cache cleared.' );
+        }
+
+        // Clear Pantheon Redis object cache
+        if ( function_exists( 'wp_cache_flush' ) ) {
+            wp_cache_flush();
+            $this->log( 'Object cache flushed.' );
+        }
+
+        // Trigger action for other caching plugins
+        do_action( 'ymca_ig_feed_cache_cleared' );
     }
 
     /**

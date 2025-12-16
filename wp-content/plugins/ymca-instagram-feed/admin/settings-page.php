@@ -181,6 +181,18 @@ class YMCA_IG_Feed_Admin {
                 'max' => 1440,
             )
         );
+
+        add_settings_field(
+            'cron_token',
+            __( 'External Cron Token', 'ymca-instagram-feed' ),
+            array( $this, 'render_cron_token_field' ),
+            'ymca-instagram-feed',
+            'ymca_ig_feed_cache_section',
+            array( 
+                'field' => 'cron_token',
+                'description' => __( 'Token for external cron refresh (Pantheon). Leave empty to auto-generate.', 'ymca-instagram-feed' ),
+            )
+        );
     }
 
     /**
@@ -224,6 +236,15 @@ class YMCA_IG_Feed_Admin {
         $sanitized['refresh_interval'] = isset( $input['refresh_interval'] ) 
             ? max( 5, min( 1440, absint( $input['refresh_interval'] ) ) ) 
             : 30;
+
+        // Handle cron token - generate if empty
+        if ( ! empty( $input['cron_token'] ) ) {
+            $sanitized['cron_token'] = sanitize_text_field( $input['cron_token'] );
+        } elseif ( ! empty( $existing['cron_token'] ) ) {
+            $sanitized['cron_token'] = $existing['cron_token'];
+        } else {
+            $sanitized['cron_token'] = wp_generate_password( 32, false );
+        }
 
         // Clear cache when settings change
         $cache = new YMCA_IG_Feed_Cache();
@@ -450,6 +471,39 @@ class YMCA_IG_Feed_Admin {
                 <?php echo esc_html( $args['description'] ); ?>
             <?php endif; ?>
         </label>
+        <?php
+    }
+
+    /**
+     * Render cron token field with URL display
+     */
+    public function render_cron_token_field( $args ) {
+        $settings = get_option( $this->option_name, array() );
+        $field = $args['field'];
+        $value = isset( $settings[ $field ] ) ? $settings[ $field ] : '';
+        
+        // Generate token if not set
+        if ( empty( $value ) ) {
+            $value = wp_generate_password( 32, false );
+        }
+
+        $cron_url = rest_url( 'ymca-ig-feed/v1/refresh' ) . '?token=' . $value;
+        ?>
+        <input 
+            type="text" 
+            name="<?php echo esc_attr( $this->option_name . '[' . $field . ']' ); ?>"
+            value="<?php echo esc_attr( $value ); ?>"
+            class="regular-text code"
+            readonly
+        >
+        <p class="description"><?php echo esc_html( $args['description'] ); ?></p>
+        <p class="description">
+            <strong><?php _e( 'External Cron URL:', 'ymca-instagram-feed' ); ?></strong><br>
+            <code style="word-break: break-all;"><?php echo esc_url( $cron_url ); ?></code>
+        </p>
+        <p class="description">
+            <?php _e( 'For Pantheon: Add this URL to a server cron job or use a service like cron-job.org to call it every 15-30 minutes.', 'ymca-instagram-feed' ); ?>
+        </p>
         <?php
     }
 
