@@ -1226,3 +1226,28 @@ textarea {
 }
 
 
+
+/* ------ Press Room Styles ------ */
+
+.y175-press-release p {
+  color: #f15922 !important;
+}
+
+.y175-press-release a {
+  font-family: 'Cachet Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -1px;
+  line-height: 1.2em;
+  color: #f15922 !important;
+}
+
+.y175-pressroom-about p {
+  color: #ffffff !important;
+}
+
+.y175-pr-image-cap p {
+  color: #ffffff !important;
+  font-size: 11px !important;
+}
