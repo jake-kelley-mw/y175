@@ -476,3 +476,181 @@ function ymca_175_event_tracking() {
     <?php
 }
 add_action('wp_footer', 'ymca_175_event_tracking', 20);
+
+
+/**
+ * Media Coverage Grid Shortcode
+ * Displays ACF repeater content in a responsive grid
+ * Usage: [media_coverage]
+ */
+
+function ymca_media_coverage_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'columns' => 3,
+        'limit' => -1,
+        'order' => 'desc',
+    ), $atts);
+
+    // Check if ACF is active
+    if (!function_exists('get_field')) {
+        return '<!-- ACF not active -->';
+    }
+
+    $media_items = get_field('add_media_coverage');
+
+    if (empty($media_items)) {
+        return '';
+    }
+
+    // Apply limit if set
+    if ($atts['limit'] > 0) {
+        $media_items = array_slice($media_items, 0, (int)$atts['limit']);
+    }
+
+    // Sort by date
+    usort($media_items, function($a, $b) use ($atts) {
+        $date_a = strtotime($a['mc_article_date'] ?? '');
+        $date_b = strtotime($b['mc_article_date'] ?? '');
+        return ($atts['order'] === 'asc') ? $date_a - $date_b : $date_b - $date_a;
+    });
+
+    ob_start();
+    ?>
+    <div class="mc-grid mc-cols-<?php echo esc_attr($atts['columns']); ?>">
+        <?php foreach ($media_items as $item) :
+            $headline = $item['mc_article_headline'] ?? '';
+            $date = $item['mc_article_date'] ?? '';
+            $preview = $item['mc_article_preview'] ?? '';
+            $pub_title = $item['mc_publication_title'] ?? '';
+            $pub_logo = $item['mc_publication_logo'] ?? '';
+            $link = $item['mc_article_link'] ?? '#';
+
+            // Get optimized image URL (medium size for performance)
+            $logo_url = '';
+            $logo_alt = '';
+            if ($pub_logo) {
+                if (is_array($pub_logo)) {
+                    $logo_url = $pub_logo['sizes']['medium'] ?? $pub_logo['url'];
+                    $logo_alt = $pub_logo['alt'] ?? $pub_title;
+                } else {
+                    $logo_url = wp_get_attachment_image_url($pub_logo, 'medium');
+                    $logo_alt = get_post_meta($pub_logo, '_wp_attachment_image_alt', true) ?: $pub_title;
+                }
+            }
+        ?>
+        <div class="mc-card">
+            <?php if ($logo_url) : ?>
+            <div class="mc-card-logo">
+                <img src="<?php echo esc_url($logo_url); ?>" 
+                     alt="<?php echo esc_attr($logo_alt); ?>" 
+                     loading="lazy" 
+                     decoding="async">
+            </div>
+            <?php elseif ($pub_title) : ?>
+            <div class="mc-card-logo mc-card-logo-text">
+                <span><?php echo esc_html($pub_title); ?></span>
+            </div>
+            <?php endif; ?>
+
+            <div class="mc-card-content">
+                <?php if ($date) : ?>
+                <time class="mc-card-date" datetime="<?php echo esc_attr(date('Y-m-d', strtotime($date))); ?>">
+                    <?php echo esc_html($date); ?>
+                </time>
+                <?php endif; ?>
+
+                <?php if ($headline) : ?>
+                <h3 class="mc-card-headline"><?php echo esc_html($headline); ?></h3>
+                <?php endif; ?>
+
+                <?php if ($preview) : ?>
+                <p class="mc-card-preview"><?php echo esc_html($preview); ?></p>
+                <?php endif; ?>
+
+                <?php if ($pub_title) : ?>
+                <span class="mc-card-source"><?php echo esc_html($pub_title); ?></span>
+                <?php endif; ?>
+            </div>
+
+            <a href="<?php echo esc_url($link); ?>" class="mc-card-cta" target="_blank" rel="noopener noreferrer">
+                Read Article
+                <svg class="mc-cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+            </a>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('media_coverage', 'ymca_media_coverage_shortcode');
+
+/**
+ * Preferred Vendors Grid Shortcode
+ * Displays ACF repeater content in a responsive grid
+ * Usage: [preferred_vendors]
+ */
+
+function ymca_preferred_vendors_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'columns' => 3,
+        'limit' => -1,
+    ), $atts);
+
+    if (!function_exists('get_field')) {
+        return '<!-- ACF not active -->';
+    }
+
+    $vendor_items = get_field('pv_add_preferred_vendor');
+
+    if (empty($vendor_items)) {
+        return '';
+    }
+
+    if ($atts['limit'] > 0) {
+        $vendor_items = array_slice($vendor_items, 0, (int)$atts['limit']);
+    }
+
+    ob_start();
+    ?>
+    <div class="pv-grid pv-cols-<?php echo esc_attr($atts['columns']); ?>">
+        <?php foreach ($vendor_items as $item) :
+            $image = $item['example_product_image'] ?? '';
+            $button_label = $item['vendor_website_link']['pv_button_label'] ?? 'Visit Vendor';
+            $button_link = $item['vendor_website_link']['pv_button_link'] ?? '#';
+
+            $image_url = '';
+            $image_alt = '';
+            if ($image) {
+                if (is_array($image)) {
+                    $image_url = $image['sizes']['large'] ?? $image['url'];
+                    $image_alt = $image['alt'] ?? 'Vendor Product';
+                } else {
+                    $image_url = wp_get_attachment_image_url($image, 'large');
+                    $image_alt = get_post_meta($image, '_wp_attachment_image_alt', true) ?: 'Vendor Product';
+                }
+            }
+        ?>
+        <div class="pv-card">
+            <?php if ($image_url) : ?>
+            <div class="pv-card-image">
+                <img src="<?php echo esc_url($image_url); ?>" 
+                     alt="<?php echo esc_attr($image_alt); ?>" 
+                     loading="lazy" 
+                     decoding="async">
+            </div>
+            <?php endif; ?>
+
+            <a href="<?php echo esc_url($button_link); ?>" 
+               class="pv-card-cta" 
+               target="_blank" 
+               rel="noopener noreferrer">
+                <?php echo esc_html($button_label); ?>
+                <svg class="pv-cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+            </a>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('preferred_vendors', 'ymca_preferred_vendors_shortcode');
