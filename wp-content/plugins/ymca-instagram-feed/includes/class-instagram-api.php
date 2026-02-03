@@ -38,6 +38,15 @@ class YMCA_IG_Feed_API {
     }
 
     /**
+     * Check if token refresh credentials are configured
+     */
+    public function can_refresh_token() {
+        return ! empty( $this->settings['app_id'] ) 
+            && ! empty( $this->settings['app_secret'] )
+            && ! empty( $this->settings['access_token'] );
+    }
+
+    /**
      * Fetch posts from Instagram
      * 
      * @param int $limit Maximum number of posts to fetch from API (before filtering)
@@ -192,28 +201,35 @@ class YMCA_IG_Feed_API {
     /**
      * Attempt to refresh the access token
      * 
+     * For Facebook Graph API tokens, we use the fb_exchange_token endpoint
+     * which requires App ID and App Secret.
+     * 
      * @return bool Success status
      */
     public function attempt_token_refresh() {
-        if ( empty( $this->settings['access_token'] ) ) {
+        if ( ! $this->can_refresh_token() ) {
+            $this->log_error( 'Token refresh failed: App ID and App Secret are required for token refresh.' );
             return false;
         }
 
+        $app_id = sanitize_text_field( $this->settings['app_id'] );
+        $app_secret = sanitize_text_field( $this->settings['app_secret'] );
         $access_token = sanitize_text_field( $this->settings['access_token'] );
 
-        // Long-lived tokens can be refreshed by calling this endpoint
-        // Token must be at least 24 hours old and not expired
+        // Facebook Graph API token refresh endpoint
         $url = add_query_arg( array(
-            'grant_type'   => 'ig_refresh_token',
-            'access_token' => $access_token,
-        ), "{$this->api_base}/refresh_access_token" );
+            'grant_type'        => 'fb_exchange_token',
+            'client_id'         => $app_id,
+            'client_secret'     => $app_secret,
+            'fb_exchange_token' => $access_token,
+        ), "{$this->api_base}/oauth/access_token" );
 
         $response = wp_remote_get( $url, array(
             'timeout' => 30,
         ) );
 
         if ( is_wp_error( $response ) ) {
-            $this->log_error( 'Token refresh failed: ' . $response->get_error_message() );
+            $this->log_error( 'Token refresh request failed: ' . $response->get_error_message() );
             return false;
         }
 
@@ -240,6 +256,11 @@ class YMCA_IG_Feed_API {
      * Called periodically via cron
      */
     public function maybe_refresh_token() {
+        // Skip if we can't refresh anyway
+        if ( ! $this->can_refresh_token() ) {
+            return;
+        }
+
         if ( empty( $this->settings['token_updated'] ) ) {
             return;
         }
@@ -251,6 +272,41 @@ class YMCA_IG_Feed_API {
         if ( $days_since > 50 ) {
             $this->attempt_token_refresh();
         }
+    }
+
+    /**
+     * Get token expiration status
+     * 
+     * @return array Status info
+     */
+    public function get_token_status() {
+        if ( empty( $this->settings['token_updated'] ) ) {
+            return array(
+                'status'  => 'unknown',
+                'message' => __( 'Token update date unknown.', 'ymca-instagram-feed' ),
+            );
+        }
+
+        $last_update = strtotime( $this->settings['token_updated'] );
+        $days_since = ( time() - $last_update ) / DAY_IN_SECONDS;
+        $days_remaining = 60 - $days_since;
+
+        if ( $days_remaining <= 0 ) {
+            return array(
+                'status'  => 'expired',
+                'message' => __( 'Token has expired. Please generate a new one.', 'ymca-instagram-feed' ),
+            );
+        } elseif ( $days_remaining <= 10 ) {
+            return array(
+                'status'  => 'expiring_soon',
+                'message' => sprintf( __( 'Token expires in %d days. Will auto-refresh if App ID/Secret are configured.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
+            );
+        }
+
+        return array(
+            'status'  => 'valid',
+            'message' => sprintf( __( 'Token valid for ~%d more days.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
+        );
     }
 
     /**

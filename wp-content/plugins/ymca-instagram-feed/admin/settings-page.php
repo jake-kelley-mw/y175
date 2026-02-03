@@ -82,6 +82,30 @@ class YMCA_IG_Feed_Admin {
             )
         );
 
+        add_settings_field(
+            'app_id',
+            __( 'Facebook App ID', 'ymca-instagram-feed' ),
+            array( $this, 'render_text_field' ),
+            'ymca-instagram-feed',
+            'ymca_ig_feed_api_section',
+            array( 
+                'field' => 'app_id',
+                'description' => __( 'Required for automatic token refresh. Found in your Facebook Developer App settings.', 'ymca-instagram-feed' ),
+            )
+        );
+
+        add_settings_field(
+            'app_secret',
+            __( 'Facebook App Secret', 'ymca-instagram-feed' ),
+            array( $this, 'render_password_field' ),
+            'ymca-instagram-feed',
+            'ymca_ig_feed_api_section',
+            array( 
+                'field' => 'app_secret',
+                'description' => __( 'Required for automatic token refresh. Keep this secret!', 'ymca-instagram-feed' ),
+            )
+        );
+
         // Filter Section
         add_settings_section(
             'ymca_ig_feed_filter_section',
@@ -190,7 +214,7 @@ class YMCA_IG_Feed_Admin {
             'ymca_ig_feed_cache_section',
             array( 
                 'field' => 'cron_token',
-                'description' => __( 'Token for external cron refresh (Pantheon). Leave empty to auto-generate.', 'ymca-instagram-feed' ),
+                'description' => __( 'Token for external cron refresh (Pantheon).', 'ymca-instagram-feed' ),
             )
         );
     }
@@ -201,7 +225,7 @@ class YMCA_IG_Feed_Admin {
     public function sanitize_settings( $input ) {
         $sanitized = array();
 
-        // Preserve existing token_updated timestamp if token hasn't changed
+        // Preserve existing values
         $existing = get_option( $this->option_name, array() );
         
         $sanitized['instagram_id'] = isset( $input['instagram_id'] ) 
@@ -218,6 +242,14 @@ class YMCA_IG_Feed_Admin {
         } else {
             $sanitized['token_updated'] = $existing['token_updated'] ?? '';
         }
+
+        $sanitized['app_id'] = isset( $input['app_id'] ) 
+            ? sanitize_text_field( $input['app_id'] ) 
+            : '';
+
+        $sanitized['app_secret'] = isset( $input['app_secret'] ) 
+            ? sanitize_text_field( $input['app_secret'] ) 
+            : '';
 
         $sanitized['hashtags'] = isset( $input['hashtags'] ) 
             ? sanitize_text_field( $input['hashtags'] ) 
@@ -297,6 +329,7 @@ class YMCA_IG_Feed_Admin {
         $api = new YMCA_IG_Feed_API();
         $last_error = get_option( 'ymca_ig_feed_last_error', array() );
         $settings = get_option( $this->option_name, array() );
+        $token_status = $api->get_token_status();
         ?>
         <div class="card" style="max-width: 600px; margin-bottom: 20px; padding: 15px;">
             <h2 style="margin-top: 0;"><?php _e( 'Status', 'ymca-instagram-feed' ); ?></h2>
@@ -310,6 +343,28 @@ class YMCA_IG_Feed_Admin {
                         <?php else : ?>
                             <span style="color: red;">&#10008; <?php _e( 'No', 'ymca-instagram-feed' ); ?></span>
                         <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong><?php _e( 'Token Refresh Enabled', 'ymca-instagram-feed' ); ?></strong></td>
+                    <td>
+                        <?php if ( $api->can_refresh_token() ) : ?>
+                            <span style="color: green;">&#10004; <?php _e( 'Yes', 'ymca-instagram-feed' ); ?></span>
+                        <?php else : ?>
+                            <span style="color: orange;">&#10008; <?php _e( 'No - Add App ID and App Secret', 'ymca-instagram-feed' ); ?></span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong><?php _e( 'Token Status', 'ymca-instagram-feed' ); ?></strong></td>
+                    <td>
+                        <?php 
+                        $color = 'gray';
+                        if ( $token_status['status'] === 'valid' ) $color = 'green';
+                        if ( $token_status['status'] === 'expiring_soon' ) $color = 'orange';
+                        if ( $token_status['status'] === 'expired' ) $color = 'red';
+                        ?>
+                        <span style="color: <?php echo $color; ?>;"><?php echo esc_html( $token_status['message'] ); ?></span>
                     </td>
                 </tr>
                 <tr>
@@ -359,7 +414,7 @@ class YMCA_IG_Feed_Admin {
      * Render API section description
      */
     public function render_api_section() {
-        echo '<p>' . __( 'Enter your Instagram Graph API credentials. These are obtained through the Facebook Developer portal.', 'ymca-instagram-feed' ) . '</p>';
+        echo '<p>' . __( 'Enter your Instagram Graph API credentials. App ID and App Secret are required for automatic token refresh.', 'ymca-instagram-feed' ) . '</p>';
     }
 
     /**
@@ -384,6 +439,26 @@ class YMCA_IG_Feed_Admin {
             value="<?php echo esc_attr( $value ); ?>"
             placeholder="<?php echo esc_attr( $placeholder ); ?>"
             class="regular-text"
+        >
+        <?php if ( isset( $args['description'] ) ) : ?>
+            <p class="description"><?php echo esc_html( $args['description'] ); ?></p>
+        <?php endif;
+    }
+
+    /**
+     * Render password input field
+     */
+    public function render_password_field( $args ) {
+        $settings = get_option( $this->option_name, array() );
+        $field = $args['field'];
+        $value = isset( $settings[ $field ] ) ? $settings[ $field ] : '';
+        ?>
+        <input 
+            type="password" 
+            name="<?php echo esc_attr( $this->option_name . '[' . $field . ']' ); ?>"
+            value="<?php echo esc_attr( $value ); ?>"
+            class="regular-text"
+            autocomplete="off"
         >
         <?php if ( isset( $args['description'] ) ) : ?>
             <p class="description"><?php echo esc_html( $args['description'] ); ?></p>

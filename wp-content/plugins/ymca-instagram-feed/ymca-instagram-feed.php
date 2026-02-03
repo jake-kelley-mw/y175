@@ -2,7 +2,7 @@
 /**
  * Plugin Name: YMCA Instagram Feed
  * Description: Displays Instagram posts filtered by hashtags with server-side caching for optimal performance.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Jake
  * Text Domain: ymca-instagram-feed
  */
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'YMCA_IG_FEED_VERSION', '1.0.0' );
+define( 'YMCA_IG_FEED_VERSION', '1.1.0' );
 define( 'YMCA_IG_FEED_PATH', plugin_dir_path( __FILE__ ) );
 define( 'YMCA_IG_FEED_URL', plugin_dir_url( __FILE__ ) );
 
