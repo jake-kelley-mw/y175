@@ -122,7 +122,6 @@ class Background_Process_Media extends Background_Process {
 		session_write_close();
 		\ewwwio_debug_message( '<b>' . __METHOD__ . '()</b>' );
 		ewwwio()->defer = false;
-		$max_attempts   = 15;
 		$attachment_id  = $item['attachment_id'];
 		if ( empty( $item['attempts'] ) && ! empty( $item['new'] ) ) {
 			ewwwio_debug_message( 'first attempt on new upload, going to sleep for a second' );
@@ -333,9 +332,8 @@ class Background_Process_Media extends Background_Process {
 			return;
 		}
 
-		$gallery = 'media';
-		$size    = 'full';
-		$queued  = 0;
+		$size   = 'full';
+		$queued = 0;
 		ewwwio_debug_message( "attachment id: $id" );
 
 		session_write_close();
@@ -349,7 +347,7 @@ class Background_Process_Media extends Background_Process {
 
 		$attached_file = ! empty( $this->attachments_meta[ $id ]['_wp_attached_file'] ) ? $this->attachments_meta[ $id ]['_wp_attached_file'] : '';
 
-		list( $file_path, $upload_path ) = ewww_image_optimizer_attachment_path( $meta, $id, $attached_file, false );
+		$file_path = \ewww_image_optimizer_attachment_path( $meta, $id, $attached_file, false );
 
 		/**
 		 * Allow altering the metadata or performing other actions before the plugin processes an attachement.
@@ -394,7 +392,6 @@ class Background_Process_Media extends Background_Process {
 			$queued += $this->queue_single_size( $id, $size, $hidpi_path, $item );
 		}
 
-		$base_dir = trailingslashit( dirname( $file_path ) );
 		// Resized versions, so we can continue.
 		if ( isset( $meta['sizes'] ) && ewww_image_optimizer_iterable( $meta['sizes'] ) ) {
 			$disabled_sizes = ewww_image_optimizer_get_option( 'ewww_image_optimizer_disable_resizes_opt', false, true );
@@ -518,7 +515,7 @@ class Background_Process_Media extends Background_Process {
 		$file_path = false;
 		$meta      = \wp_get_attachment_metadata( $item['attachment_id'] );
 		if ( ! empty( $meta ) ) {
-			list( $file_path, $upload_path ) = \ewww_image_optimizer_attachment_path( $meta, $item['attachment_id'] );
+			$file_path = \ewww_image_optimizer_attachment_path( $meta, $item['attachment_id'] );
 		}
 
 		if ( $file_path ) {

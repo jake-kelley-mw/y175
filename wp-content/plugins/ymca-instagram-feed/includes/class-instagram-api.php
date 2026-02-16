@@ -47,6 +47,73 @@ class YMCA_IG_Feed_API {
     }
 
     /**
+     * Validate the current token with Facebook's debug endpoint
+     * Returns actual expiration info from Facebook, not our stored timestamp
+     * 
+     * @return array Token info including 'is_valid', 'expires_at', 'days_remaining', 'error'
+     */
+    public function validate_token() {
+        if ( ! $this->is_configured() ) {
+            return array(
+                'is_valid' => false,
+                'error'    => 'API credentials not configured',
+            );
+        }
+
+        if ( ! $this->can_refresh_token() ) {
+            return array(
+                'is_valid' => false,
+                'error'    => 'App ID and App Secret required for token validation',
+            );
+        }
+
+        $access_token = sanitize_text_field( $this->settings['access_token'] );
+        $app_id = sanitize_text_field( $this->settings['app_id'] );
+        $app_secret = sanitize_text_field( $this->settings['app_secret'] );
+
+        // Use Facebook's token debug endpoint
+        $url = add_query_arg( array(
+            'input_token'  => $access_token,
+            'access_token' => $app_id . '|' . $app_secret,
+        ), "{$this->api_base}/debug_token" );
+
+        $response = wp_remote_get( $url, array( 'timeout' => 15 ) );
+
+        if ( is_wp_error( $response ) ) {
+            return array(
+                'is_valid' => false,
+                'error'    => $response->get_error_message(),
+            );
+        }
+
+        $body = wp_remote_retrieve_body( $response );
+        $data = json_decode( $body, true );
+
+        if ( ! isset( $data['data'] ) ) {
+            return array(
+                'is_valid' => false,
+                'error'    => 'Invalid response from Facebook',
+            );
+        }
+
+        $token_data = $data['data'];
+        $is_valid = ! empty( $token_data['is_valid'] );
+        $expires_at = isset( $token_data['expires_at'] ) ? $token_data['expires_at'] : null;
+        
+        $days_remaining = null;
+        if ( $expires_at && $expires_at > 0 ) {
+            $days_remaining = ( $expires_at - time() ) / DAY_IN_SECONDS;
+        }
+
+        return array(
+            'is_valid'       => $is_valid,
+            'expires_at'     => $expires_at,
+            'days_remaining' => $days_remaining,
+            'error'          => isset( $token_data['error']['message'] ) ? $token_data['error']['message'] : null,
+        );
+    }
+
+    /**
      * Fetch posts from Instagram
      * 
      * @param int $limit Maximum number of posts to fetch from API (before filtering)
@@ -208,7 +275,18 @@ class YMCA_IG_Feed_API {
      */
     public function attempt_token_refresh() {
         if ( ! $this->can_refresh_token() ) {
-            $this->log_error( 'Token refresh failed: App ID and App Secret are required for token refresh.' );
+            $error_msg = 'Token refresh failed: App ID and App Secret are required.';
+            $this->log_error( $error_msg );
+            $this->send_failure_notification( $error_msg );
+            return false;
+        }
+
+        // First check if current token is still valid (can't refresh expired tokens)
+        $validation = $this->validate_token();
+        if ( ! $validation['is_valid'] ) {
+            $error_msg = 'Token refresh failed: Current token is already invalid or expired. A new token must be generated manually.';
+            $this->log_error( $error_msg );
+            $this->send_failure_notification( $error_msg );
             return false;
         }
 
@@ -229,7 +307,9 @@ class YMCA_IG_Feed_API {
         ) );
 
         if ( is_wp_error( $response ) ) {
-            $this->log_error( 'Token refresh request failed: ' . $response->get_error_message() );
+            $error_msg = 'Token refresh request failed: ' . $response->get_error_message();
+            $this->log_error( $error_msg );
+            $this->send_failure_notification( $error_msg );
             return false;
         }
 
@@ -237,18 +317,79 @@ class YMCA_IG_Feed_API {
         $data = json_decode( $body, true );
 
         if ( isset( $data['access_token'] ) ) {
-            // Update stored token
-            $this->settings['access_token'] = $data['access_token'];
-            $this->settings['token_updated'] = current_time( 'mysql' );
-            update_option( 'ymca_ig_feed_settings', $this->settings );
+            $new_token = $data['access_token'];
+            $old_token = $this->settings['access_token'];
+            
+            // Temporarily set new token to validate it
+            $this->settings['access_token'] = $new_token;
+            $new_validation = $this->validate_token();
+            
+            if ( ! $new_validation['is_valid'] ) {
+                // New token is invalid, restore old one
+                $this->settings['access_token'] = $old_token;
+                $error_msg = 'Token refresh failed: New token failed validation.';
+                $this->log_error( $error_msg );
+                $this->send_failure_notification( $error_msg );
+                return false;
+            }
 
-            $this->log_info( 'Access token refreshed successfully.' );
+            // New token is valid, save everything
+            $this->settings['token_updated'] = current_time( 'mysql' );
+            
+            if ( ! empty( $new_validation['expires_at'] ) ) {
+                $this->settings['token_expires'] = $new_validation['expires_at'];
+            }
+            
+            update_option( 'ymca_ig_feed_settings', $this->settings );
+            
+            // Clear error since we succeeded
+            delete_option( 'ymca_ig_feed_last_error' );
+
+            $this->log_info( 'Access token refreshed and verified successfully.' );
             return true;
         }
 
         $error = isset( $data['error']['message'] ) ? $data['error']['message'] : 'Unknown error';
-        $this->log_error( 'Token refresh failed: ' . $error );
+        $error_msg = 'Token refresh failed: ' . $error;
+        $this->log_error( $error_msg );
+        $this->send_failure_notification( $error_msg );
         return false;
+    }
+
+    /**
+     * Send email notification when token refresh fails
+     * 
+     * @param string $error_message The error details
+     */
+    private function send_failure_notification( $error_message ) {
+        // Only send once per day to avoid spam
+        $last_notification = get_option( 'ymca_ig_feed_last_notification', 0 );
+        if ( ( time() - $last_notification ) < DAY_IN_SECONDS ) {
+            return;
+        }
+
+        $admin_email = get_option( 'admin_email' );
+        $site_name = get_bloginfo( 'name' );
+        $settings_url = admin_url( 'options-general.php?page=ymca-instagram-feed' );
+
+        $subject = "[{$site_name}] ACTION REQUIRED: Instagram Feed Token Issue";
+        
+        $message = "The Instagram Feed plugin encountered a problem with its access token.\n\n";
+        $message .= "Error: {$error_message}\n\n";
+        $message .= "ACTION REQUIRED: The Instagram feed may stop working soon if this is not addressed.\n\n";
+        $message .= "To fix this, generate a new access token:\n\n";
+        $message .= "1. Go to: https://developers.facebook.com/tools/explorer\n";
+        $message .= "2. Select your app from the dropdown\n";
+        $message .= "3. Add permissions: instagram_basic, pages_read_engagement, pages_show_list, business_management\n";
+        $message .= "4. Click 'Generate Access Token' and complete the authorization\n";
+        $message .= "5. Exchange for long-lived token using the URL format in your documentation\n";
+        $message .= "6. Paste the new token here: {$settings_url}\n\n";
+        $message .= "This email is sent at most once per day while the issue persists.";
+
+        wp_mail( $admin_email, $subject, $message );
+        
+        update_option( 'ymca_ig_feed_last_notification', time() );
+        $this->log_info( 'Failure notification email sent to ' . $admin_email );
     }
 
     /**
@@ -261,51 +402,91 @@ class YMCA_IG_Feed_API {
             return;
         }
 
-        if ( empty( $this->settings['token_updated'] ) ) {
+        // Validate token with Facebook to get real expiration
+        $validation = $this->validate_token();
+        
+        if ( ! $validation['is_valid'] ) {
+            // Token is already invalid
+            $error_msg = 'Token is invalid: ' . ( $validation['error'] ?? 'Unknown error' );
+            $this->log_error( $error_msg );
+            $this->send_failure_notification( $error_msg );
             return;
         }
 
-        $last_update = strtotime( $this->settings['token_updated'] );
-        $days_since = ( time() - $last_update ) / DAY_IN_SECONDS;
+        // Check days remaining from Facebook's response
+        $days_remaining = $validation['days_remaining'];
+        
+        if ( $days_remaining === null ) {
+            // Couldn't determine expiration, try to refresh anyway if our timestamp is old
+            if ( ! empty( $this->settings['token_updated'] ) ) {
+                $last_update = strtotime( $this->settings['token_updated'] );
+                $days_since = ( time() - $last_update ) / DAY_IN_SECONDS;
+                
+                if ( $days_since > 45 ) {
+                    $this->attempt_token_refresh();
+                }
+            }
+            return;
+        }
 
-        // Refresh if token is older than 50 days (expires at 60)
-        if ( $days_since > 50 ) {
+        // Refresh at 45 days remaining (gives 15 days buffer)
+        if ( $days_remaining <= 45 ) {
+            $this->log_info( "Token expires in {$days_remaining} days, attempting refresh." );
             $this->attempt_token_refresh();
         }
     }
 
     /**
-     * Get token expiration status
+     * Get token expiration status based on actual Facebook validation
      * 
      * @return array Status info
      */
     public function get_token_status() {
-        if ( empty( $this->settings['token_updated'] ) ) {
+        if ( ! $this->can_refresh_token() ) {
             return array(
                 'status'  => 'unknown',
-                'message' => __( 'Token update date unknown.', 'ymca-instagram-feed' ),
+                'message' => __( 'Add App ID and App Secret to enable token monitoring.', 'ymca-instagram-feed' ),
             );
         }
 
-        $last_update = strtotime( $this->settings['token_updated'] );
-        $days_since = ( time() - $last_update ) / DAY_IN_SECONDS;
-        $days_remaining = 60 - $days_since;
+        $validation = $this->validate_token();
+
+        if ( ! $validation['is_valid'] ) {
+            return array(
+                'status'  => 'expired',
+                'message' => __( 'Token is invalid or expired. Generate a new token.', 'ymca-instagram-feed' ),
+            );
+        }
+
+        $days_remaining = $validation['days_remaining'];
+
+        if ( $days_remaining === null ) {
+            return array(
+                'status'  => 'valid',
+                'message' => __( 'Token is valid (expiration unknown).', 'ymca-instagram-feed' ),
+            );
+        }
 
         if ( $days_remaining <= 0 ) {
             return array(
                 'status'  => 'expired',
-                'message' => __( 'Token has expired. Please generate a new one.', 'ymca-instagram-feed' ),
+                'message' => __( 'Token has expired. Generate a new token.', 'ymca-instagram-feed' ),
             );
         } elseif ( $days_remaining <= 10 ) {
             return array(
                 'status'  => 'expiring_soon',
-                'message' => sprintf( __( 'Token expires in %d days. Will auto-refresh if App ID/Secret are configured.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
+                'message' => sprintf( __( 'Token expires in %d days. Auto-refresh will attempt soon.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
+            );
+        } elseif ( $days_remaining <= 45 ) {
+            return array(
+                'status'  => 'valid',
+                'message' => sprintf( __( 'Token valid for %d days. Auto-refresh scheduled.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
             );
         }
 
         return array(
             'status'  => 'valid',
-            'message' => sprintf( __( 'Token valid for ~%d more days.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
+            'message' => sprintf( __( 'Token valid for %d days.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
         );
     }
 

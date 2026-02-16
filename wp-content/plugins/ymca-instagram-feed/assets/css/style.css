@@ -9,7 +9,7 @@
 .ymca-ig-feed {
     display: grid;
     grid-template-columns: repeat(var(--ymca-ig-columns, 4), 1fr);
-    gap: 4px;
+    gap: 20px;
     max-width: 100%;
 }
 
@@ -21,6 +21,8 @@
     overflow: hidden;
     background-color: #f0f0f0;
     text-decoration: none;
+    border-radius: 12px;
+    box-shadow: 0px 0px 12px -2px rgba(0,0,0,.19) !important;
 }
 
 /* Post Image */
@@ -106,7 +108,7 @@
 @media (max-width: 480px) {
     .ymca-ig-feed {
         grid-template-columns: repeat(2, 1fr);
-        gap: 2px;
+        gap: 10px;
     }
     
     .ymca-ig-feed__icon {

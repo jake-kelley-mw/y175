@@ -1081,6 +1081,26 @@ class Base {
 	}
 
 	/**
+	 * Get the dimensions of an image.
+	 *
+	 * Differs from the core wp_getimagesize() in that it always returns an array with two values.
+	 *
+	 * @param string $filename The filename of an image.
+	 * @return array Array of width and height, both set to false on failure.
+	 */
+	public function getimagesize( $filename ) {
+		$width  = false;
+		$height = false;
+
+		$image_data = \wp_getimagesize( $filename );
+		if ( \is_array( $image_data ) && ! empty( $image_data[0] ) && ! empty( $image_data[1] ) ) {
+			$width  = (int) $image_data[0];
+			$height = (int) $image_data[1];
+		}
+		return array( $width, $height );
+	}
+
+	/**
 	 * Check the mimetype of the given file with magic mime strings/patterns.
 	 *
 	 * @param string $path The absolute path to the file.
@@ -1588,6 +1608,13 @@ class Base {
 			$this->debug_message( 'local file found' );
 			return $path_parts[0];
 		}
+		if ( ! empty( $extension ) ) {
+			$path_info     = pathinfo( $path_parts[0] );
+			$replaced_path = $path_info['dirname'] . '/' . $path_info['filename'] . $extension;
+			if ( $this->is_file( $replaced_path ) ) {
+				return $path_parts[0];
+			}
+		}
 		if ( \class_exists( '\HMWP_Classes_ObjController' ) ) {
 			$hmwp_file_handler = \HMWP_Classes_ObjController::getClass( 'HMWP_Models_Files' );
 			if ( \is_object( $hmwp_file_handler ) ) {
@@ -1599,6 +1626,13 @@ class Base {
 				if ( $this->is_file( $path_parts[0] . $extension ) ) {
 					$this->debug_message( 'local file found' );
 					return $path_parts[0];
+				}
+				if ( ! empty( $extension ) ) {
+					$path_info     = pathinfo( $path_parts[0] );
+					$replaced_path = $path_info['dirname'] . '/' . $path_info['filename'] . $extension;
+					if ( $this->is_file( $replaced_path ) ) {
+						return $path_parts[0];
+					}
 				}
 			}
 		}
