@@ -144,6 +144,8 @@ class YMCA_Instagram_Feed {
         $atts = shortcode_atts( array(
             'count'   => 0,  // 0 = use admin setting
             'columns' => 0,  // 0 = use admin setting
+            'heading'       => '',
+            'heading_color' => '',
         ), $atts, 'ymca_instagram_feed' );
 
         $display = new YMCA_IG_Feed_Display();

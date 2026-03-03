@@ -66,6 +66,35 @@
     opacity: 1;
 }
 
+/* Feed Wrapper */
+.ymca-ig-feed-wrapper {
+    max-width: 100%;
+}
+
+/* Feed Header */
+.ymca-ig-feed-header {
+    margin-bottom: 20px;
+}
+
+.ymca-ig-feed-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ymca-ig-feed-header__icon {
+    flex-shrink: 0;
+}
+
+.ymca-ig-feed-header__title {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 48px;
+    font-weight: 100;
+    line-height: 1.2em;
+    letter-spacing: -1.5px;
+}
+
 /* Caption Text */
 .ymca-ig-feed__caption {
     color: #fff;
@@ -101,6 +130,11 @@
 @media (max-width: 768px) {
     .ymca-ig-feed {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ymca-ig-feed-header__icon {
+        width: 26px !important;
+        height: 26px !important;
     }
 }
 

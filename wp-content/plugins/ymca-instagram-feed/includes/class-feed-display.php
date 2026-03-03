@@ -41,6 +41,10 @@ class YMCA_IG_Feed_Display {
             ? intval( $atts['columns'] ) 
             : ( isset( $this->settings['columns'] ) ? intval( $this->settings['columns'] ) : 4 );
 
+        // Heading params
+        $heading = isset( $atts['heading'] ) ? sanitize_text_field( $atts['heading'] ) : '';
+        $heading_color = isset( $atts['heading_color'] ) ? sanitize_hex_color( $atts['heading_color'] ) : '#2dc6c9';
+
         // Get cached posts
         $cache = new YMCA_IG_Feed_Cache();
         $posts = $cache->get_posts( $count );
@@ -50,8 +54,44 @@ class YMCA_IG_Feed_Display {
             return $this->render_empty_state();
         }
 
-        // Build grid HTML
-        return $this->render_grid( $posts, $columns );
+        // Build output with optional header
+        $output = '<div class="ymca-ig-feed-wrapper">';
+
+        if ( ! empty( $heading ) ) {
+            $output .= $this->render_header( $heading, $heading_color );
+        }
+
+        $output .= $this->render_grid( $posts, $columns );
+        $output .= '</div>';
+
+        return $output;
+    }
+
+    /**
+     * Render feed header with Instagram icon
+     *
+     * @param string $heading Heading text
+     * @param string $color Hex color for text and icon
+     * @return string HTML
+     */
+    private function render_header( $heading, $color ) {
+        $style = sprintf( 'color: %s;', esc_attr( $color ) );
+
+        $output  = '<div class="ymca-ig-feed-header">';
+        $output .= '<div class="ymca-ig-feed-header__inner">';
+        $output .= sprintf(
+            '<svg class="ymca-ig-feed-header__icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="%s" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>',
+            esc_attr( $color )
+        );
+        $output .= sprintf(
+            '<h2 class="ymca-ig-feed-header__title" style="%s">%s</h2>',
+            esc_attr( $style ),
+            esc_html( $heading )
+        );
+        $output .= '</div>';
+        $output .= '</div>';
+
+        return $output;
     }
 
     /**
@@ -189,10 +229,9 @@ class YMCA_IG_Feed_Display {
                     __( 'Instagram feed not configured. Please add API credentials in Settings.', 'ymca-instagram-feed' ) . 
                     '</p>';
             }
-            return ''; // Don't show anything to regular visitors
+            return '';
         }
 
-        // API is configured but no posts found
         $hashtags = isset( $this->settings['hashtags'] ) ? $this->settings['hashtags'] : '';
         
         if ( ! empty( $hashtags ) && current_user_can( 'manage_options' ) ) {
@@ -211,7 +250,6 @@ class YMCA_IG_Feed_Display {
 
     /**
      * SVG icon for video posts
-     * Minimal inline SVG to avoid extra HTTP requests
      * 
      * @return string SVG markup
      */
