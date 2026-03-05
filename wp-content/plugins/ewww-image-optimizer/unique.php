@@ -1280,7 +1280,12 @@ function ewww_image_optimizer_get_webp_path( $file ) {
 	$info        = pathinfo( $file );
 
 	if ( 'replace' === $naming_mode ) {
-		$webp_path = $info['dirname'] . '/' . $info['filename'] . '.webp';
+		if ( empty( $info['dirname'] ) || '.' === $info['dirname'] ) {
+			$info['dirname'] = '';
+		} else {
+			$info['dirname'] = trailingslashit( $info['dirname'] );
+		}
+		$webp_path = $info['dirname'] . $info['filename'] . '.webp';
 	} else {
 		$webp_path = $file . '.webp';
 	}
@@ -1295,10 +1300,18 @@ function ewww_image_optimizer_get_webp_path( $file ) {
  * @return array Returns array of both append and replace WebP naming paths.
  */
 function ewww_image_optimizer_get_all_webp_paths( $path ) {
+	if ( empty( $path ) ) {
+		return array( '', '' );
+	}
 	$naming_mode = ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_naming_mode', 'append' );
 	$append      = $path . '.webp';
 	$info        = pathinfo( $path );
-	$replace     = $info['dirname'] . '/' . $info['filename'] . '.webp';
+	if ( empty( $info['dirname'] ) || '.' === $info['dirname'] ) {
+		$info['dirname'] = '';
+	} else {
+		$info['dirname'] = trailingslashit( $info['dirname'] );
+	}
+	$replace = $info['dirname'] . $info['filename'] . '.webp';
 
 	if ( 'append' === $naming_mode ) {
 		return array( $append, $replace );
@@ -1331,13 +1344,22 @@ function ewww_image_optimizer_cleanup_legacy_webp( $path ) {
  * @return string URL to the existing WebP image.
  */
 function ewww_image_optimizer_get_webp_url( $path, $url ) {
+	ewwwio_debug_message( "finding .webp path for source path $path and url $url" );
+	$webp_urls = ewww_image_optimizer_get_all_webp_paths( $url );
+	if ( empty( $path ) ) {
+		ewwwio_debug_message( "no path, returning {$webp_urls[0]}" );
+		return $webp_urls[0];
+	}
 	$webp_paths = ewww_image_optimizer_get_all_webp_paths( $path );
-	$webp_urls  = ewww_image_optimizer_get_all_webp_paths( $url );
+
 	if ( ewwwio_is_file( $webp_paths[0] ) ) {
+		ewwwio_debug_message( "{$webp_paths[0]} found, returning {$webp_urls[0]}" );
 		return $webp_urls[0];
 	} elseif ( ewwwio_is_file( $webp_paths[1] ) ) {
+		ewwwio_debug_message( "{$webp_paths[1]} found, returning {$webp_urls[1]}" );
 		return $webp_urls[1];
 	}
+	ewwwio_debug_message( "no local file found, returning {$webp_urls[0]}" );
 	return $webp_urls[0];
 }
 

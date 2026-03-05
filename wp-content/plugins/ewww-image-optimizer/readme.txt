@@ -3,7 +3,7 @@ Contributors: nosilver4u
 Donate link: https://ewww.io/donate/
 Tags: compress, convert, webp, resize, lazy load
 Tested up to: 6.9
-Stable tag: 8.4.0
+Stable tag: 8.4.1
 License: GPLv3
 
 Comprehensive image optimization that doesn't require a rocket science degree. Optimize images automatically for Faster Sites and Happy Visitors.
@@ -168,6 +168,14 @@ That's not a question, but since I made it up, I'll answer it. See this resource
 
 * Feature requests can be viewed and submitted on our [feedback portal](https://feedback.ewww.io/b/features)
 * If you would like to help translate this plugin in your language, [join the team](https://translate.wordpress.org/projects/wp-plugins/ewww-image-optimizer/)
+
+= 8.4.1 =
+*Release Date - Feburary 19, 2026*
+
+* fixed: PHP warnings with offloaded media in the Media Library
+* fixed: WebP naming mode unable to be changed on Cloudflare sites
+* fixed: incorrect WebP paths generated for images in root of S3 buckets (S3 Image Optimizer compat)
+* fixed: JS/Picture WebP uses incorrect URLs after naming mode is changed and existing .webp files have not been renamed
 
 = 8.4.0 =
 *Release Date - February 11, 2026*

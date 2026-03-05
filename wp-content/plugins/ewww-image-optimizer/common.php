@@ -10231,7 +10231,6 @@ function ewww_image_optimizer_get_translated_media_results( $id ) {
 	ewwwio_debug_message( '<b>' . __FUNCTION__ . '()</b>' );
 	$translations = ewww_image_optimizer_get_translated_media_ids( $id );
 	if ( ewww_image_optimizer_iterable( $translations ) ) {
-		global $wpdb;
 		foreach ( $translations as $translation ) {
 			ewwwio_debug_message( "checking {$translation} for results with WPML (or another translation plugin)" );
 			$optimized_images = ewww_image_optimizer_get_optimized_sizes( $translation );
@@ -10901,21 +10900,40 @@ function ewww_image_optimizer_webp_unwrite() {
 }
 
 /**
+ * Check if .htaccess rules can be used for WebP rewriting.
+ *
+ * @return bool True if .htaccess rules are permitted, false otherwise.
+ */
+function ewww_image_optimizer_webp_htaccess_permitted() {
+	if (
+		ewww_image_optimizer_easy_active() ||
+		ewwwio()->perfect_images_easyio_domain() ||
+		ewwwio_is_cf_host() ||
+		ewww_image_optimizer_ce_webp_enabled() ||
+		ewww_image_optimizer_swis_webp_enabled() ||
+		ewww_image_optimizer_wpfc_webp_enabled()
+	) {
+		return false;
+	}
+	if ( ! empty( $_SERVER['SERVER_SOFTWARE'] ) && str_contains( strtolower( sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) ), 'nginx' ) ) {
+		return false;
+	}
+	return true;
+}
+
+/**
  * If rules are present, stay silent, otherwise, gives us some rules to insert!
  *
- * @return array Rules to be inserted.
+ * @return array Rules to be inserted, empty if they already exist.
  */
 function ewww_image_optimizer_webp_rewrite_verify() {
 	ewwwio_debug_message( '<b>' . __FUNCTION__ . '()</b>' );
-	if ( ewww_image_optimizer_easy_active() || ewwwio_is_cf_host() ) {
+	if ( ! ewww_image_optimizer_webp_htaccess_permitted() ) {
 		if ( ewwwio_extract_from_markers( ewww_image_optimizer_htaccess_path(), 'EWWWIO' ) ) {
 			ewwwio_debug_message( 'removing htaccess webp to prevent EasyIO/Cloudflare problems' );
 			insert_with_markers( ewww_image_optimizer_htaccess_path(), 'EWWWIO', '' );
 		}
-		return;
-	}
-	if ( ewww_image_optimizer_wpfc_webp_enabled() ) {
-		return;
+		return array();
 	}
 	$current_rules = ewwwio_extract_from_markers( ewww_image_optimizer_htaccess_path(), 'EWWWIO' );
 	$naming_mode   = ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_naming_mode', 'append' );
@@ -10973,7 +10991,7 @@ function ewww_image_optimizer_webp_rewrite_verify() {
 		return $ewww_rules;
 	} else {
 		ewwwio_debug_message( 'all good' );
-		return;
+		return array();
 	}
 }
 
@@ -11379,13 +11397,10 @@ function ewwwio_debug_info() {
 		ewwwio_debug_message( 'origin (SERVER_ADDR): ' . sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) ) );
 	}
 	if (
-		! ewwwio_is_cf_host() &&
 		ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp' ) &&
 		! ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_for_cdn' ) &&
 		! ewww_image_optimizer_get_option( 'ewww_image_optimizer_picture_webp' ) &&
-		! ewww_image_optimizer_ce_webp_enabled() &&
-		! ewww_image_optimizer_swis_webp_enabled() &&
-		! ewww_image_optimizer_easy_active()
+		ewww_image_optimizer_webp_htaccess_permitted()
 	) {
 		if ( defined( 'PHP_SAPI' ) ) {
 			ewwwio_debug_message( 'PHP module: ' . PHP_SAPI );
@@ -12390,7 +12405,6 @@ function ewww_image_optimizer_options( $network = 'singlesite' ) {
 	$exactdn_enabled         = false;
 	$show_as3cf_cname_notice = false;
 	if ( ( get_option( 'easyio_exactdn' ) && function_exists( 'easyio' ) ) || ewwwio()->perfect_images_easyio_domain() ) {
-		ewww_image_optimizer_webp_rewrite_verify();
 		update_option( 'ewww_image_optimizer_exactdn', false );
 		if ( get_option( 'easyio_exactdn' ) && function_exists( 'easyio' ) ) {
 			update_option( 'ewww_image_optimizer_lazy_load', false );
@@ -12847,22 +12861,20 @@ function ewww_image_optimizer_options( $network = 'singlesite' ) {
 	if ( ewww_image_optimizer_get_option( 'ewww_image_optimizer_exactdn' ) ) {
 		$frontend_functions[] = __( 'Easy IO', 'ewww-image-optimizer' );
 	}
-	$easyio_site_url      = ewwwio()->content_url();
-	$exactdn_los_dis      = false;
-	$exactdn_hidpi_che    = ewww_image_optimizer_get_option( 'exactdn_hidpi' );
-	$eio_exclude_paths    = ewww_image_optimizer_get_option( 'exactdn_exclude' ) ? implode( "\n", (array) ewww_image_optimizer_get_option( 'exactdn_exclude' ) ) : '';
-	$lqip_che             = ( ( is_multisite() && is_network_admin() ) || is_object( $exactdn ) ) && ewww_image_optimizer_get_option( 'ewww_image_optimizer_use_lqip' );
-	$lqip_id              = ! is_network_admin() && ! $exactdn_enabled ? 'ewww_image_optimizer_use_lqip_disabled' : 'ewww_image_optimizer_use_lqip';
-	$lqip_dis             = ! is_network_admin() && ! $exactdn_enabled;
-	$dcip_che             = ( ( is_multisite() && is_network_admin() ) || is_object( $exactdn ) ) && ewww_image_optimizer_get_option( 'ewww_image_optimizer_use_dcip' );
-	$dcip_id              = ! is_network_admin() && ! $exactdn_enabled ? 'ewww_image_optimizer_use_dcip_disabled' : 'ewww_image_optimizer_use_dcip';
-	$dcip_dis             = $lqip_dis;
-	$ll_exclude_paths     = ewww_image_optimizer_get_option( 'ewww_image_optimizer_ll_exclude' ) ? implode( "\n", (array) ewww_image_optimizer_get_option( 'ewww_image_optimizer_ll_exclude' ) ) : '';
-	$current_jpeg_quality = apply_filters( 'jpeg_quality', 82, 'image_resize' );
-	$webp_php_rewriting   = ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_for_cdn' ) || ewww_image_optimizer_get_option( 'ewww_image_optimizer_picture_webp' );
-	$webp_exclude_paths   = ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_rewrite_exclude' ) ? implode( "\n", (array) ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_rewrite_exclude' ) ) : '';
-	$webp_paths           = ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_paths' ) ? implode( "\n", (array) ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_paths' ) ) : '';
-	$webp_url_example     = sprintf(
+	$easyio_site_url    = ewwwio()->content_url();
+	$exactdn_hidpi_che  = ewww_image_optimizer_get_option( 'exactdn_hidpi' );
+	$eio_exclude_paths  = ewww_image_optimizer_get_option( 'exactdn_exclude' ) ? implode( "\n", (array) ewww_image_optimizer_get_option( 'exactdn_exclude' ) ) : '';
+	$lqip_che           = ( ( is_multisite() && is_network_admin() ) || is_object( $exactdn ) ) && ewww_image_optimizer_get_option( 'ewww_image_optimizer_use_lqip' );
+	$lqip_id            = ! is_network_admin() && ! $exactdn_enabled ? 'ewww_image_optimizer_use_lqip_disabled' : 'ewww_image_optimizer_use_lqip';
+	$lqip_dis           = ! is_network_admin() && ! $exactdn_enabled;
+	$dcip_che           = ( ( is_multisite() && is_network_admin() ) || is_object( $exactdn ) ) && ewww_image_optimizer_get_option( 'ewww_image_optimizer_use_dcip' );
+	$dcip_id            = ! is_network_admin() && ! $exactdn_enabled ? 'ewww_image_optimizer_use_dcip_disabled' : 'ewww_image_optimizer_use_dcip';
+	$dcip_dis           = $lqip_dis;
+	$ll_exclude_paths   = ewww_image_optimizer_get_option( 'ewww_image_optimizer_ll_exclude' ) ? implode( "\n", (array) ewww_image_optimizer_get_option( 'ewww_image_optimizer_ll_exclude' ) ) : '';
+	$webp_php_rewriting = ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_for_cdn' ) || ewww_image_optimizer_get_option( 'ewww_image_optimizer_picture_webp' );
+	$webp_exclude_paths = ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_rewrite_exclude' ) ? implode( "\n", (array) ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_rewrite_exclude' ) ) : '';
+	$webp_paths         = ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_paths' ) ? implode( "\n", (array) ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp_paths' ) ) : '';
+	$webp_url_example   = sprintf(
 		/* translators: 1: An image URL on a CDN 2: An image URL 3: An example folder URL */
 		esc_html__( 'For example, with a CDN URL of %1$s and a local URL of %2$s you would enter %3$s.', 'ewww-image-optimizer' ),
 		'https://cdn.example.com/<strong>files/</strong>2038/01/image.jpg',
@@ -12905,16 +12917,14 @@ function ewww_image_optimizer_options( $network = 'singlesite' ) {
 	if ( isset( $_SERVER['cw_allowed_ip'] ) ) {
 		$cloudways_host = true;
 	}
-	// Make sure .htaccess rules are terminated when ExactDN is enabled or if Cloudflare is detected.
-	$cf_host = ewwwio_is_cf_host();
-	if ( ewww_image_optimizer_easy_active() || $cf_host ) {
-		ewww_image_optimizer_webp_rewrite_verify();
-	}
+	$cf_host             = ewwwio_is_cf_host();
 	$webp_available      = ewww_image_optimizer_webp_available();
-	$test_webp_image     = plugins_url( '/images/test.png.webp', __FILE__ );
 	$test_png_image      = plugins_url( '/images/test.png', __FILE__ );
 	$webp_rewrite_verify = false;
-	if ( $webp_available && ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp' ) ) {
+	// Make sure .htaccess rules are terminated when another WebP delivery method is active (like ExactDN) or if Cloudflare is detected.
+	if ( ! ewww_image_optimizer_webp_htaccess_permitted() ) {
+		ewww_image_optimizer_webp_rewrite_verify();
+	} elseif ( $webp_available && ewww_image_optimizer_get_option( 'ewww_image_optimizer_webp' ) ) {
 		$webp_rewrite_verify = ! (bool) ewww_image_optimizer_webp_rewrite_verify();
 	}
 	?>

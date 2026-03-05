@@ -493,13 +493,13 @@ class JS_Webp extends Page_Parser {
 				if ( \strpos( $image, 'jetpack-lazy-image' ) && $validated_file_path ) {
 					$new_image = $image;
 					$new_image = $this->jetpack_replace( $new_image );
-					$real_file = $this->get_attribute( $new_image, 'data-lazy-src' );
+					$real_url  = $this->get_attribute( $new_image, 'data-lazy-src' );
 					$this->debug_message( 'checking webp for Jetpack Lazy Load data-lazy-src' );
-					if ( $real_file ) {
-						$validated_real_path = $this->validate_image_url( $real_file );
+					if ( $real_url ) {
+						$validated_real_path = $this->validate_image_url( $real_url );
 						if ( $validated_real_path ) {
-							$this->debug_message( "found webp for Jetpack Lazy Load: $real_file" );
-							$this->set_attribute( $new_image, 'data-lazy-src-webp', $this->generate_url( $real_file, $validated_real_path ) );
+							$this->debug_message( "found webp for Jetpack Lazy Load: $real_url" );
+							$this->set_attribute( $new_image, 'data-lazy-src-webp', $this->generate_url( $real_url, $validated_real_path ) );
 						}
 					}
 					$srcset = $this->get_attribute( $new_image, 'data-lazy-srcset' );
@@ -549,12 +549,12 @@ class JS_Webp extends Page_Parser {
 				} elseif ( ! empty( $file ) && \strpos( $image, ' data-lazy-src=' ) ) {
 					// BJ Lazy Load & WP Rocket.
 					$new_image = $image;
-					$real_file = $this->get_attribute( $new_image, 'data-lazy-src' );
-					$this->debug_message( "checking webp for Lazy Load data-lazy-src: $real_file" );
-					$validated_real_path = $this->validate_image_url( $real_file );
+					$real_url  = $this->get_attribute( $new_image, 'data-lazy-src' );
+					$this->debug_message( "checking webp for Lazy Load data-lazy-src: $real_url" );
+					$validated_real_path = $this->validate_image_url( $real_url );
 					if ( $validated_real_path ) {
-						$this->debug_message( "found webp for Lazy Load: $real_file" );
-						$this->set_attribute( $new_image, 'data-lazy-src-webp', $this->generate_url( $real_file, $validated_real_path ) );
+						$this->debug_message( "found webp for Lazy Load: $real_url" );
+						$this->set_attribute( $new_image, 'data-lazy-src-webp', $this->generate_url( $real_url, $validated_real_path ) );
 					}
 					$srcset = $this->get_attribute( $new_image, 'data-lazy-srcset' );
 					if ( $srcset ) {
@@ -570,12 +570,12 @@ class JS_Webp extends Page_Parser {
 				} elseif ( ! empty( $file ) && \strpos( $image, ' data-src=' ) && ( \strpos( $image, ' data-lazy-type="image' ) || \strpos( $image, 'lazyload' ) ) ) {
 					// a3 or EWWW IO Lazy Load.
 					$new_image = $image;
-					$real_file = $this->get_attribute( $new_image, 'data-src' );
-					$this->debug_message( "checking webp for Lazy Load data-src: $real_file" );
-					$validated_real_path = $this->validate_image_url( $real_file );
+					$real_url  = $this->get_attribute( $new_image, 'data-src' );
+					$this->debug_message( "checking webp for Lazy Load data-src: $real_url" );
+					$validated_real_path = $this->validate_image_url( $real_url );
 					if ( $validated_real_path ) {
 						$this->debug_message( 'found webp for Lazy Load' );
-						$this->set_attribute( $new_image, 'data-src-webp', $this->generate_url( $real_file, $validated_real_path ) );
+						$this->set_attribute( $new_image, 'data-src-webp', $this->generate_url( $real_url, $validated_real_path ) );
 					}
 					$srcset = $this->get_attribute( $new_image, 'data-srcset' );
 					if ( $srcset ) {
@@ -591,12 +591,12 @@ class JS_Webp extends Page_Parser {
 				} elseif ( ! empty( $file ) && \strpos( $image, 'data-lazysrc=' ) && \strpos( $image, '/essential-grid' ) ) {
 					// Essential Grid.
 					$new_image = $image;
-					$real_file = $this->get_attribute( $new_image, 'data-lazysrc' );
-					$this->debug_message( "checking webp for EG Lazy Load data-lazysrc: $real_file" );
-					$validated_real_path = $this->validate_image_url( $real_file );
+					$real_url  = $this->get_attribute( $new_image, 'data-lazysrc' );
+					$this->debug_message( "checking webp for EG Lazy Load data-lazysrc: $real_url" );
+					$validated_real_path = $this->validate_image_url( $real_url );
 					if ( $validated_real_path ) {
-						$this->debug_message( "found webp for Lazy Load: $real_file" );
-						$this->set_attribute( $new_image, 'data-lazysrc-webp', $this->generate_url( $real_file, $validated_real_path ) );
+						$this->debug_message( "found webp for Lazy Load: $real_url" );
+						$this->set_attribute( $new_image, 'data-lazysrc-webp', $this->generate_url( $real_url, $validated_real_path ) );
 					}
 					if ( $new_image !== $image ) {
 						$this->set_attribute( $new_image, 'class', $this->get_attribute( $new_image, 'class' ) . ' ewww_webp_lazy_load', true );
@@ -620,12 +620,12 @@ class JS_Webp extends Page_Parser {
 				if ( \strpos( $image, 'data-src=' ) && \strpos( $image, 'data-srcset=' ) && \strpos( $image, 'lazyload' ) ) {
 					// EWWW IO Lazy Load.
 					$new_image = $image;
-					$real_file = \trim( $this->get_attribute( $new_image, 'data-src' ) );
-					$this->debug_message( "checking webp for Lazy Load data-src: $real_file" );
-					$validated_real_path = $this->validate_image_url( $real_file );
+					$real_url  = \trim( $this->get_attribute( $new_image, 'data-src' ) );
+					$this->debug_message( "checking webp for Lazy Load data-src: $real_url" );
+					$validated_real_path = $this->validate_image_url( $real_url );
 					if ( $validated_real_path ) {
 						$this->debug_message( 'found webp for Lazy Load' );
-						$this->set_attribute( $new_image, 'data-src-webp', $this->generate_url( $real_file, $validated_real_path ) );
+						$this->set_attribute( $new_image, 'data-src-webp', $this->generate_url( $real_url, $validated_real_path ) );
 					}
 					$srcset = $this->get_attribute( $new_image, 'data-srcset' );
 					if ( $srcset ) {
@@ -1155,8 +1155,9 @@ class JS_Webp extends Page_Parser {
 				}
 			}
 		} elseif ( $this->allowed_urls && $this->allowed_domains ) {
-			if ( $this->cdn_to_local( $image ) ) {
-				return true;
+			$maybe_path = $this->cdn_to_local( $image );
+			if ( $maybe_path ) {
+				return $maybe_path;
 			}
 		}
 		return $this->url_to_path_exists( $image );
@@ -1174,8 +1175,10 @@ class JS_Webp extends Page_Parser {
 		$queryless_url = $url_parts[0];
 		if ( true === $path ) {
 			$webp_url = ewww_image_optimizer_get_webp_path( $queryless_url );
+			ewwwio_debug_message( "unknown path, used default pattern for $queryless_url to get $webp_url" );
 		} else {
 			$webp_url = ewww_image_optimizer_get_webp_url( $path, $queryless_url );
+			ewwwio_debug_message( "path $path used for $queryless_url to get $webp_url" );
 		}
 		if ( ! empty( $url_parts[1] ) && ! str_contains( $url_parts[1], 'is-pending-load' ) ) {
 			$webp_url .= '?' . $url_parts[1];

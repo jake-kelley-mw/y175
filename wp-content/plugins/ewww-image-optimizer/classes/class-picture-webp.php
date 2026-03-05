@@ -584,8 +584,9 @@ class Picture_Webp extends Page_Parser {
 				}
 			}
 		} elseif ( $this->allowed_urls && $this->allowed_domains ) {
-			if ( $this->cdn_to_local( $image ) ) {
-				return true;
+			$maybe_path = $this->cdn_to_local( $image );
+			if ( $maybe_path ) {
+				return $maybe_path;
 			}
 		}
 		return $this->url_to_path_exists( $image );
