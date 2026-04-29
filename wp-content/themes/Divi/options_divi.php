@@ -1014,6 +1014,14 @@ $options = array (
 				'sub_setting_name'  => 'api_key',
 			),
 
+			array(
+				'name' => esc_html__( 'Enable Divi 5 Updates', $themename ),
+				'id'   => 'et_enable_divi5_updates',
+				'type' => 'checkbox',
+				'std'  => 'off',
+				'desc' => esc_html__( 'Enable this option if you are using Divi 4 and want to receive Divi 5 updates instead of Divi 4 updates.', $themename ),
+			),
+
 			et_divi_version_rollback()->get_epanel_option(),
 
 		array( "name" => "updates-1",

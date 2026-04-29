@@ -23,8 +23,29 @@ class YMCA_IG_Feed_Admin {
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
+        add_action( 'admin_init', array( $this, 'daily_token_health_check' ) );
         add_action( 'admin_post_ymca_ig_feed_refresh', array( $this, 'handle_manual_refresh' ) );
         add_action( 'admin_post_ymca_ig_feed_test', array( $this, 'handle_test_connection' ) );
+    }
+
+    /**
+     * Check token health once per day on admin load.
+     * Fallback for wp-cron failures on cached hosting (Pantheon).
+     */
+    public function daily_token_health_check() {
+        $last_check = get_option( 'ymca_ig_feed_last_admin_token_check', 0 );
+
+        // Only run once per day
+        if ( ( time() - $last_check ) < DAY_IN_SECONDS ) {
+            return;
+        }
+
+        update_option( 'ymca_ig_feed_last_admin_token_check', time(), false );
+
+        $api = new YMCA_IG_Feed_API();
+        if ( $api->can_refresh_token() ) {
+            $api->maybe_refresh_token();
+        }
     }
 
     /**

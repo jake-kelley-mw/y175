@@ -1,3 +1,9 @@
+version 4.27.6 ( updated 02-25-2026 )
+- Add the option to opt in to Divi 5 updates in the Divi Dashboard.
+- Added a new option in the Divi Dashboard to opt in to Divi 5 updates.
+- Fixed YouTube videos showing Error 153 ("Video player configuration error") in the Visual Builder.
+- Fixed Theme Customizer button icon picker displaying broken characters after WordPress 6.9 update.
+
 version 4.27.5 ( updated 12-04-2025 )
 - Fixed Shop module not properly filtering products by custom taxonomy terms when "Use Current Page" was enabled.
 - Fixed RankMath's sitemap generation produced errors when Blurb modules used icons.

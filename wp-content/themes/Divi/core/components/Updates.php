@@ -313,6 +313,9 @@ final class ET_Core_Updates {
 			$send_to_api['username'] = urlencode( sanitize_text_field( $this->options['username'] ) );
 			$send_to_api['api_key']  = sanitize_text_field( $this->options['api_key'] );
 
+			// Add divi_5 parameter if Divi 5 updates are enabled or user is already on Divi 5
+			$send_to_api = et_core_maybe_add_divi5_api_parameter( $send_to_api );
+
 			$send_to_api = apply_filters( 'et_add_automatic_updates_data', $send_to_api );
 		}
 

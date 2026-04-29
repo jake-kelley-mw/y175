@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.27.5' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.27.6' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -645,7 +645,7 @@ if ( ! function_exists( 'et_pb_get_font_icon_list_items' ) ) :
 		$symbols = et_pb_get_font_icon_symbols();
 
 		foreach ( $symbols as $symbol ) {
-			$output .= sprintf( '<li data-icon=\'%1$s\'></li>', esc_attr( $symbol ) );
+			$output .= sprintf( '<li data-icon=\'%1$s\'></li>', esc_attr( html_entity_decode( $symbol, ENT_QUOTES, 'UTF-8' ) ) );
 		}
 
 		return $output;
@@ -695,7 +695,7 @@ if ( ! function_exists( 'et_pb_get_font_down_icon_list_items' ) ) :
 		$symbols = et_pb_get_font_down_icon_symbols();
 
 		foreach ( $symbols as $symbol ) {
-			$output .= sprintf( '<li data-icon="%1$s"></li>', esc_attr( $symbol ) );
+			$output .= sprintf( '<li data-icon="%1$s"></li>', esc_attr( html_entity_decode( $symbol, ENT_QUOTES, 'UTF-8' ) ) );
 		}
 
 		return $output;

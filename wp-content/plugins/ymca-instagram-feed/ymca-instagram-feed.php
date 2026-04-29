@@ -2,7 +2,7 @@
 /**
  * Plugin Name: YMCA Instagram Feed
  * Description: Displays Instagram posts filtered by hashtags with server-side caching for optimal performance.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Jake
  * Text Domain: ymca-instagram-feed
  */
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'YMCA_IG_FEED_VERSION', '1.2.0' );
+define( 'YMCA_IG_FEED_VERSION', '1.3.0' );
 define( 'YMCA_IG_FEED_PATH', plugin_dir_path( __FILE__ ) );
 define( 'YMCA_IG_FEED_URL', plugin_dir_url( __FILE__ ) );
 
@@ -110,6 +110,12 @@ class YMCA_Instagram_Feed {
      * REST API callback to refresh feed
      */
     public function rest_refresh_feed( $request ) {
+        // Check/refresh token before refreshing feed
+        $api = new YMCA_IG_Feed_API();
+        if ( $api->can_refresh_token() ) {
+            $api->maybe_refresh_token();
+        }
+
         $cache = new YMCA_IG_Feed_Cache();
         $result = $cache->refresh();
 

@@ -91,6 +91,9 @@ class YMCA_IG_Feed_Cache {
         // Update last refresh time
         update_option( 'ymca_ig_feed_last_refresh', current_time( 'mysql' ) );
 
+        // Clear any previous error since refresh succeeded
+        delete_option( 'ymca_ig_feed_last_error' );
+
         // Clear page caches so fresh content is served
         $this->clear_page_cache();
 

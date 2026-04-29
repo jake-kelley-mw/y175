@@ -2277,3 +2277,29 @@ function et_core_get_roles_by_capabilities( $capabilities ) {
 	 */
 	return apply_filters( 'et_core_get_roles_by_capabilities', $roles, $capabilities );
 }
+
+
+if ( ! function_exists( 'et_core_maybe_add_divi5_api_parameter' ) ) :
+/**
+ * Adds the divi_5 parameter to API request data if Divi 5 updates are enabled or user is on Divi 5.
+ *
+ * @since ??
+ *
+ * @param array $api_data The API request data array to modify.
+ * @return array Modified API data with divi_5 parameter added if applicable.
+ */
+function et_core_maybe_add_divi5_api_parameter( $api_data ) {
+	// Check if user is on Divi 5
+	$is_divi5 = defined( 'ET_BUILDER_PRODUCT_VERSION' ) && version_compare( ET_BUILDER_PRODUCT_VERSION, '5.0', '>=' );
+	$enable_divi5_updates = et_get_option( 'et_enable_divi5_updates', 'off' );
+
+	// Add divi_5 parameter if Divi 5 updates are enabled or user is already on Divi 5
+    // Not on Divi 5: The setting controls opt-in to Divi 5 updates.
+    // Already on Divi 5: No opt-out allowed (you can't "downgrade" by toggling a setting).
+	if ( $is_divi5 || 'on' === $enable_divi5_updates ) {
+		$api_data['divi_5'] = 'on';
+	}
+
+	return $api_data;
+}
+endif;

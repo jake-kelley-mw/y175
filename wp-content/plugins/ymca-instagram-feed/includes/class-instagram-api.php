@@ -422,15 +422,15 @@ class YMCA_IG_Feed_API {
                 $last_update = strtotime( $this->settings['token_updated'] );
                 $days_since = ( time() - $last_update ) / DAY_IN_SECONDS;
                 
-                if ( $days_since > 45 ) {
+                if ( $days_since > 40 ) {
                     $this->attempt_token_refresh();
                 }
             }
             return;
         }
 
-        // Refresh at 45 days remaining (gives 15 days buffer)
-        if ( $days_remaining <= 45 ) {
+        // Refresh at 50 days remaining (gives 10 days buffer)
+        if ( $days_remaining <= 50 ) {
             $this->log_info( "Token expires in {$days_remaining} days, attempting refresh." );
             $this->attempt_token_refresh();
         }
@@ -477,7 +477,7 @@ class YMCA_IG_Feed_API {
                 'status'  => 'expiring_soon',
                 'message' => sprintf( __( 'Token expires in %d days. Auto-refresh will attempt soon.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
             );
-        } elseif ( $days_remaining <= 45 ) {
+        } elseif ( $days_remaining <= 50 ) {
             return array(
                 'status'  => 'valid',
                 'message' => sprintf( __( 'Token valid for %d days. Auto-refresh scheduled.', 'ymca-instagram-feed' ), round( $days_remaining ) ),

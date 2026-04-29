@@ -112,6 +112,8 @@ class ET_Onboarding {
 		add_action( 'wp_ajax_et_onboarding_result_delete_menu', [ self::class, 'result_delete_menu' ] );
 		add_action( 'wp_ajax_et_onboarding_result_delete_theme_builder_layout', [ self::class, 'result_delete_theme_builder_layout' ] );
 		add_action( 'wp_ajax_et_onboarding_update_customizer', [ self::class, 'update_customizer_design_settings' ] );
+		add_action( 'wp_ajax_et_onboarding_enable_divi5_updates', [ self::class, 'enable_divi5_updates' ] );
+		add_action( 'wp_ajax_et_onboarding_disable_divi5_updates', [ self::class, 'disable_divi5_updates' ] );
 
 		// Make sure that our Support Account's roles are set up.
 		add_filter( 'add_et_builder_role_options', [ self::class, 'onboarding_add_role_options' ], 20, 1 );
@@ -174,6 +176,7 @@ class ET_Onboarding {
 			'ajaxurl'                  => is_ssl() ? admin_url( 'admin-ajax.php' ) : admin_url( 'admin-ajax.php', 'http' ),
 			'adminUrl'                 => admin_url(),
 			'product_version'          => ET_BUILDER_PRODUCT_VERSION,
+			'enable_divi5_updates'     => et_get_option( 'et_enable_divi5_updates', 'off' ),
 			'onboarding_url'           => get_template_directory_uri() . '/onboarding',
 			'images_uri'               => ET_ONBOARDING_URI . '/images/',
 			'is_woocommerce_active'    => class_exists( 'WooCommerce' ),
@@ -204,9 +207,11 @@ class ET_Onboarding {
 				'et_onboarding_update_customizer'        => wp_create_nonce( 'et_onboarding_update_customizer' ),
 				'et_onboarding_activate_plugin'          => wp_create_nonce( 'et_onboarding_activate_plugin' ),
 				'et_onboarding_publish_new_pages'        => wp_create_nonce( 'et_onboarding_publish_new_pages' ),
-				'et_onboarding_is_woocommerce_installed' => wp_create_nonce( 'et_onboarding_is_woocommerce_installed' ),
-				'et_onboarding_is_woocommerce_active'    => wp_create_nonce( 'et_onboarding_is_woocommerce_active' ),
-			],
+			'et_onboarding_is_woocommerce_installed' => wp_create_nonce( 'et_onboarding_is_woocommerce_installed' ),
+			'et_onboarding_is_woocommerce_active'    => wp_create_nonce( 'et_onboarding_is_woocommerce_active' ),
+			'et_onboarding_enable_divi5_updates'    => wp_create_nonce( 'et_onboarding_enable_divi5_updates' ),
+			'et_onboarding_disable_divi5_updates'   => wp_create_nonce( 'et_onboarding_disable_divi5_updates' ),
+		],
 			'current_site_url'         => home_url(),
 			'permissions'              => [
 				'et_onboarding_quick_sites' => et_pb_is_allowed( 'et_onboarding_quick_sites' ) ? '1' : '0',
@@ -355,16 +360,21 @@ class ET_Onboarding {
 			'Divi' => wp_get_theme()->parent() ? wp_get_theme()->parent()->get( 'Version' ) : wp_get_theme()->get( 'Version' ),
 		);
 
+		$request_body = array(
+			'action'            => 'check_theme_updates',
+			'automatic_updates' => 'on',
+			'username'          => urlencode( $et_username ),
+			'api_key'           => $et_api_key,
+			'installed_themes'  => $themes,
+			'class_version'     => '1.2',
+		);
+
+		// Add divi_5 parameter if Divi 5 updates are enabled or user is already on Divi 5
+		$request_body = et_core_maybe_add_divi5_api_parameter( $request_body );
+
 		$request_options = array(
 			'timeout'    => 30,
-			'body'       => array(
-				'action'            => 'check_theme_updates',
-				'automatic_updates' => 'on',
-				'username'          => urlencode( $et_username ),
-				'api_key'           => $et_api_key,
-				'installed_themes'  => $themes,
-				'class_version'     => '1.2',
-			),
+			'body'       => $request_body,
 			'headers'    => array(
 				'rate_limit' => 'false',
 			),
@@ -574,6 +584,59 @@ class ET_Onboarding {
 		} else {
 			wp_send_json_error();
 		}
+	}
+
+	/**
+	 * Enable Divi 5 updates option.
+	 *
+	 * @since ??
+	 *
+	 * @return void
+	 */
+	public static function enable_divi5_updates() {
+		et_core_security_check( 'manage_options', 'et_onboarding_enable_divi5_updates', 'wp_nonce' );
+
+		et_update_option( 'et_enable_divi5_updates', 'on' );
+
+		// Clear update transients so the next update check uses the correct Divi 5 flag
+		if ( class_exists( 'ET_Core_Updates' ) ) {
+			$updates_instance = ET_Core_Updates::get_this();
+			if ( $updates_instance ) {
+				$updates_instance->force_update_requests();
+			}
+		}
+
+		// Clear onboarding account status cache so it fetches fresh data with divi_5 parameter
+		delete_transient( 'et_onboarding_account_data' );
+
+		wp_send_json_success();
+	}
+
+	/**
+	 * Disable Divi 5 updates option.
+	 *
+	 * @since ??
+	 *
+	 * @return void
+	 */
+	public static function disable_divi5_updates() {
+		et_core_security_check( 'manage_options', 'et_onboarding_disable_divi5_updates', 'wp_nonce' );
+
+		// Save 'false' as a string, matching how epanel saves unchecked checkboxes
+		et_update_option( 'et_enable_divi5_updates', 'false' );
+
+		// Clear update transients so the next update check uses the correct Divi 5 flag
+		if ( class_exists( 'ET_Core_Updates' ) ) {
+			$updates_instance = ET_Core_Updates::get_this();
+			if ( $updates_instance ) {
+				$updates_instance->force_update_requests();
+			}
+		}
+
+		// Clear onboarding account status cache so it fetches fresh data without divi_5 parameter
+		delete_transient( 'et_onboarding_account_data' );
+
+		wp_send_json_success();
 	}
 
 	/**

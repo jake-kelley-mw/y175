@@ -4,7 +4,7 @@ Plugin Name: WP YouTube Lyte
 Plugin URI: http://blog.futtta.be/wp-youtube-lyte/
 Description: Lite and accessible YouTube audio and video embedding.
 Author: Frank Goossens (futtta)
-Version: 1.7.29
+Version: 1.7.30
 Author URI: http://blog.futtta.be/
 Text Domain: wp-youtube-lyte
 */
@@ -14,7 +14,7 @@ Text Domain: wp-youtube-lyte
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $debug           = false;
-$lyte_version    = '1.7.29';
+$lyte_version    = '1.7.30';
 $lyte_db_version = get_option( 'lyte_version', 'none' );
 
 /** have we updated? */
@@ -532,7 +532,7 @@ function lyte_get_YT_resp( $vid, $playlist=false, $cachekey='', $apiTestKey='', 
                 }
 
                 // try to ensure description is never empty to avoid Google structured data test tool complaining about it missing.
-                if ( ! array_key_exists( 'description', $_thisLyte ) || empty( $_thisLyte['description'] ) ) {
+                if ( array_key_exists( 'title', $_thisLyte ) && ( ! array_key_exists( 'description', $_thisLyte ) || empty( $_thisLyte['description'] ) ) ) {
                     $_thisLyte['description'] = $_thisLyte['title'];
                 }
                 $_thisLyte['description'] = apply_filters( 'lyte_ytapi_description', $_thisLyte['description'] );
@@ -657,13 +657,13 @@ function shortcode_lyte( $atts ) {
     $qs = '';
 
     if ($audio) { $proto = 'httpa'; } else { $proto = 'httpv'; }
-    if ( $start !== '' ) { $qs .= '&amp;start=' . $start; }
+    if ( $start !== '' ) { $qs .= '&amp;start=' . esc_attr( $start ); }
     if ( $showinfo === 'false' ) { $qs .= '&amp;showinfo=0'; }
     if ( $hqthumb ) { $qs .= '&amp;hqThumb=1'; }
-    if ( $stepsize ) { $qs .= '#stepSize=' . $stepsize; }
+    if ( $stepsize ) { $qs .= '#stepSize=' . esc_attr( $stepsize ); }
     if ( $playlist ) { $action = 'playlist?list=';} else { $action = 'watch?v='; }
 
-    return lyte_parse( $proto . '://www.youtube.com/' . $action . $id . $qs );
+    return lyte_parse( $proto . '://www.youtube.com/' . $action . esc_attr( $id ) . $qs );
 }
 
 /** update functions */
