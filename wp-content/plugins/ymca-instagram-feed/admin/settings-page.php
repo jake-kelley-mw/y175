@@ -26,6 +26,7 @@ class YMCA_IG_Feed_Admin {
         add_action( 'admin_init', array( $this, 'daily_token_health_check' ) );
         add_action( 'admin_post_ymca_ig_feed_refresh', array( $this, 'handle_manual_refresh' ) );
         add_action( 'admin_post_ymca_ig_feed_test', array( $this, 'handle_test_connection' ) );
+        add_action( 'admin_post_ymca_ig_feed_convert', array( $this, 'handle_convert_token' ) );
     }
 
     /**
@@ -299,6 +300,58 @@ class YMCA_IG_Feed_Admin {
             $sanitized['cron_token'] = wp_generate_password( 32, false );
         }
 
+        // Carry over token metadata; refreshed below if we convert.
+        $sanitized['page_id']       = $existing['page_id'] ?? '';
+        $sanitized['token_type']    = $existing['token_type'] ?? '';
+        $sanitized['token_expires'] = $existing['token_expires'] ?? '';
+
+        // When a new access token is pasted, immediately convert it to a
+        // non-expiring Page access token. This is the durable fix for the
+        // recurring ~60-day User-token expiry: a Page token derived from a
+        // long-lived User token does not expire.
+        $token_changed = $sanitized['access_token'] !== ( $existing['access_token'] ?? '' );
+        if ( $token_changed
+            && ! empty( $sanitized['access_token'] )
+            && ! empty( $sanitized['app_id'] )
+            && ! empty( $sanitized['app_secret'] )
+            && ! empty( $sanitized['instagram_id'] ) ) {
+
+            $api       = new YMCA_IG_Feed_API( $sanitized );
+            $converted = $api->convert_to_page_token( $sanitized['access_token'] );
+
+            if ( is_wp_error( $converted ) ) {
+                add_settings_error(
+                    'ymca_ig_feed_settings',
+                    'token_convert_failed',
+                    sprintf( __( 'Saved your token, but automatic conversion to a permanent Page token failed: %s', 'ymca-instagram-feed' ), $converted->get_error_message() ),
+                    'error'
+                );
+            } else {
+                $sanitized['access_token']  = $converted['access_token'];
+                $sanitized['page_id']       = $converted['page_id'];
+                $sanitized['token_type']    = $converted['token_type'];
+                $sanitized['token_expires'] = $converted['token_expires'];
+                $sanitized['token_updated'] = current_time( 'mysql' );
+
+                if ( ! empty( $converted['never_expires'] ) ) {
+                    add_settings_error(
+                        'ymca_ig_feed_settings',
+                        'token_converted',
+                        __( 'Success: stored a permanent Page access token. It does not expire — no further token maintenance is needed.', 'ymca-instagram-feed' ),
+                        'updated'
+                    );
+                } else {
+                    $days = $converted['token_expires'] ? max( 0, round( ( (int) $converted['token_expires'] - time() ) / DAY_IN_SECONDS ) ) : 0;
+                    add_settings_error(
+                        'ymca_ig_feed_settings',
+                        'token_converted_temp',
+                        sprintf( __( 'Stored a Page access token, but it still expires in ~%d days because the source token was not freshly authorized. For a permanent token, generate a brand-new token via Graph API Explorer (fresh Facebook login) and paste it here.', 'ymca-instagram-feed' ), $days ),
+                        'warning'
+                    );
+                }
+            }
+        }
+
         // Clear cache when settings change
         $cache = new YMCA_IG_Feed_Cache();
         $cache->clear();
@@ -318,6 +371,21 @@ class YMCA_IG_Feed_Admin {
         ?>
         <div class="wrap">
             <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+
+            <?php
+            // Feedback from the "Convert to Permanent Page Token" action.
+            if ( isset( $_GET['converted'] ) ) {
+                $converted = sanitize_key( $_GET['converted'] );
+                if ( 'perm' === $converted ) {
+                    echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Success: the access token is now a permanent Page access token. It does not expire — the recurring token issue is resolved.', 'ymca-instagram-feed' ) . '</p></div>';
+                } elseif ( 'temp' === $converted ) {
+                    echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'A Page access token was stored, but it still has an expiry. For a permanent token, generate a brand-new token via Graph API Explorer (fresh Facebook login) and paste it into Access Token, then Save.', 'ymca-instagram-feed' ) . '</p></div>';
+                } else {
+                    $msg = isset( $_GET['convert_message'] ) ? sanitize_text_field( rawurldecode( wp_unslash( $_GET['convert_message'] ) ) ) : '';
+                    echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Token conversion failed: ', 'ymca-instagram-feed' ) . esc_html( $msg ) . '</p></div>';
+                }
+            }
+            ?>
 
             <?php $this->render_status_box(); ?>
 
@@ -426,7 +494,17 @@ class YMCA_IG_Feed_Admin {
                 <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ymca_ig_feed_refresh' ), 'ymca_ig_feed_refresh' ) ); ?>" class="button button-primary">
                     <?php _e( 'Refresh Feed Now', 'ymca-instagram-feed' ); ?>
                 </a>
+                <?php if ( $api->can_refresh_token() ) : ?>
+                <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ymca_ig_feed_convert' ), 'ymca_ig_feed_convert' ) ); ?>" class="button">
+                    <?php _e( 'Convert to Permanent Page Token', 'ymca-instagram-feed' ); ?>
+                </a>
+                <?php endif; ?>
             </p>
+            <?php if ( $api->can_refresh_token() ) : ?>
+            <p class="description" style="margin-top: 8px;">
+                <?php _e( '&#8505; "Convert to Permanent Page Token" exchanges the current token for a non-expiring Page access token. Run it once while the current token is still valid to stop the recurring expiry.', 'ymca-instagram-feed' ); ?>
+            </p>
+            <?php endif; ?>
         </div>
         <?php
     }
@@ -625,6 +703,35 @@ class YMCA_IG_Feed_Admin {
         );
 
         wp_redirect( $redirect );
+        exit;
+    }
+
+    /**
+     * Handle "Convert to Permanent Page Token" action.
+     *
+     * Converts the currently stored token into a non-expiring Page access token
+     * and saves it. This is the durable fix for the recurring ~60-day User-token
+     * expiry and can be run any time the current token is still valid.
+     */
+    public function handle_convert_token() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'Unauthorized', 'ymca-instagram-feed' ) );
+        }
+
+        check_admin_referer( 'ymca_ig_feed_convert' );
+
+        $api    = new YMCA_IG_Feed_API();
+        $result = $api->convert_and_store();
+
+        $args = array( 'page' => 'ymca-instagram-feed' );
+        if ( is_wp_error( $result ) ) {
+            $args['converted']       = 'error';
+            $args['convert_message'] = rawurlencode( $result->get_error_message() );
+        } else {
+            $args['converted'] = ! empty( $result['never_expires'] ) ? 'perm' : 'temp';
+        }
+
+        wp_redirect( add_query_arg( $args, admin_url( 'options-general.php' ) ) );
         exit;
     }
 

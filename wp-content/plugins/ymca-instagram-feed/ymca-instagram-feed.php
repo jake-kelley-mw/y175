@@ -2,7 +2,7 @@
 /**
  * Plugin Name: YMCA Instagram Feed
  * Description: Displays Instagram posts filtered by hashtags with server-side caching for optimal performance.
- * Version: 1.3.0
+ * Version: 1.4.0
  * Author: Jake
  * Text Domain: ymca-instagram-feed
  */
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'YMCA_IG_FEED_VERSION', '1.3.0' );
+define( 'YMCA_IG_FEED_VERSION', '1.4.0' );
 define( 'YMCA_IG_FEED_PATH', plugin_dir_path( __FILE__ ) );
 define( 'YMCA_IG_FEED_URL', plugin_dir_url( __FILE__ ) );
 
@@ -70,6 +70,10 @@ class YMCA_Instagram_Feed {
 
         // Cron hook for refreshing feed
         add_action( 'ymca_ig_feed_cron_refresh', array( $this, 'cron_refresh_feed' ) );
+
+        // Self-heal: make sure the refresh event is scheduled even if activation
+        // never ran (e.g. code deployed via git rather than (re)activated).
+        add_action( 'init', array( $this, 'maybe_schedule_cron' ) );
 
         // REST API endpoint for external cron (Pantheon)
         add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
@@ -181,9 +185,19 @@ class YMCA_Instagram_Feed {
         if ( ! wp_next_scheduled( 'ymca_ig_feed_cron_refresh' ) ) {
             wp_schedule_event( time(), 'ymca_ig_feed_interval', 'ymca_ig_feed_cron_refresh' );
         }
+    }
 
-        // Add custom cron interval
-        add_filter( 'cron_schedules', array( $this, 'add_cron_interval' ) );
+    /**
+     * Ensure the recurring refresh event is scheduled.
+     *
+     * Runs on every load (cheap no-op once scheduled). This is what recovers
+     * sites where the event went missing because the cron_schedules filter
+     * used to fatal (see add_cron_interval) and WP-Cron stopped running.
+     */
+    public function maybe_schedule_cron() {
+        if ( ! wp_next_scheduled( 'ymca_ig_feed_cron_refresh' ) ) {
+            wp_schedule_event( time(), 'ymca_ig_feed_interval', 'ymca_ig_feed_cron_refresh' );
+        }
     }
 
     /**
@@ -205,8 +219,13 @@ class YMCA_Instagram_Feed {
 
     /**
      * Add custom cron interval
+     *
+     * Static because it is registered as a global `cron_schedules` filter
+     * (see bottom of file). Registering a non-static method via a class-name
+     * callback previously caused a fatal TypeError on PHP 8, which killed
+     * wp_get_schedules() and broke WP-Cron site-wide.
      */
-    public function add_cron_interval( $schedules ) {
+    public static function add_cron_interval( $schedules ) {
         $options = get_option( 'ymca_ig_feed_settings', array() );
         $interval = isset( $options['refresh_interval'] ) ? intval( $options['refresh_interval'] ) : 30;
 
@@ -219,7 +238,7 @@ class YMCA_Instagram_Feed {
     }
 }
 
-// Add cron interval filter early
+// Add cron interval filter early (static callback — must not be an instance method)
 add_filter( 'cron_schedules', array( 'YMCA_Instagram_Feed', 'add_cron_interval' ) );
 
 // Initialize plugin

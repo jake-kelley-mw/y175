@@ -24,9 +24,53 @@ class YMCA_IG_Feed_API {
 
     /**
      * Constructor
+     *
+     * @param array|null $settings Optional settings to seed (used when validating
+     *                             a not-yet-saved token during admin save). Falls
+     *                             back to the stored option.
      */
-    public function __construct() {
-        $this->settings = get_option( 'ymca_ig_feed_settings', array() );
+    public function __construct( $settings = null ) {
+        $this->settings = is_array( $settings ) ? $settings : get_option( 'ymca_ig_feed_settings', array() );
+    }
+
+    /**
+     * Whether outbound calls to Facebook are permitted in this environment.
+     *
+     * Disabled automatically in Local development so a cloned copy of the site
+     * never hits the production Facebook app or rotates the live access token.
+     * Define YMCA_IG_FEED_ALLOW_REMOTE (true/false) in wp-config to override.
+     *
+     * @return bool
+     */
+    public function remote_allowed() {
+        if ( defined( 'YMCA_IG_FEED_ALLOW_REMOTE' ) ) {
+            return (bool) YMCA_IG_FEED_ALLOW_REMOTE;
+        }
+
+        return 'local' !== wp_get_environment_type();
+    }
+
+    /**
+     * Call Facebook's debug_token endpoint and return the `data` payload.
+     *
+     * @param string $token Token to inspect.
+     * @return array Token metadata (empty array on failure).
+     */
+    private function debug_token( $token ) {
+        $url = add_query_arg( array(
+            'input_token'  => $token,
+            'access_token' => sanitize_text_field( $this->settings['app_id'] ?? '' ) . '|' . sanitize_text_field( $this->settings['app_secret'] ?? '' ),
+        ), "{$this->api_base}/debug_token" );
+
+        $response = wp_remote_get( $url, array( 'timeout' => 20 ) );
+
+        if ( is_wp_error( $response ) ) {
+            return array();
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        return isset( $data['data'] ) && is_array( $data['data'] ) ? $data['data'] : array();
     }
 
     /**
@@ -67,6 +111,16 @@ class YMCA_IG_Feed_API {
             );
         }
 
+        // In isolated environments (local), assume valid without calling out.
+        if ( ! $this->remote_allowed() ) {
+            return array(
+                'is_valid'      => true,
+                'never_expires' => false,
+                'skipped'       => true,
+                'error'         => null,
+            );
+        }
+
         $access_token = sanitize_text_field( $this->settings['access_token'] );
         $app_id = sanitize_text_field( $this->settings['app_id'] );
         $app_secret = sanitize_text_field( $this->settings['app_secret'] );
@@ -98,8 +152,13 @@ class YMCA_IG_Feed_API {
 
         $token_data = $data['data'];
         $is_valid = ! empty( $token_data['is_valid'] );
-        $expires_at = isset( $token_data['expires_at'] ) ? $token_data['expires_at'] : null;
-        
+        $expires_at = isset( $token_data['expires_at'] ) ? (int) $token_data['expires_at'] : null;
+        $type = isset( $token_data['type'] ) ? $token_data['type'] : null;
+
+        // expires_at === 0 is Facebook's signal for a non-expiring token
+        // (a Page access token derived from a long-lived User token).
+        $never_expires = ( 0 === $expires_at );
+
         $days_remaining = null;
         if ( $expires_at && $expires_at > 0 ) {
             $days_remaining = ( $expires_at - time() ) / DAY_IN_SECONDS;
@@ -107,7 +166,9 @@ class YMCA_IG_Feed_API {
 
         return array(
             'is_valid'       => $is_valid,
+            'type'           => $type,
             'expires_at'     => $expires_at,
+            'never_expires'  => $never_expires,
             'days_remaining' => $days_remaining,
             'error'          => isset( $token_data['error']['message'] ) ? $token_data['error']['message'] : null,
         );
@@ -122,6 +183,10 @@ class YMCA_IG_Feed_API {
     public function fetch_posts( $limit = 50 ) {
         if ( ! $this->is_configured() ) {
             return new WP_Error( 'not_configured', __( 'Instagram API credentials not configured.', 'ymca-instagram-feed' ) );
+        }
+
+        if ( ! $this->remote_allowed() ) {
+            return new WP_Error( 'remote_disabled', __( 'Instagram API calls are disabled in this environment. Cached posts are served instead.', 'ymca-instagram-feed' ) );
         }
 
         $instagram_id = sanitize_text_field( $this->settings['instagram_id'] );
@@ -274,6 +339,10 @@ class YMCA_IG_Feed_API {
      * @return bool Success status
      */
     public function attempt_token_refresh() {
+        if ( ! $this->remote_allowed() ) {
+            return false;
+        }
+
         if ( ! $this->can_refresh_token() ) {
             $error_msg = 'Token refresh failed: App ID and App Secret are required.';
             $this->log_error( $error_msg );
@@ -397,15 +466,15 @@ class YMCA_IG_Feed_API {
      * Called periodically via cron
      */
     public function maybe_refresh_token() {
-        // Skip if we can't refresh anyway
-        if ( ! $this->can_refresh_token() ) {
+        // Skip if we can't refresh anyway, or if remote calls are disabled here.
+        if ( ! $this->can_refresh_token() || ! $this->remote_allowed() ) {
             return;
         }
 
         // Validate token with Facebook to get real expiration
         $validation = $this->validate_token();
-        
-        if ( ! $validation['is_valid'] ) {
+
+        if ( empty( $validation['is_valid'] ) ) {
             // Token is already invalid
             $error_msg = 'Token is invalid: ' . ( $validation['error'] ?? 'Unknown error' );
             $this->log_error( $error_msg );
@@ -413,27 +482,223 @@ class YMCA_IG_Feed_API {
             return;
         }
 
-        // Check days remaining from Facebook's response
-        $days_remaining = $validation['days_remaining'];
-        
-        if ( $days_remaining === null ) {
-            // Couldn't determine expiration, try to refresh anyway if our timestamp is old
-            if ( ! empty( $this->settings['token_updated'] ) ) {
-                $last_update = strtotime( $this->settings['token_updated'] );
-                $days_since = ( time() - $last_update ) / DAY_IN_SECONDS;
-                
-                if ( $days_since > 40 ) {
-                    $this->attempt_token_refresh();
-                }
-            }
+        // A never-expiring Page access token needs no maintenance. This is the
+        // healthy steady state once the token has been converted (see
+        // convert_to_page_token) — do nothing.
+        if ( ! empty( $validation['never_expires'] ) ) {
             return;
         }
 
-        // Refresh at 50 days remaining (gives 10 days buffer)
-        if ( $days_remaining <= 50 ) {
-            $this->log_info( "Token expires in {$days_remaining} days, attempting refresh." );
-            $this->attempt_token_refresh();
+        $days_remaining = $validation['days_remaining'];
+
+        // Valid but expiry unknown: leave it alone (can't act sensibly).
+        if ( null === $days_remaining ) {
+            return;
         }
+
+        // The token still has a finite life. IMPORTANT: a long-lived *User*
+        // token cannot be extended by re-exchanging it via fb_exchange_token —
+        // Facebook returns a new string with the SAME expiry. The durable fix is
+        // to convert to a non-expiring Page token. Try that within the buffer
+        // window; if it can't yield a permanent token, alert so a human can
+        // generate a fresh token.
+        if ( $days_remaining <= 10 ) {
+            $converted = $this->convert_to_page_token();
+
+            if ( ! is_wp_error( $converted ) && ! empty( $converted['never_expires'] ) ) {
+                $this->store_converted_token( $converted );
+                $this->log_info( 'Converted access token to a permanent Page access token.' );
+                return;
+            }
+
+            $this->log_error( 'Token expiring and could not be auto-converted to a permanent Page token.' );
+            $this->send_failure_notification( sprintf(
+                'Access token expires in about %d day(s) and could not be renewed automatically. Generate a fresh token to switch to a permanent Page token.',
+                max( 0, (int) round( $days_remaining ) )
+            ) );
+        }
+    }
+
+    /**
+     * Convert the current (or a supplied) access token into a non-expiring
+     * Facebook Page access token for the configured Instagram account.
+     *
+     * Flow: exchange for a long-lived User token, locate the Page connected to
+     * the Instagram Business account, and read that Page's access token. A Page
+     * token derived from a long-lived User token does not expire.
+     *
+     * @param string|null $source_token Token to convert (defaults to stored token).
+     * @return array|WP_Error { access_token, page_id, token_type, token_expires, never_expires }
+     */
+    public function convert_to_page_token( $source_token = null ) {
+        if ( ! $this->remote_allowed() ) {
+            return new WP_Error( 'remote_disabled', __( 'Remote API calls are disabled in this environment.', 'ymca-instagram-feed' ) );
+        }
+
+        if ( ! $this->can_refresh_token() ) {
+            return new WP_Error( 'no_app_creds', __( 'App ID and App Secret are required to obtain a Page token.', 'ymca-instagram-feed' ) );
+        }
+
+        $source = $source_token ? $source_token : ( $this->settings['access_token'] ?? '' );
+        if ( empty( $source ) ) {
+            return new WP_Error( 'no_token', __( 'No access token to convert.', 'ymca-instagram-feed' ) );
+        }
+
+        $instagram_id = sanitize_text_field( $this->settings['instagram_id'] ?? '' );
+        if ( empty( $instagram_id ) ) {
+            return new WP_Error( 'no_ig', __( 'Instagram Business Account ID is required.', 'ymca-instagram-feed' ) );
+        }
+
+        // 1) Ensure a long-lived User token (no-op-ish if already long-lived).
+        $long_lived = $this->get_long_lived_user_token( $source );
+        if ( is_wp_error( $long_lived ) ) {
+            return $long_lived;
+        }
+
+        // 2) Find the Page connected to the Instagram account + its Page token.
+        $page = $this->find_instagram_page_token( $long_lived, $instagram_id );
+        if ( is_wp_error( $page ) ) {
+            return $page;
+        }
+
+        // 3) Inspect the resulting Page token's real expiry.
+        $info       = $this->debug_token( $page['access_token'] );
+        $expires_at = isset( $info['expires_at'] ) ? (int) $info['expires_at'] : 0;
+
+        return array(
+            'access_token'  => $page['access_token'],
+            'page_id'       => $page['id'],
+            'token_type'    => isset( $info['type'] ) ? $info['type'] : 'PAGE',
+            'token_expires' => $expires_at,
+            'never_expires' => ( 0 === $expires_at ),
+        );
+    }
+
+    /**
+     * Exchange any User token for a long-lived User token.
+     *
+     * @param string $token
+     * @return string|WP_Error Long-lived token string.
+     */
+    private function get_long_lived_user_token( $token ) {
+        $url = add_query_arg( array(
+            'grant_type'        => 'fb_exchange_token',
+            'client_id'         => sanitize_text_field( $this->settings['app_id'] ),
+            'client_secret'     => sanitize_text_field( $this->settings['app_secret'] ),
+            'fb_exchange_token' => $token,
+        ), "{$this->api_base}/oauth/access_token" );
+
+        $response = wp_remote_get( $url, array( 'timeout' => 30 ) );
+        if ( is_wp_error( $response ) ) {
+            return $response;
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+        if ( empty( $data['access_token'] ) ) {
+            $msg = isset( $data['error']['message'] ) ? $data['error']['message'] : __( 'Could not exchange for a long-lived token.', 'ymca-instagram-feed' );
+            return new WP_Error( 'exchange_failed', $msg );
+        }
+
+        return $data['access_token'];
+    }
+
+    /**
+     * Locate the Page access token for the Page linked to $ig_id.
+     *
+     * Tries /me/accounts first; falls back to the Page IDs embedded in the
+     * token's granular_scopes (Business-Manager / granular permissions often
+     * leave /me/accounts empty).
+     *
+     * @param string $user_token Long-lived User token.
+     * @param string $ig_id      Instagram Business Account ID.
+     * @return array|WP_Error { id, access_token }
+     */
+    private function find_instagram_page_token( $user_token, $ig_id ) {
+        // Preferred path: list managed Pages.
+        $response = wp_remote_get( add_query_arg( array(
+            'access_token' => $user_token,
+            'fields'       => 'id,access_token,instagram_business_account',
+            'limit'        => 100,
+        ), "{$this->api_base}/me/accounts" ), array( 'timeout' => 30 ) );
+
+        if ( ! is_wp_error( $response ) ) {
+            $data = json_decode( wp_remote_retrieve_body( $response ), true );
+            if ( ! empty( $data['data'] ) ) {
+                foreach ( $data['data'] as $pg ) {
+                    if ( isset( $pg['instagram_business_account']['id'] )
+                        && (string) $pg['instagram_business_account']['id'] === (string) $ig_id
+                        && ! empty( $pg['access_token'] ) ) {
+                        return array( 'id' => $pg['id'], 'access_token' => $pg['access_token'] );
+                    }
+                }
+            }
+        }
+
+        // Fallback: candidate Page IDs from granular scopes.
+        $info     = $this->debug_token( $user_token );
+        $page_ids = array();
+        if ( ! empty( $info['granular_scopes'] ) ) {
+            foreach ( $info['granular_scopes'] as $scope ) {
+                if ( ! empty( $scope['target_ids'] ) ) {
+                    $page_ids = array_merge( $page_ids, $scope['target_ids'] );
+                }
+            }
+        }
+        $page_ids = array_values( array_unique( $page_ids ) );
+
+        foreach ( $page_ids as $pid ) {
+            $response = wp_remote_get( add_query_arg( array(
+                'access_token' => $user_token,
+                'fields'       => 'id,access_token,instagram_business_account',
+            ), "{$this->api_base}/{$pid}" ), array( 'timeout' => 30 ) );
+
+            if ( is_wp_error( $response ) ) {
+                continue;
+            }
+
+            $pg = json_decode( wp_remote_retrieve_body( $response ), true );
+            if ( isset( $pg['error'] ) || empty( $pg['access_token'] ) ) {
+                continue;
+            }
+
+            $linked = isset( $pg['instagram_business_account']['id'] ) ? (string) $pg['instagram_business_account']['id'] : '';
+            if ( $linked === (string) $ig_id ) {
+                return array( 'id' => $pg['id'], 'access_token' => $pg['access_token'] );
+            }
+        }
+
+        return new WP_Error( 'no_page', __( 'Could not find a Facebook Page linked to this Instagram account. Ensure the token has instagram_basic, pages_show_list, pages_read_engagement and business_management permissions.', 'ymca-instagram-feed' ) );
+    }
+
+    /**
+     * Convert the current/supplied token to a Page token AND persist it.
+     *
+     * @param string|null $source_token
+     * @return array|WP_Error The converted token data, or WP_Error on failure.
+     */
+    public function convert_and_store( $source_token = null ) {
+        $converted = $this->convert_to_page_token( $source_token );
+        if ( is_wp_error( $converted ) ) {
+            return $converted;
+        }
+        $this->store_converted_token( $converted );
+        return $converted;
+    }
+
+    /**
+     * Persist a converted Page token into the stored settings.
+     *
+     * @param array $converted Output of convert_to_page_token().
+     */
+    private function store_converted_token( array $converted ) {
+        $this->settings['access_token']  = $converted['access_token'];
+        $this->settings['page_id']       = $converted['page_id'];
+        $this->settings['token_type']    = $converted['token_type'];
+        $this->settings['token_expires'] = $converted['token_expires'];
+        $this->settings['token_updated'] = current_time( 'mysql' );
+
+        update_option( 'ymca_ig_feed_settings', $this->settings );
+        delete_option( 'ymca_ig_feed_last_error' );
     }
 
     /**
@@ -449,6 +714,13 @@ class YMCA_IG_Feed_API {
             );
         }
 
+        if ( ! $this->remote_allowed() ) {
+            return array(
+                'status'  => 'unknown',
+                'message' => __( 'Token checks are disabled in this (local) environment.', 'ymca-instagram-feed' ),
+            );
+        }
+
         $validation = $this->validate_token();
 
         if ( ! $validation['is_valid'] ) {
@@ -458,12 +730,29 @@ class YMCA_IG_Feed_API {
             );
         }
 
+        // The desired steady state: a non-expiring Page access token.
+        if ( ! empty( $validation['never_expires'] ) ) {
+            return array(
+                'status'  => 'valid',
+                'message' => __( 'Permanent Page access token — does not expire. ✓', 'ymca-instagram-feed' ),
+            );
+        }
+
         $days_remaining = $validation['days_remaining'];
 
         if ( $days_remaining === null ) {
             return array(
                 'status'  => 'valid',
                 'message' => __( 'Token is valid (expiration unknown).', 'ymca-instagram-feed' ),
+            );
+        }
+
+        // A token with a finite life means we are still on a User token (or a
+        // non-permanent Page token) and the expiry cycle will recur.
+        if ( $validation['type'] !== 'PAGE' ) {
+            return array(
+                'status'  => 'expiring_soon',
+                'message' => sprintf( __( 'Using a temporary User token (expires in %d days). Re-save your token to convert it to a permanent Page token.', 'ymca-instagram-feed' ), round( $days_remaining ) ),
             );
         }
 
