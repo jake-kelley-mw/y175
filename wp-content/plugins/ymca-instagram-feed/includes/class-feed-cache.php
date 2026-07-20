@@ -72,17 +72,21 @@ class YMCA_IG_Feed_Cache {
         // Also check/refresh token if needed
         $api->maybe_refresh_token();
 
-        // Fetch more posts than we might display to allow for hashtag filtering
-        $fetch_limit = $this->get_fetch_limit();
-        $posts = $api->fetch_posts( $fetch_limit );
+        // Fetch hashtag-matching posts, paging deep enough to satisfy the display
+        // count even when tagged posts are sparse among the most recent media.
+        // (Previously we fetched a single page of post_count*3 and filtered it,
+        // which under-filled the feed whenever fewer than post_count of those
+        // recent posts carried a target hashtag.)
+        $display_count = isset( $this->settings['post_count'] )
+            ? intval( $this->settings['post_count'] )
+            : 12;
 
-        if ( is_wp_error( $posts ) ) {
-            $this->log( 'Cache refresh failed: ' . $posts->get_error_message() );
+        $filtered = $api->fetch_filtered_posts( $display_count );
+
+        if ( is_wp_error( $filtered ) ) {
+            $this->log( 'Cache refresh failed: ' . $filtered->get_error_message() );
             return false;
         }
-
-        // Filter by hashtags
-        $filtered = $api->filter_by_hashtags( $posts );
 
         // Store in transient
         $cache_duration = $this->get_cache_duration();
@@ -97,10 +101,10 @@ class YMCA_IG_Feed_Cache {
         // Clear page caches so fresh content is served
         $this->clear_page_cache();
 
-        $this->log( sprintf( 
-            'Cache refreshed: %d posts fetched, %d posts after filtering.',
-            count( $posts ),
-            count( $filtered )
+        $this->log( sprintf(
+            'Cache refreshed: %d hashtag-matching posts stored (requested %d).',
+            count( $filtered ),
+            $display_count
         ) );
 
         return true;
@@ -150,28 +154,6 @@ class YMCA_IG_Feed_Cache {
 
         // Cache for 1.5x the refresh interval (minimum 1 hour)
         return max( $interval * 90, HOUR_IN_SECONDS );
-    }
-
-    /**
-     * Get number of posts to fetch from API
-     * 
-     * Since we filter by hashtags, we need to fetch more than we display.
-     * 
-     * @return int Fetch limit
-     */
-    private function get_fetch_limit() {
-        $display_count = isset( $this->settings['post_count'] ) 
-            ? intval( $this->settings['post_count'] ) 
-            : 12;
-
-        // If set to 0 (show all), fetch maximum
-        if ( $display_count === 0 ) {
-            return 100; // API limit per request
-        }
-
-        // Fetch 3x what we want to display to account for filtering
-        // (assuming roughly 1/3 of posts might have the target hashtag)
-        return min( $display_count * 3, 100 );
     }
 
     /**

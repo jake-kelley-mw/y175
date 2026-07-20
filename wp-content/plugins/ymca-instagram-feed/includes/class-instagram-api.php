@@ -134,19 +134,30 @@ class YMCA_IG_Feed_API {
         $response = wp_remote_get( $url, array( 'timeout' => 15 ) );
 
         if ( is_wp_error( $response ) ) {
+            // Network/transport failure — we did not get a verdict from Facebook.
+            // Mark inconclusive so a transient blip is never treated as an
+            // invalid token (which would fire a false-alarm alert email).
             return array(
-                'is_valid' => false,
-                'error'    => $response->get_error_message(),
+                'is_valid'      => false,
+                'indeterminate' => true,
+                'error'         => $response->get_error_message(),
             );
         }
 
+        $code = (int) wp_remote_retrieve_response_code( $response );
         $body = wp_remote_retrieve_body( $response );
         $data = json_decode( $body, true );
 
-        if ( ! isset( $data['data'] ) ) {
+        // A non-200 status, or a body with no `data` payload, means Facebook did
+        // not actually evaluate the token (5xx, rate limit, empty/garbled body).
+        // This is NOT the same as Facebook reporting the token invalid — a truly
+        // expired/invalid token still comes back as HTTP 200 with
+        // data.is_valid=false. Treat the ambiguous case as inconclusive.
+        if ( 200 !== $code || ! isset( $data['data'] ) || ! is_array( $data['data'] ) ) {
             return array(
-                'is_valid' => false,
-                'error'    => 'Invalid response from Facebook',
+                'is_valid'      => false,
+                'indeterminate' => true,
+                'error'         => isset( $data['error']['message'] ) ? $data['error']['message'] : 'Invalid response from Facebook',
             );
         }
 
@@ -231,6 +242,97 @@ class YMCA_IG_Feed_API {
         }
 
         return $data['data'];
+    }
+
+    /**
+     * Fetch hashtag-matching posts, paging through the account's media until we
+     * have at least $needed matches (or run out of posts / hit the scan cap).
+     *
+     * The Graph API returns media newest-first with no server-side hashtag
+     * filter. When tagged posts are sparse among recent media, a single page of
+     * ~$needed items yields fewer than $needed matches (this is exactly why the
+     * feed was showing 14 of a requested 16). Following the `paging.next` cursor
+     * lets us look deeper until the display count is satisfied.
+     *
+     * @param int $needed   Desired number of matching posts (0 = collect as many
+     *                       as found, up to the scan cap).
+     * @param int $max_scan Safety ceiling on raw posts paged through.
+     * @return array|WP_Error Matching posts (may be fewer than $needed if the
+     *                        account genuinely has fewer), or WP_Error if the
+     *                        very first request fails.
+     */
+    public function fetch_filtered_posts( $needed, $max_scan = 500 ) {
+        if ( ! $this->is_configured() ) {
+            return new WP_Error( 'not_configured', __( 'Instagram API credentials not configured.', 'ymca-instagram-feed' ) );
+        }
+
+        if ( ! $this->remote_allowed() ) {
+            return new WP_Error( 'remote_disabled', __( 'Instagram API calls are disabled in this environment. Cached posts are served instead.', 'ymca-instagram-feed' ) );
+        }
+
+        $instagram_id = sanitize_text_field( $this->settings['instagram_id'] );
+        $access_token = sanitize_text_field( $this->settings['access_token'] );
+        $fields       = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp';
+        $page_size    = 50;
+        $max_pages    = 10; // hard stop alongside $max_scan
+
+        // First page. Subsequent pages reuse Facebook's paging.next URL, which
+        // already carries the access token, fields and the `after` cursor.
+        $url = add_query_arg( array(
+            'fields'       => $fields,
+            'access_token' => $access_token,
+            'limit'        => $page_size,
+        ), "{$this->api_base}/{$instagram_id}/media" );
+
+        $matched = array();
+        $scanned = 0;
+        $pages   = 0;
+
+        while ( $url && $pages < $max_pages && $scanned < $max_scan ) {
+            $response = wp_remote_get( $url, array( 'timeout' => 30 ) );
+
+            if ( is_wp_error( $response ) ) {
+                $this->log_error( 'API request failed: ' . $response->get_error_message() );
+                // Return whatever we already gathered rather than losing the feed.
+                return ! empty( $matched ) ? $matched : $response;
+            }
+
+            $code = wp_remote_retrieve_response_code( $response );
+            $body = wp_remote_retrieve_body( $response );
+            $data = json_decode( $body, true );
+
+            if ( 200 !== (int) $code ) {
+                $error_message = isset( $data['error']['message'] ) ? $data['error']['message'] : 'Unknown API error';
+                $this->log_error( "API error (HTTP {$code}): {$error_message}" );
+                if ( $this->is_token_error( $data ) ) {
+                    $this->attempt_token_refresh();
+                }
+                return ! empty( $matched ) ? $matched : new WP_Error( 'api_error', $error_message );
+            }
+
+            if ( ! isset( $data['data'] ) || ! is_array( $data['data'] ) ) {
+                return ! empty( $matched ) ? $matched : new WP_Error( 'invalid_response', __( 'Invalid API response format.', 'ymca-instagram-feed' ) );
+            }
+
+            $batch    = $data['data'];
+            $scanned += count( $batch );
+            $matched  = array_merge( $matched, $this->filter_by_hashtags( $batch ) );
+
+            // Got enough — stop paging.
+            if ( $needed > 0 && count( $matched ) >= $needed ) {
+                break;
+            }
+
+            $url = isset( $data['paging']['next'] ) ? $data['paging']['next'] : '';
+            $pages++;
+        }
+
+        // Trim any overshoot from the final page so we store exactly what's asked.
+        if ( $needed > 0 && count( $matched ) > $needed ) {
+            $matched = array_slice( $matched, 0, $needed );
+        }
+
+        return $matched;
     }
 
     /**
@@ -352,6 +454,11 @@ class YMCA_IG_Feed_API {
 
         // First check if current token is still valid (can't refresh expired tokens)
         $validation = $this->validate_token();
+        if ( ! empty( $validation['indeterminate'] ) ) {
+            // Couldn't confirm token state right now; don't rotate or alarm on a blip.
+            $this->log_info( 'Skipping token refresh: validation inconclusive (transient) — ' . ( $validation['error'] ?? 'unknown' ) . '.' );
+            return false;
+        }
         if ( ! $validation['is_valid'] ) {
             $error_msg = 'Token refresh failed: Current token is already invalid or expired. A new token must be generated manually.';
             $this->log_error( $error_msg );
@@ -392,7 +499,15 @@ class YMCA_IG_Feed_API {
             // Temporarily set new token to validate it
             $this->settings['access_token'] = $new_token;
             $new_validation = $this->validate_token();
-            
+
+            if ( ! empty( $new_validation['indeterminate'] ) ) {
+                // Couldn't confirm the new token (transient); keep the old token
+                // and try again later rather than emailing over a blip.
+                $this->settings['access_token'] = $old_token;
+                $this->log_info( 'New token validation inconclusive (transient) — keeping existing token, will retry next cycle.' );
+                return false;
+            }
+
             if ( ! $new_validation['is_valid'] ) {
                 // New token is invalid, restore old one
                 $this->settings['access_token'] = $old_token;
@@ -474,8 +589,16 @@ class YMCA_IG_Feed_API {
         // Validate token with Facebook to get real expiration
         $validation = $this->validate_token();
 
+        // Inconclusive check (transport error, 5xx, rate limit, garbled body):
+        // Facebook never gave a verdict, so the token is presumed fine. Log it
+        // and try again next cycle — do NOT alarm the admin over a transient blip.
+        if ( ! empty( $validation['indeterminate'] ) ) {
+            $this->log_info( 'Token check inconclusive (transient): ' . ( $validation['error'] ?? 'unknown' ) . ' — leaving token unchanged, will recheck next cycle.' );
+            return;
+        }
+
         if ( empty( $validation['is_valid'] ) ) {
-            // Token is already invalid
+            // Facebook explicitly reports the token is invalid/expired.
             $error_msg = 'Token is invalid: ' . ( $validation['error'] ?? 'Unknown error' );
             $this->log_error( $error_msg );
             $this->send_failure_notification( $error_msg );
@@ -722,6 +845,13 @@ class YMCA_IG_Feed_API {
         }
 
         $validation = $this->validate_token();
+
+        if ( ! empty( $validation['indeterminate'] ) ) {
+            return array(
+                'status'  => 'unknown',
+                'message' => __( 'Could not reach Facebook to check the token just now (temporary). The saved token is unchanged.', 'ymca-instagram-feed' ),
+            );
+        }
 
         if ( ! $validation['is_valid'] ) {
             return array(
