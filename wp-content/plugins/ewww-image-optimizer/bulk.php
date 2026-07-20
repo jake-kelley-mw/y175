@@ -28,6 +28,7 @@ function ewww_image_optimizer_display_tools() {
 	}
 	$queue_count  = ewwwio()->background_media->count_queue();
 	$queue_count += ewwwio()->background_image->count_queue();
+	$nonce        = '';
 	if ( $queue_count ) {
 		$nonce = wp_create_nonce( 'ewww_image_optimizer_clear_queue' );
 	}
@@ -262,11 +263,11 @@ function ewwwio_table_nav_controls( $location = 'top' ) {
  * @param string $hook The Hook suffix of the calling page.
  */
 function ewww_image_optimizer_tool_script( $hook ) {
-	ewwwio_debug_message( '<b>' . __FUNCTION__ . '()</b>' );
 	// Make sure we are being called from the bulk optimization page.
 	if ( 'tools_page_ewww-image-optimizer-tools' !== $hook ) {
 		return;
 	}
+	ewwwio_debug_message( '<b>' . __FUNCTION__ . '()</b>' );
 	add_filter( 'admin_footer_text', 'ewww_image_optimizer_footer_review_text' );
 
 	wp_enqueue_script( 'ewww-tool-script', plugins_url( '/includes/eio-tools.js', __FILE__ ), array( 'jquery', 'jquery-ui-progressbar' ), EWWW_IMAGE_OPTIMIZER_VERSION, true );
@@ -462,8 +463,8 @@ function ewww_image_optimizer_bulk_footer_output() {
 			$hs_debug = str_replace( array( "'", '<br>', '<b>', '</b>', '=>' ), array( "\'", '\n', '**', '**', '=' ), EWWW\Base::$debug_data );
 		}
 		?>
-<script type="text/javascript">!function(e,t,n){function a(){var e=t.getElementsByTagName("script")[0],n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://beacon-v2.helpscout.net",e.parentNode.insertBefore(n,e)}if(e.Beacon=n=function(t,n,a){e.Beacon.readyQueue.push({method:t,options:n,data:a})},n.readyQueue=[],"complete"===t.readyState)return a();e.attachEvent?e.attachEvent("onload",a):e.addEventListener("load",a,!1)}(window,document,window.Beacon||function(){});</script>
-<script type="text/javascript">
+<script>!function(e,t,n){function a(){var e=t.getElementsByTagName("script")[0],n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://beacon-v2.helpscout.net",e.parentNode.insertBefore(n,e)}if(e.Beacon=n=function(t,n,a){e.Beacon.readyQueue.push({method:t,options:n,data:a})},n.readyQueue=[],"complete"===t.readyState)return a();e.attachEvent?e.attachEvent("onload",a):e.addEventListener("load",a,!1)}(window,document,window.Beacon||function(){});</script>
+<script>
 	window.Beacon('init', 'aa9c3d3b-d4bc-4e9b-b6cb-f11c9f69da87');
 	Beacon( 'prefill', {
 		email: '<?php echo esc_js( $help_email ); ?>',
@@ -528,7 +529,7 @@ function ewww_image_optimizer_bulk_controls() {
 	<form id="ewww-bulk-controls" class="ewww-bulk-form" style="display: none;">
 		<?php ewww_image_optimizer_bulk_background_option(); ?>
 		<?php ewww_image_optimizer_bulk_scan_only_option( $scan_args ); ?>
-		<?php ewww_image_optimizer_bulk_aux_folders_option( $scan_args ); ?>
+		<?php ewww_image_optimizer_bulk_aux_folders_option(); ?>
 		<?php ewww_image_optimizer_bulk_force_reopt_option(); ?>
 		<?php ewww_image_optimizer_bulk_variant_option(); ?>
 		<?php ewww_image_optimizer_bulk_webp_only_option(); ?>
@@ -765,29 +766,35 @@ function ewww_image_optimizer_count_images_to_optimize( $gallery = 'media' ) {
 	$attachment_query = '';
 	$started          = microtime( true ); // Retrieve the time when the counting starts.
 	$max_query        = (int) apply_filters( 'ewww_image_optimizer_count_optimized_queries', 4000 );
+	$max_query_length = 15000;
 	/**
 	 * Set a maximum for a query, 1k less than WPE's 16k limit, just to be safe.
 	 *
-	 * @param int 15000 The maximum query length.
+	 * @param int $max_query_length The maximum query length.
 	 */
-	$max_query_length       = apply_filters( 'ewww_image_optimizer_max_query_length', 15000 );
+	$max_query_length       = apply_filters( 'ewww_image_optimizer_max_query_length', $max_query_length );
 	$attachment_query_count = 0;
 	switch ( $gallery ) {
 		case 'media':
 			return ewww_image_optimizer_count_attachments();
-			break;
 		case 'ngg':
 			// See if we were given attachment IDs to work with via GET/POST.
 			if ( ! empty( $_REQUEST['doaction'] ) || get_option( 'ewww_image_optimizer_bulk_ngg_resume' ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 				// Retrieve the attachment IDs that were pre-loaded in the database.
 				$attachment_ids = get_option( 'ewww_image_optimizer_bulk_ngg_attachments' );
-				array_walk( $attachment_ids, 'intval' );
-				while ( $attachment_ids && strlen( $attachment_query ) < $max_query_length ) {
-					$attachment_query .= "'" . array_pop( $attachment_ids ) . "',";
-					++$attachment_query_count;
+				if ( is_array( $attachment_ids ) ) {
+					// Use array_map to convert all values to positive integers, and array_filter to remove any left-over empty values.
+					$attachment_ids = array_filter( array_map( 'absint', $attachment_ids ) );
+
+					while ( $attachment_ids && strlen( $attachment_query ) < $max_query_length ) {
+						$attachment_query .= "'" . array_pop( $attachment_ids ) . "',";
+						++$attachment_query_count;
+					}
+					$attachment_query = 'WHERE pid IN (' . substr( $attachment_query, 0, -1 ) . ')';
+					$max_query        = $attachment_query_count;
+				} else {
+					$attachment_ids = array();
 				}
-				$attachment_query = 'WHERE pid IN (' . substr( $attachment_query, 0, -1 ) . ')';
-				$max_query        = $attachment_query_count;
 			}
 			// Get an array of sizes available for the $image.
 			global $ewwwngg;
@@ -836,13 +843,19 @@ function ewww_image_optimizer_count_images_to_optimize( $gallery = 'media' ) {
 			if ( ! empty( $_REQUEST['doaction'] ) || get_option( 'ewww_image_optimizer_bulk_flag_resume' ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 				// Retrieve the attachment IDs that were pre-loaded in the database.
 				$attachment_ids = get_option( 'ewww_image_optimizer_bulk_flag_attachments' );
-				array_walk( $attachment_ids, 'intval' );
-				while ( $attachment_ids && strlen( $attachment_query ) < $max_query_length ) {
-					$attachment_query .= "'" . array_pop( $attachment_ids ) . "',";
-					++$attachment_query_count;
+				if ( is_array( $attachment_ids ) ) {
+					// Use array_map to convert all values to positive integers, and array_filter to remove any left-over empty values.
+					$attachment_ids = array_filter( array_map( 'absint', $attachment_ids ) );
+
+					while ( $attachment_ids && strlen( $attachment_query ) < $max_query_length ) {
+						$attachment_query .= "'" . array_pop( $attachment_ids ) . "',";
+						++$attachment_query_count;
+					}
+					$attachment_query = 'WHERE pid IN (' . substr( $attachment_query, 0, -1 ) . ')';
+					$max_query        = $attachment_query_count;
+				} else {
+					$attachment_ids = array();
 				}
-				$attachment_query = 'WHERE pid IN (' . substr( $attachment_query, 0, -1 ) . ')';
-				$max_query        = $attachment_query_count;
 			}
 			$offset      = 0;
 			$attachments = $wpdb->get_col( "SELECT meta_data FROM $wpdb->flagpictures $attachment_query LIMIT $offset, $max_query" ); // phpcs:ignore WordPress.DB.PreparedSQL
@@ -899,11 +912,11 @@ function ewww_image_optimizer_count_images_to_optimize( $gallery = 'media' ) {
  * @param string $hook An indicator if this was not called from AJAX, like WP-CLI.
  */
 function ewww_image_optimizer_bulk_script( $hook ) {
-	ewwwio_debug_message( '<b>' . __FUNCTION__ . '()</b>' );
 	// Make sure we are being called from the bulk optimization page.
 	if ( 'media_page_ewww-image-optimizer-bulk' !== $hook && 'settings_page_ewww-image-optimizer-options' !== $hook ) {
 		return;
 	}
+	ewwwio_debug_message( '<b>' . __FUNCTION__ . '()</b>' );
 
 	remove_all_actions( 'admin_notices' );
 	remove_all_actions( 'network_admin_notices' );
@@ -929,10 +942,10 @@ function ewww_image_optimizer_bulk_script( $hook ) {
 	) {
 		$ids = sanitize_text_field( wp_unslash( $_REQUEST['ids'] ) );
 		if ( is_numeric( $ids ) ) {
-			$ids[] = (int) $ids;
+			$ids = array( (int) $ids );
 		} else {
 			$ids = explode( ',', $ids );
-			array_walk( $ids, 'intval' );
+			$ids = array_filter( array_map( 'absint', $ids ) );
 		}
 		$ids = implode( ',', $ids );
 		// Unset the 'bulk resume' option since we were given specific IDs to optimize.
@@ -1320,12 +1333,13 @@ function ewww_image_optimizer_fetch_metadata_batch( $attachment_ids ) {
 	$attachments_meta = array();
 	$attachments_in   = '';
 	$attachments      = array();
+	$max_query_length = 15000;
 	/**
 	 * Set a maximum for a query, 1k less than WPE's 16k limit, just to be safe.
 	 *
-	 * @param int 15000 The maximum query length.
+	 * @param int $max_query_length The maximum query length.
 	 */
-	$max_query_length = apply_filters( 'ewww_image_optimizer_max_query_length', 15000 );
+	$max_query_length = apply_filters( 'ewww_image_optimizer_max_query_length', $max_query_length );
 	foreach ( $attachment_ids as $attachment_id ) {
 		$attachments_in .= (int) $attachment_id . ',';
 		if ( strlen( $attachments_in ) > $max_query_length - 20 ) {
@@ -1475,15 +1489,17 @@ function ewww_image_optimizer_bulk_scan_init( $hook = '' ) {
 		$ids = sanitize_text_field( wp_unslash( $_REQUEST['ids'] ) );
 		ewwwio_debug_message( "validating requested ids: $ids" );
 		if ( is_numeric( $ids ) ) {
-			$ids[] = (int) $_REQUEST['ids'];
+			$ids = array( (int) $_REQUEST['ids'] );
 		} else {
 			$ids = explode( ',', $ids );
-			array_walk( $ids, 'intval' );
+			$ids = array_filter( array_map( 'absint', $ids ) );
 		}
+
 		// Then put it back together for the sql query.
 		$ids = implode( ',', $ids );
 		// Retrieve post IDs correlating to the IDs submitted to make sure they are all valid.
 		$attachments = $wpdb->get_col( "SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND (post_mime_type LIKE '%%image%%' OR post_mime_type LIKE '%%pdf%%') AND ID IN ({$ids}) ORDER BY ID DESC" ); // phpcs:ignore WordPress.DB.PreparedSQL
+
 		// Unset the 'bulk resume' option since we were given specific IDs to optimize.
 		update_option( 'ewww_image_optimizer_bulk_resume', '' );
 		update_option( 'ewww_image_optimizer_bulk_foreground', '' );
@@ -1741,7 +1757,7 @@ function ewww_image_optimizer_media_scan( $hook = '' ) {
 					$s3_uploads = \S3_Uploads\Plugin::get_instance();
 					remove_filter( 'upload_dir', array( $s3_uploads, 'filter_upload_dir' ) );
 				}
-				if ( ewww_image_optimizer_stream_wrapped( $file_path ) || 0 === strpos( $file_path, 'http' ) ) {
+				if ( ewww_image_optimizer_stream_wrapped( $file_path ) || str_starts_with( $file_path, 'http' ) ) {
 					$file_path = get_attached_file( $selected_id, true );
 				}
 				if ( class_exists( 'S3_Uploads', false ) && method_exists( 'S3_Uploads', 'filter_upload_dir' ) ) {
@@ -2513,11 +2529,11 @@ function ewww_image_optimizer_bulk_loop( $hook = '', $delay = 0 ) {
 					$meta        = ewww_image_optimizer_update_scaled_metadata( $meta, $image->attachment_id );
 					$scaled_file = ewww_image_optimizer_scaled_filename( $image->file );
 					if ( ewwwio_is_file( $scaled_file ) ) {
+						global $wpdb;
 						if ( ! empty( $ewww_image->id ) && ! ewww_image_optimizer_get_option( 'ewww_image_optimizer_include_originals' ) ) {
 							ewww_image_optimizer_delete_pending_image( $ewww_image->id );
 						} elseif ( ! empty( $ewww_image->id ) ) {
 							$add_to_total = 1;
-							global $wpdb;
 							$wpdb->update(
 								$wpdb->ewwwio_images,
 								array(
@@ -2746,10 +2762,12 @@ function ewww_image_optimizer_bulk_update_meta() {
 		die( wp_json_encode( array( 'error' => esc_html__( 'Access token has expired, please reload the page.', 'ewww-image-optimizer' ) ) ) );
 	}
 	if ( empty( $_REQUEST['attachment_id'] ) ) {
+		ewwwio_ob_clean();
 		die( wp_json_encode( array( 'success' => 0 ) ) );
 	}
 	$attachment_id = (int) $_REQUEST['attachment_id'];
 	ewww_image_optimizer_post_optimize_attachment( $attachment_id );
+	ewwwio_ob_clean();
 	die( wp_json_encode( array( 'success' => 1 ) ) );
 }
 
@@ -2782,7 +2800,7 @@ function ewww_image_optimizer_post_optimize_attachment( $attachment_id ) {
 	add_filter( 'wp_get_missing_image_subsizes', 'ewww_image_optimizer_no_missing_sizes' );
 	wp_update_attachment_metadata( $attachment_id, $meta );
 	do_action( 'ewww_image_optimizer_after_optimize_attachment', $attachment_id, $meta );
-	add_filter( 'wp_get_missing_image_subsizes', 'ewww_image_optimizer_no_missing_sizes' );
+	remove_filter( 'wp_get_missing_image_subsizes', 'ewww_image_optimizer_no_missing_sizes' );
 }
 
 /**

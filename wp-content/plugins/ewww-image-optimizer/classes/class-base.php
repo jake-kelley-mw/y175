@@ -34,6 +34,14 @@ class Base {
 	public static $temp_debug = false;
 
 	/**
+	 * Whether content_url() call has been debugged.
+	 *
+	 * @access public
+	 * @var bool $content_url_debugged
+	 */
+	public static $content_url_debugged = false;
+
+	/**
 	 * System info, gathered from the debugger and debug_info() functions.
 	 *
 	 * @access public
@@ -48,6 +56,13 @@ class Base {
 	 * @var bool $use_network_options
 	 */
 	public static $use_network_options = null;
+
+	/**
+	 * Request URI.
+	 *
+	 * @var string $request_uri
+	 */
+	public static $request_uri = '';
 
 	/**
 	 * Content directory (URL) for the plugin to use.
@@ -250,6 +265,9 @@ class Base {
 		$this->home_url          = \trailingslashit( \get_site_url() );
 		$this->relative_home_url = \preg_replace( '/https?:/', '', $this->home_url );
 		$this->home_domain       = $this->parse_url( $this->home_url, PHP_URL_HOST );
+		if ( empty( self::$request_uri ) ) {
+			self::$request_uri = \add_query_arg( '', '' );
+		}
 
 		if ( 'EWWW' === __NAMESPACE__ ) {
 			$this->content_url = \content_url( 'ewww/' );
@@ -283,6 +301,11 @@ class Base {
 		$this->debug_message( "home url: $this->home_url" );
 		$this->debug_message( "relative home url: $this->relative_home_url" );
 		$this->debug_message( "home domain: $this->home_domain" );
+		if ( ! \str_contains( self::$request_uri, 'page=ewww-image-optimizer-options' ) ) {
+			$this->debug_message( 'request uri is ' . self::$request_uri );
+		} else {
+			$this->debug_message( 'request uri is EWWW IO settings' );
+		}
 	}
 
 	/**
@@ -677,7 +700,7 @@ class Base {
 	/**
 	 * Get a list of which image types can be converted to WebP with the current configuration.
 	 *
-	 * @return A list of mime-types suitable for WebP conversion.
+	 * @return array A list of mime-types suitable for WebP conversion.
 	 */
 	public function get_webp_types() {
 		$webp_types = array( 'image/jpeg' );
@@ -740,6 +763,8 @@ class Base {
 			$paths = $input;
 		} elseif ( \is_string( $input ) ) {
 			$paths = \explode( "\n", $input );
+		} else {
+			return $path_array;
 		}
 		if ( $this->is_iterable( $paths ) ) {
 			foreach ( $paths as $path ) {
@@ -929,7 +954,7 @@ class Base {
 
 	/**
 	 * Make sure this is really and truly a "front-end request", excluding page builders and such.
-	 * NOTE: this is not currently used anywhere, each module has it's own list.
+	 * NOTE: this is currently used by Image_Detective only. Otherwise, each module still has it's own list.
 	 *
 	 * @return bool True for front-end requests, false for admin/builder requests.
 	 */
@@ -939,18 +964,32 @@ class Base {
 		}
 		$uri = \add_query_arg( '', '' );
 		if (
-			\strpos( $uri, 'cornerstone=' ) !== false ||
-			\strpos( $uri, 'cornerstone-endpoint' ) !== false ||
-			\strpos( $uri, 'ct_builder=' ) !== false ||
-			\did_action( 'cornerstone_boot_app' ) || \did_action( 'cs_before_preview_frame' ) ||
-			'/print/' === substr( $uri, -7 ) ||
-			\strpos( $uri, 'elementor-preview=' ) !== false ||
-			\strpos( $uri, 'et_fb=' ) !== false ||
-			\strpos( $uri, 'is-editor-iframe=' ) !== false ||
-			\strpos( $uri, 'vc_editable=' ) !== false ||
-			\strpos( $uri, 'tatsu=' ) !== false ||
+			\str_contains( $uri, 'bricks=run' ) ||
+			\str_contains( $uri, '?brizy-edit' ) ||
+			\str_contains( $uri, '&builder=true' ) ||
+			\str_contains( $uri, 'cornerstone=' ) ||
+			\str_contains( $uri, 'cornerstone-endpoint' ) ||
+			\str_contains( $uri, 'ct_builder=' ) ||
+			\str_contains( $uri, 'ct_render_shortcode=' ) ||
+			\did_action( 'cornerstone_boot_app' ) ||
+			\did_action( 'cs_before_preview_frame' ) ||
+			\did_action( 'cs_element_rendering' ) ||
+			\did_action( 'cornerstone_before_boot_app' ) ||
+			\apply_filters( 'cs_is_preview_render', false ) ||
+			\str_contains( $uri, 'elementor-preview=' ) ||
+			\str_contains( $uri, 'et_fb=' ) ||
+			\str_contains( $uri, 'fb-edit=' ) ||
+			\str_contains( $uri, '?fl_builder' ) ||
+			\str_contains( $uri, '?giveDonationFormInIframe' ) ||
+			\str_contains( $uri, 'is-editor-iframe=' ) ||
+			\str_contains( $uri, 'action=oxy_render' ) ||
+			\str_contains( $uri, 'tatsu=' ) ||
+			\str_contains( $uri, 'tve=true' ) ||
 			( ! empty( $_POST['action'] ) && 'tatsu_get_concepts' === \sanitize_text_field( \wp_unslash( $_POST['action'] ) ) ) || // phpcs:ignore WordPress.Security.NonceVerification
-			\strpos( $uri, 'wp-login.php' ) !== false ||
+			\str_contains( $uri, 'vc_editable=' ) ||
+			\str_contains( $uri, 'wp-login.php' ) ||
+			'/print/' === \substr( $uri, -7 ) ||
+			( \function_exists( '\affwp_is_affiliate_portal' ) && \affwp_is_affiliate_portal() ) ||
 			\is_embed() ||
 			\is_feed() ||
 			\is_preview() ||
@@ -1078,6 +1117,21 @@ class Base {
 		if ( ! \is_object( $this->filesystem ) ) {
 			$this->filesystem = new \WP_Filesystem_Direct( '' );
 		}
+	}
+
+	/**
+	 * Get elapsed time in microseconds.
+	 *
+	 * @param array $started The start time, as returned by hrtime().
+	 * @return int Elapsed time in microseconds.
+	 */
+	public function get_elapsed_time( $started ) {
+		if ( ! \is_array( $started ) || 2 !== count( $started ) ) {
+			return 0;
+		}
+		$current_time = \hrtime();
+		$elapsed_time = ( $current_time[0] - $started[0] ) * 1000000 + ( $current_time[1] - $started[1] ) / 1000;
+		return (int) $elapsed_time;
 	}
 
 	/**
@@ -1355,10 +1409,10 @@ class Base {
 		} elseif ( \function_exists( '\ini_get' ) ) {
 			$memory_limit = \ini_get( 'memory_limit' );
 		} else {
+			// Conservative default, current usage + 16M.
+			$current_memory = \memory_get_usage( true );
+			$memory_limit   = \round( $current_memory / ( 1024 * 1024 ) ) + 16;
 			if ( ! \defined( 'EIO_MEMORY_LIMIT' ) ) {
-				// Conservative default, current usage + 16M.
-				$current_memory = \memory_get_usage( true );
-				$memory_limit   = \round( $current_memory / ( 1024 * 1024 ) ) + 16;
 				define( 'EIO_MEMORY_LIMIT', $memory_limit );
 			}
 		}
@@ -1713,7 +1767,13 @@ class Base {
 		if ( $this->site_url ) {
 			return $this->site_url;
 		}
-		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
+		$temp_debug = self::$temp_debug;
+		if ( self::$temp_debug && self::$content_url_debugged ) {
+			self::$temp_debug = false;
+		}
+		if ( ! self::$content_url_debugged ) {
+			$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
+		}
 		$this->site_url = \get_home_url();
 		global $as3cf;
 		if ( \class_exists( '\Amazon_S3_And_CloudFront' ) && \is_object( $as3cf ) ) {
@@ -1731,25 +1791,35 @@ class Base {
 			}
 			if ( $as3cf->get_setting( 'enable-object-prefix' ) ) {
 				$this->s3_object_prefix = $as3cf->get_setting( 'object-prefix' );
-				$this->debug_message( $this->s3_object_prefix );
+				if ( ! self::$content_url_debugged ) {
+					$this->debug_message( $this->s3_object_prefix );
+				}
 			} else {
 				$this->s3_object_prefix = '';
-				$this->debug_message( 'no WOM prefix' );
+				if ( ! self::$content_url_debugged ) {
+					$this->debug_message( 'no WOM prefix' );
+				}
 			}
 			if ( ! empty( $s3_domain ) && $as3cf->get_setting( 'serve-from-s3' ) ) {
 				$this->s3_active = $s3_domain;
-				$this->debug_message( "found S3 domain of $s3_domain with bucket $s3_bucket and region $s3_region" );
+				if ( ! self::$content_url_debugged ) {
+					$this->debug_message( "found S3 domain of $s3_domain with bucket $s3_bucket and region $s3_region" );
+				}
 				$this->allowed_urls[] = $s3_scheme . '://' . $s3_domain . '/';
 				if ( $as3cf->get_setting( 'enable-delivery-domain' ) && $as3cf->get_setting( 'delivery-domain' ) ) {
 					$delivery_domain         = $as3cf->get_setting( 'delivery-domain' );
 					$this->allowed_urls[]    = $s3_scheme . '://' . \trailingslashit( $delivery_domain ) . \trailingslashit( \trim( $this->s3_object_prefix, '/' ) );
 					$this->allowed_domains[] = $delivery_domain;
-					$this->debug_message( "found WOM delivery domain of $delivery_domain" );
+					if ( ! self::$content_url_debugged ) {
+						$this->debug_message( "found WOM delivery domain of $delivery_domain" );
+					}
 				}
 			}
 			if ( $as3cf->get_setting( 'object-versioning' ) ) {
 				$this->s3_object_version = true;
-				$this->debug_message( 'object versioning enabled' );
+				if ( ! self::$content_url_debugged ) {
+					$this->debug_message( 'object versioning enabled' );
+				}
 			}
 		}
 
@@ -1763,7 +1833,9 @@ class Base {
 			}
 			if ( ! empty( $s3_uploads_url ) ) {
 				$this->allowed_urls[] = $s3_uploads_url;
-				$this->debug_message( "found S3 URL from S3_Uploads: $s3_uploads_url" );
+				if ( ! self::$content_url_debugged ) {
+					$this->debug_message( "found S3 URL from S3_Uploads: $s3_uploads_url" );
+				}
 				$s3_domain       = $this->parse_url( $s3_uploads_url, PHP_URL_HOST );
 				$s3_scheme       = $this->parse_url( $s3_uploads_url, PHP_URL_SCHEME );
 				$this->s3_active = $s3_domain;
@@ -1777,13 +1849,44 @@ class Base {
 				if ( 'disabled' !== $sm_mode ) {
 					$sm_host              = $sm->get_gs_host();
 					$this->allowed_urls[] = $sm_host;
-					$this->debug_message( "found cloud storage URL from WP Stateless: $sm_host" );
+					if ( ! self::$content_url_debugged ) {
+						$this->debug_message( "found cloud storage URL from WP Stateless: $sm_host" );
+					}
 					$s3_domain       = $this->parse_url( $sm_host, PHP_URL_HOST );
 					$s3_scheme       = $this->parse_url( $sm_host, PHP_URL_SCHEME );
 					$this->s3_active = $s3_domain;
 				}
 			}
 		}
+
+		/**
+		 * Allow third-party offload plugins to mark the site as serving media from S3-compatible storage.
+		 *
+		 * Built-in detection covers WP Offload Media, S3 Uploads, and WP Stateless. Other offloaders
+		 * (e.g. Advanced Media Offloader) can hook this filter to opt in.
+		 *
+		 * @param bool|string $s3_active False when no S3 offload is active, otherwise the S3/CDN host
+		 *                               that should be matched against asset URLs.
+		 */
+		$this->s3_active = \apply_filters( 'eio_s3_active', $this->s3_active );
+
+		/**
+		 * Allow third-party offload plugins to declare an S3 object prefix.
+		 *
+		 * The prefix is stripped from URLs when mapping CDN URLs back to local paths.
+		 *
+		 * @param string $s3_object_prefix The object prefix, or an empty string when none is used.
+		 */
+		$this->s3_object_prefix = \apply_filters( 'eio_s3_object_prefix', $this->s3_object_prefix );
+
+		/**
+		 * Allow third-party offload plugins to declare that offloaded URLs contain a numeric
+		 * object versioning segment (8 or 14 digits) that must be stripped before resolving
+		 * URLs to local paths.
+		 *
+		 * @param bool $s3_object_version True when offloaded URLs contain a versioning segment.
+		 */
+		$this->s3_object_version = \apply_filters( 'eio_s3_object_versioning_enabled', $this->s3_object_version );
 
 		// NOTE: we don't want this for Easy IO as they might be using SWIS to deliver
 		// JS/CSS from a different CDN domain, and that will break with Easy IO!
@@ -1803,7 +1906,9 @@ class Base {
 			$site_domain = $this->parse_url( $site_url, PHP_URL_HOST );
 			// If the home domain does not match the upload url, and the site domain does match...
 			if ( $home_domain && false === \strpos( $upload_dir['baseurl'], $home_domain ) && $site_domain && false !== \strpos( $upload_dir['baseurl'], $site_domain ) ) {
-				$this->debug_message( "using WP URL (via get_site_url) with $site_domain rather than $home_domain" );
+				if ( ! self::$content_url_debugged ) {
+					$this->debug_message( "using WP URL (via get_site_url) with $site_domain rather than $home_domain" );
+				}
 				$home_url = $site_url;
 			}
 			$this->site_url = \defined( 'EXACTDN_LOCAL_DOMAIN' ) && EXACTDN_LOCAL_DOMAIN ? EXACTDN_LOCAL_DOMAIN : $home_url;
@@ -1825,7 +1930,9 @@ class Base {
 		$this->allowed_domains[] = $this->upload_domain;
 		// For when plugins don't do a very good job of updating URLs for mapped multi-site domains.
 		if ( ! $this->s3_active && \is_multisite() && false === \strpos( $upload_dir['baseurl'], $this->upload_domain ) ) {
-			$this->debug_message( 'upload domain does not match the home URL' );
+			if ( ! self::$content_url_debugged ) {
+				$this->debug_message( 'upload domain does not match the home URL' );
+			}
 			$origin_upload_domain = $this->parse_url( $upload_dir['baseurl'], PHP_URL_HOST );
 			if ( $origin_upload_domain ) {
 				$this->allowed_domains[] = $origin_upload_domain;
@@ -1840,6 +1947,9 @@ class Base {
 				$this->allowed_domains[] = $nonwww;
 			}
 		}
+		// Yes, this is correct, as weird as it looks...
+		// So long as we are not using S3, then all classes should check for WPML domains.
+		// But, when we're using S3, ExactDN should no longer bother with WPML domains, since it only cares about the S3 domain then.
 		if ( ! $this->s3_active || __NAMESPACE__ . '\ExactDN' !== \get_class( $this ) ) {
 			$wpml_domains = \apply_filters( 'wpml_setting', array(), 'language_domains' );
 			if ( $this->is_iterable( $wpml_domains ) ) {
@@ -1852,9 +1962,15 @@ class Base {
 				}
 			}
 		}
-		$this->debug_message( "site/upload url: $this->site_url" );
-		$this->debug_message( "site/upload domain: $this->upload_domain" );
-		$this->debug_message( "upload_url: $this->upload_url" );
+		if ( ! self::$content_url_debugged ) {
+			$this->debug_message( "site/upload url: $this->site_url" );
+			$this->debug_message( "site/upload domain: $this->upload_domain" );
+			$this->debug_message( "upload_url: $this->upload_url" );
+		}
+		if ( $temp_debug ) {
+			self::$temp_debug = true;
+		}
+		self::$content_url_debugged = true;
 		return $this->site_url;
 	}
 

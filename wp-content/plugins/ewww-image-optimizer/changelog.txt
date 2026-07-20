@@ -1,3 +1,53 @@
+= 8.7.4 =
+*Release Date - July 16, 2026*
+
+* security: prevent authenticated XSS
+
+= 8.7.3 =
+*Release Date - July 9, 2026*
+
+* added: ewww_image_optimizer_cloud_based_media filter for cloud-based storage plugins to integrate with optimization processes
+
+= 8.7.2 =
+*Release Date - June 10, 2026*
+
+* changed: re-test mechanism for background optimization only runs on settings, and improved error reporting for re-testing
+* fixed: cross-site image collisions in remote_push/remote_fetch on multisite with S3 Offload plugin, props @earthlingdavey
+* fixed: bulk JS enqueued twice
+
+= 8.7.1 =
+*Release Date - June 4, 2026*
+
+* fixed: JS/CSS URLs created by WP Rocket are not delivered via Easy IO CDN
+* fixed: docs/help links for Image Detective and Max Image Dimensions
+* fixed: search during bulk optimization does not pause table updates
+
+= 8.7.0 =
+*Release Date - May 21, 2026*
+
+* changed: Linux binaries are now 64-bit for better compatibility with modern servers
+* fixed: Image Detective uses incorrect dimensions for auto-sized srcset images
+* fixed: size detection for images using native lazy load
+* fixed: PHP error adding global Lazy Load exclusion with Image Detective
+* updated: jpegtran to version 10
+* updated: optipng to version 7.9.1
+* updated: gifsicle to version 1.96
+* updated: pngquant to version 3.0.4
+* updated: cwebp to version 1.6.0
+
+= 8.6.0 =
+*Release Date - May 14, 2026*
+
+* added: LCP image detection helper, along with improved UI for Resize Detection which has been renamed to Image Detective
+* added: ability to exclude LCP image from Lazy Load
+* added: filters for plugins that offload media to cloud storage to integrate with S3 detection for JS/Picture WebP and Lazy Load, props @alessandrocarrera
+* changed: Lazy Load and Easy IO scaling thresholds reduced for improved auto-scaling
+* fixed: performance regression when Lazy Load checks parent elements for skip-lazy exceptions
+* fixed: new uploads checked twice for optimization when Image Regenerate & Select Crop plugin is active
+* fixed: incorrect WebP URLs shown in Media Library when naming mode is empty, usually when media is offloaded
+* fixed: some front-end options not autoloaded
+* fixed: AVIF images rewritten in Force WebP mode
+
 = 8.5.0 =
 *Release Date - April 1, 2026*
 

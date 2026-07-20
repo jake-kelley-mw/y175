@@ -117,7 +117,7 @@ class ExactDN extends Page_Parser {
 	 * The ExactDN domain/zone.
 	 *
 	 * @access private
-	 * @var float $elapsed_time
+	 * @var string $exactdn_domain
 	 */
 	private $exactdn_domain = false;
 
@@ -154,6 +154,46 @@ class ExactDN extends Page_Parser {
 	private $scheme = false;
 
 	/**
+	 * The JPEG quality to use when resizing images with ExactDN.
+	 *
+	 * @access private
+	 * @var int $jpg_quality
+	 */
+	private $jpg_quality = 82;
+
+	/**
+	 * The WebP quality to use when resizing images with ExactDN.
+	 *
+	 * @access private
+	 * @var int $webp_quality
+	 */
+	private $webp_quality = 75;
+
+	/**
+	 * The AVIF quality to use when resizing images with ExactDN.
+	 *
+	 * @access private
+	 * @var int $avif_quality
+	 */
+	private $avif_quality = 60;
+
+	/**
+	 * Whether to remove metadata from images when resizing with ExactDN.
+	 *
+	 * @access private
+	 * @var bool $metadata_remove
+	 */
+	private $metadata_remove = true;
+
+	/**
+	 * Whether to apply image sharpening when resizing with ExactDN.
+	 *
+	 * @access private
+	 * @var bool $sharpen
+	 */
+	private $sharpen = false;
+
+	/**
 	 * Allow us to track how much overhead ExactDN introduces.
 	 *
 	 * @access private
@@ -186,13 +226,6 @@ class ExactDN extends Page_Parser {
 	private $replaced_images = array();
 
 	/**
-	 * Request URI.
-	 *
-	 * @var string $request_uri
-	 */
-	public $request_uri = '';
-
-	/**
 	 * Register (once) actions and filters for ExactDN. If you want to use this class, use the global.
 	 */
 	public function __construct() {
@@ -211,14 +244,8 @@ class ExactDN extends Page_Parser {
 		}
 
 		$this->validate_user_exclusions();
-		$this->request_uri = \add_query_arg( '', '' );
-		if ( false === \strpos( $this->request_uri, 'page=ewww-image-optimizer-options' ) ) {
-			$this->debug_message( "request uri is {$this->request_uri}" );
-		} else {
-			$this->debug_message( 'request uri is EWWW IO settings' );
-		}
 
-		if ( '/robots.txt' === $this->request_uri || '/sitemap.xml' === $this->request_uri ) {
+		if ( '/robots.txt' === parent::$request_uri || '/sitemap.xml' === parent::$request_uri ) {
 			return;
 		}
 
@@ -227,10 +254,10 @@ class ExactDN extends Page_Parser {
 		/**
 		 * Allow pre-empting the parsers by page.
 		 *
-		 * @param bool Whether to skip parsing the page.
-		 * @param string The URI/path of the page.
+		 * @param bool false Whether to skip parsing the page.
+		 * @param string parent::$request_uri The URI/path of the page.
 		 */
-		if ( \apply_filters( 'exactdn_skip_page', false, $this->request_uri ) ) {
+		if ( \apply_filters( 'exactdn_skip_page', false, parent::$request_uri ) ) {
 			return;
 		}
 
@@ -252,6 +279,16 @@ class ExactDN extends Page_Parser {
 				$this->debug_message( 'using plain http' );
 			}
 			$this->scheme = $scheme;
+		}
+
+		$this->jpg_quality     = \apply_filters( 'jpeg_quality', null, 'image_resize' );
+		$this->webp_quality    = \apply_filters( 'webp_quality', 75, 'image/webp' );
+		$this->avif_quality    = \apply_filters( 'avif_quality', 60, 'image/avif' );
+		$this->metadata_remove = $this->get_option( $this->prefix . 'metadata_remove' );
+		if ( \defined( 'EIO_WEBP_SHARP_YUV' ) && EIO_WEBP_SHARP_YUV ) {
+			$this->sharpen = true;
+		} elseif ( $this->get_option( $this->prefix . 'sharpen' ) ) {
+			$this->sharpen = true;
 		}
 
 		if ( \is_multisite() && \defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) {
@@ -392,6 +429,8 @@ class ExactDN extends Page_Parser {
 		if ( $this->get_option( 'exactdn_all_the_things' ) ) {
 			\add_filter( 'style_loader_src', array( $this, 'parse_enqueue' ), 9999 );
 			\add_filter( 'script_loader_src', array( $this, 'parse_enqueue' ), 9999 );
+			\add_filter( 'rocket_css_url', array( $this, 'parse_enqueue' ) );
+			\add_filter( 'rocket_js_url', array( $this, 'parse_enqueue' ) );
 		}
 		if ( ! $this->get_option( 'exactdn_prevent_db_queries' ) ) {
 			$this->set_option( 'exactdn_prevent_db_queries', true );
@@ -405,6 +444,8 @@ class ExactDN extends Page_Parser {
 
 		// Configure Autoptimize with our CDN domain.
 		\add_filter( 'autoptimize_filter_cssjs_multidomain', array( $this, 'add_cdn_domain' ) );
+		// Inform WP Rocket of the CDN domain also.
+		\add_filter( 'rocket_cdn_hosts', array( $this, 'add_cdn_domain' ) );
 
 		\add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 
@@ -549,7 +590,7 @@ class ExactDN extends Page_Parser {
 		}
 		$site_url = $this->content_url();
 
-		$url = 'http://optimize.exactlywww.com/exactdn/activate.php';
+		$url = 'http://api.exactlywww.net/exactdn/activate.php';
 		$ssl = \wp_http_supports( array( 'ssl' ) );
 		if ( $ssl ) {
 			$url = \set_url_scheme( $url, 'https' );
@@ -641,7 +682,7 @@ class ExactDN extends Page_Parser {
 		global $exactdn_activate_error;
 		$exactdn_activate_error = 'zone not verified';
 		// Primary check sends the test URL to the API for full verification.
-		$api_url = 'http://optimize.exactlywww.com/exactdn/verify.php';
+		$api_url = 'http://api.exactlywww.net/exactdn/verify.php';
 		$ssl     = \wp_http_supports( array( 'ssl' ) );
 		if ( $ssl ) {
 			$api_url = \set_url_scheme( $api_url, 'https' );
@@ -1091,11 +1132,11 @@ class ExactDN extends Page_Parser {
 		if ( $this->is_json( $content ) ) {
 			return $content;
 		}
-		if ( \apply_filters( 'exactdn_skip_page', false, $this->request_uri ) ) {
+		if ( \apply_filters( 'exactdn_skip_page', false, parent::$request_uri ) ) {
 			return $content;
 		}
 
-		$started = \microtime( true );
+		$started = \hrtime();
 		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
 		$images = $this->get_images_from_html( $content, true );
 
@@ -1176,6 +1217,7 @@ class ExactDN extends Page_Parser {
 				if ( empty( $args ) ) {
 					$srcset_fill = false;
 				}
+				$placeholder_src_orig = '';
 				// Support Lazy Load plugins.
 				// Don't modify $tag yet as we need unmodified version later.
 				$lazy_load_src = \trim( $this->get_attribute( $images['img_tag'][ $index ], 'data-lazy-src' ) );
@@ -1564,6 +1606,7 @@ class ExactDN extends Page_Parser {
 
 					$args    = array();
 					$new_tag = $tag;
+					$new_src = '';
 					$width   = $this->get_attribute( $images['img_tag'][ $index ], 'width' );
 					$height  = $this->get_attribute( $images['img_tag'][ $index ], 'height' );
 					// Making sure the width/height are numeric.
@@ -1715,9 +1758,9 @@ class ExactDN extends Page_Parser {
 			$this->debug_message( "never found matching img for image preload: {$preload_image['tag']}" );
 		}
 
-		$elapsed_time = \microtime( true ) - $started;
+		$elapsed_time = $this->get_elapsed_time( $started ) / 1000000;
 		$this->debug_message( "parsing the_content took $elapsed_time seconds" );
-		$this->elapsed_time += \microtime( true ) - $started;
+		$this->elapsed_time += $elapsed_time;
 		$this->debug_message( "parsing the page took $this->elapsed_time seconds so far" );
 		if ( ! $this->get_option( 'exactdn_prevent_db_queries' ) && $this->elapsed_time > .5 ) {
 			$this->set_option( 'exactdn_prevent_db_queries', true );
@@ -2471,8 +2514,7 @@ class ExactDN extends Page_Parser {
 	 * @return string|bool
 	 */
 	public function filter_image_downsize( $image, $attachment_id, $size ) {
-		$started = \microtime( true );
-		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
+		$started = \hrtime();
 
 		if ( \is_array( $attachment_id ) || \is_object( $attachment_id ) ) {
 			return $image;
@@ -2515,10 +2557,11 @@ class ExactDN extends Page_Parser {
 			return $image;
 		}
 		// Make it easier to skip all images by URI.
-		if ( \apply_filters( 'exactdn_skip_page', false, $this->request_uri ) ) {
+		if ( \apply_filters( 'exactdn_skip_page', false, parent::$request_uri ) ) {
 			return $image;
 		}
 
+		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
 		if ( \function_exists( '\aq_resize' ) ) {
 			$this->debug_message( 'aq_resize detected, image_downsize filter bypassed' );
 			return $image;
@@ -2795,9 +2838,9 @@ class ExactDN extends Page_Parser {
 			$this->debug_message( $image[0] );
 		}
 		$this->debug_message( 'end image_downsize' );
-		$elapsed_time = \microtime( true ) - $started;
+		$elapsed_time = $this->get_elapsed_time( $started ) / 1000000;
 		$this->debug_message( "parsing image_downsize took $elapsed_time seconds" );
-		$this->elapsed_time += \microtime( true ) - $started;
+		$this->elapsed_time += $elapsed_time;
 		return $image;
 	}
 
@@ -2857,7 +2900,7 @@ class ExactDN extends Page_Parser {
 	 * @return array An array of ExactDN image urls and widths.
 	 */
 	public function filter_srcset_array( $sources = array(), $size_array = array(), $image_src = '', $image_meta = array(), $attachment_id = 0 ) {
-		$started = \microtime( true );
+		$started = \hrtime();
 		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
 		// Don't foul up the admin side of things, unless a plugin wants to.
 		if ( \is_admin() &&
@@ -2876,7 +2919,7 @@ class ExactDN extends Page_Parser {
 		) {
 			return $sources;
 		}
-		if ( \apply_filters( 'exactdn_skip_page', false, $this->request_uri ) ) {
+		if ( \apply_filters( 'exactdn_skip_page', false, parent::$request_uri ) ) {
 			return $sources;
 		}
 
@@ -2892,6 +2935,7 @@ class ExactDN extends Page_Parser {
 			if ( 'x' === $source['descriptor'] ) {
 				$w_descriptor = false;
 			}
+			$this->debug_message( "checking {$source['url']} with descriptor {$source['descriptor']}" );
 			if ( ! $this->validate_image_url( $source['url'] ) ) {
 				continue;
 			}
@@ -2965,7 +3009,7 @@ class ExactDN extends Page_Parser {
 		 *
 		 * @param array|bool $multipliers Array of multipliers to use or false to bypass.
 		 */
-		$multipliers = \apply_filters( 'exactdn_srcset_multipliers', array( .2, .4, .6, .8, 1, 450 ) );
+		$multipliers = \apply_filters( 'exactdn_srcset_multipliers', array( .1, .2, .3, .4, .5, .6, .7, .8, .9, 1, 450 ) );
 
 		if ( empty( $url ) || empty( $multipliers ) ) {
 			// No URL, or no multipliers, bail!
@@ -3100,10 +3144,10 @@ class ExactDN extends Page_Parser {
 				$sources = \array_replace( $sources, $newsources );
 			}
 		} // if ( isset( $image_meta['width'] ) && isset( $image_meta['file'] ) )
-		$elapsed_time = \microtime( true ) - $started;
+		$elapsed_time = $this->get_elapsed_time( $started ) / 1000000;
 		$this->debug_message( "parsing srcset took $elapsed_time seconds" );
 		/* $this->debug_message( print_r( $sources, true ) ); */
-		$this->elapsed_time += \microtime( true ) - $started;
+		$this->elapsed_time += $elapsed_time;
 		return $sources;
 	}
 
@@ -3116,12 +3160,12 @@ class ExactDN extends Page_Parser {
 	 * @return array An array of media query breakpoints.
 	 */
 	public function filter_sizes( $sizes, $size ) {
-		$started = \microtime( true );
+		$started = \hrtime();
 		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
 		if ( ! \doing_filter( 'the_content' ) ) {
 			return $sizes;
 		}
-		if ( \apply_filters( 'exactdn_skip_page', false, $this->request_uri ) ) {
+		if ( \apply_filters( 'exactdn_skip_page', false, parent::$request_uri ) ) {
 			return $sizes;
 		}
 		$content_width = $this->get_content_width();
@@ -3130,9 +3174,9 @@ class ExactDN extends Page_Parser {
 			return $sizes;
 		}
 
-		$elapsed_time = \microtime( true ) - $started;
+		$elapsed_time = $this->get_elapsed_time( $started ) / 1000000;
 		$this->debug_message( "parsing sizes took $elapsed_time seconds" );
-		$this->elapsed_time += \microtime( true ) - $started;
+		$this->elapsed_time += $elapsed_time;
 		return \sprintf( '(max-width: %1$dpx) 100vw, %1$dpx', $content_width );
 	}
 
@@ -3283,10 +3327,10 @@ class ExactDN extends Page_Parser {
 	/**
 	 * Check if this is a REST API request that we should handle (or not).
 	 *
-	 * @param WP_HTTP_Response $response Result to send to the client. Usually a WP_REST_Response.
-	 * @param WP_REST_Server   $handler  ResponseHandler instance (usually WP_REST_Server).
-	 * @param WP_REST_Request  $request  Request used to generate the response.
-	 * @return WP_HTTP_Response The result, unaltered.
+	 * @param \WP_HTTP_Response $response Result to send to the client. Usually a WP_REST_Response.
+	 * @param \WP_REST_Server   $handler  ResponseHandler instance (usually WP_REST_Server).
+	 * @param \WP_REST_Request  $request  Request used to generate the response.
+	 * @return \WP_HTTP_Response The result, unaltered.
 	 */
 	public function parse_restapi_maybe( $response, $handler, $request ) {
 		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
@@ -4152,7 +4196,7 @@ class ExactDN extends Page_Parser {
 		if ( \function_exists( '\affwp_is_affiliate_portal' ) && \affwp_is_affiliate_portal() ) {
 			return $url;
 		}
-		if ( \apply_filters( 'exactdn_skip_page', false, $this->request_uri ) ) {
+		if ( \apply_filters( 'exactdn_skip_page', false, parent::$request_uri ) ) {
 			return $url;
 		}
 		if ( \did_action( 'cornerstone_boot_app' ) || \did_action( 'cs_before_preview_frame' ) ) {
@@ -4239,21 +4283,22 @@ class ExactDN extends Page_Parser {
 		global $wp_version;
 		// If a resource doesn't have a version string, we add one to help with cache-busting.
 		if (
-			false !== \strpos( $url, $this->content_path . '/themes/' ) &&
+			\str_contains( $url, $this->content_path . '/themes/' ) &&
 			( empty( $parsed_url['query'] ) || 'ver=' . $wp_version === $parsed_url['query'] )
 		) {
 			$modified = $this->function_exists( '\filemtime' ) ? \filemtime( \get_template_directory() ) : '';
 			if ( empty( $modified ) ) {
 				$modified = $this->version;
 			}
+			$modified = "m=$modified";
 			/**
 			 * Allows a custom version string for resources that are missing one.
 			 *
-			 * @param string Defaults to the modified time of the theme folder, and falls back to the plugin version.
+			 * @param string $modified Defaults to the modified time of the theme folder, and falls back to the plugin version.
 			 */
-			$parsed_url['query'] = \apply_filters( 'exactdn_version_string', "m=$modified" );
+			$parsed_url['query'] = \apply_filters( 'exactdn_version_string', $modified );
 		} elseif (
-			false !== \strpos( $url, $this->content_path . '/plugins/' ) &&
+			\str_contains( $url, $this->content_path . '/plugins/' ) &&
 			( empty( $parsed_url['query'] ) || 'ver=' . $wp_version === $parsed_url['query'] )
 		) {
 			$parsed_url['query'] = '';
@@ -4263,12 +4308,13 @@ class ExactDN extends Page_Parser {
 				if ( empty( $modified ) ) {
 					$modified = $this->version;
 				}
+				$modified = "m=$modified";
 				/**
 				 * Allows a custom version string for resources that are missing one.
 				 *
-				 * @param string Defaults to the modified time of the folder, and falls back to the plugin version.
+				 * @param string $modified Defaults to the modified time of the folder, and falls back to the plugin version.
 				 */
-				$parsed_url['query'] = \apply_filters( 'exactdn_version_string', "m=$modified" );
+				$parsed_url['query'] = \apply_filters( 'exactdn_version_string', $modified );
 			}
 		} elseif ( empty( $parsed_url['query'] ) ) {
 			$parsed_url['query'] = \apply_filters( 'exactdn_version_string', 'm=' . $this->version );
@@ -4305,16 +4351,6 @@ class ExactDN extends Page_Parser {
 		}
 
 		/**
-		 * Disables ExactDN URL processing for local development.
-		 *
-		 * @param bool false default
-		 */
-		if ( true === \apply_filters( 'exactdn_development_mode', false ) ) {
-			$this->debug_message( 'skipping in dev mode' );
-			return $image_url;
-		}
-
-		/**
 		 * Allow specific URLs to avoid going through ExactDN.
 		 *
 		 * @param bool false Should the URL be returned as is, without going through ExactDN. Default to false.
@@ -4327,37 +4363,31 @@ class ExactDN extends Page_Parser {
 			return $image_url;
 		}
 
-		$jpg_quality  = \apply_filters( 'jpeg_quality', null, 'image_resize' );
-		$webp_quality = \apply_filters( 'webp_quality', 75, 'image/webp' );
-		$avif_quality = \apply_filters( 'avif_quality', 60, 'image/avif' );
-
 		$more_args = array();
-		if ( ! \str_contains( $image_url, 'strip=all' ) && $this->get_option( $this->prefix . 'metadata_remove' ) ) {
+		if ( ! \str_contains( $image_url, 'strip=all' ) && $this->metadata_remove ) {
 			$more_args['strip'] = 'all';
 		}
-		if ( false !== \strpos( $image_url, 'lossy=1' ) && isset( $args['lossy'] ) && 0 === $args['lossy'] ) {
+		if ( \str_contains( $image_url, 'lossy=1' ) && isset( $args['lossy'] ) && 0 === $args['lossy'] ) {
 			$image_url = \str_replace( 'lossy=1', 'lossy=0', $image_url );
 			unset( $args['lossy'] );
-		} elseif ( isset( $args['lossy'] ) && false !== \strpos( $image_url, 'lossy=0' ) ) {
+		} elseif ( isset( $args['lossy'] ) && \str_contains( $image_url, 'lossy=0' ) ) {
 			unset( $args['lossy'] );
 		}
-		if ( false === \strpos( $image_url, 'quality=' ) && ! \is_null( $jpg_quality ) && 82 !== (int) $jpg_quality ) {
-			$more_args['quality'] = $jpg_quality;
+		if ( ! \str_contains( $image_url, 'quality=' ) && ! \is_null( $this->jpg_quality ) && 82 !== (int) $this->jpg_quality ) {
+			$more_args['quality'] = $this->jpg_quality;
 		}
-		if ( false === \strpos( $image_url, 'webp=' ) && 75 !== (int) $webp_quality ) {
-			$more_args['webp'] = $webp_quality;
+		if ( ! \str_contains( $image_url, 'webp=' ) && 75 !== (int) $this->webp_quality ) {
+			$more_args['webp'] = $this->webp_quality;
 		}
-		if ( false === \strpos( $image_url, 'avif=' ) && 60 !== (int) $avif_quality ) {
-			$more_args['avif'] = $avif_quality;
+		if ( ! \str_contains( $image_url, 'avif=' ) && 60 !== (int) $this->avif_quality ) {
+			$more_args['avif'] = $this->avif_quality;
 		}
-		if ( \defined( 'EIO_WEBP_SHARP_YUV' ) && EIO_WEBP_SHARP_YUV ) {
-			$more_args['sharp'] = 1;
-		} elseif ( $this->get_option( $this->prefix . 'sharpen' ) ) {
+		if ( $this->sharpen ) {
 			$more_args['sharp'] = 1;
 		}
 
 		// Support WordPress.com crop=1 query parameter.
-		if ( \strpos( $image_url, 'crop=1' ) ) {
+		if ( \str_contains( $image_url, 'crop=1' ) ) {
 			$more_args['crop'] = 1;
 		}
 
@@ -4436,7 +4466,7 @@ class ExactDN extends Page_Parser {
 		// However some source images are served via PHP so check the no-query-string extension.
 		// For future proofing, this is a blacklist of common issues rather than a whitelist.
 		$extension = \pathinfo( $image_url_parts['path'], PATHINFO_EXTENSION );
-		if ( ( empty( $extension ) && false === \strpos( $image_url_parts['path'], 'nextgen-image/' ) ) || \in_array( $extension, array( 'php', 'ashx' ), true ) ) {
+		if ( ( empty( $extension ) && ! \str_contains( $image_url_parts['path'], 'nextgen-image/' ) ) || \in_array( $extension, array( 'php', 'ashx' ), true ) ) {
 			$this->debug_message( 'bad extension' );
 			return $image_url;
 		}
@@ -4462,7 +4492,7 @@ class ExactDN extends Page_Parser {
 		}
 
 		// This makes sure we populate args with the existing TST image version.
-		if ( ! empty( $image_url_parts['query'] ) && false !== \strpos( $image_url_parts['query'], 'theia_smart' ) ) {
+		if ( ! empty( $image_url_parts['query'] ) && \str_contains( $image_url_parts['query'], 'theia_smart' ) ) {
 			$args = wp_parse_args( $image_url_parts['query'], $args );
 		}
 
@@ -4483,7 +4513,8 @@ class ExactDN extends Page_Parser {
 		}
 		$this->debug_message( "exactdn url with args: $exactdn_url" );
 
-		return $this->url_scheme( $exactdn_url, $scheme );
+		$exactdn_url = $this->url_scheme( $exactdn_url, $scheme );
+		return $exactdn_url;
 	}
 
 	/**
@@ -4534,8 +4565,7 @@ class ExactDN extends Page_Parser {
 	 * @return array The list of hints, potentially with the ExactDN domain added in.
 	 */
 	public function resource_hints( $hints, $relationship_type ) {
-		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
-		if ( ! $this->exactdn_domain ) {
+		if ( ! $this->exactdn_domain || \is_admin() ) {
 			return $hints;
 		}
 		if ( 'dns-prefetch' === $relationship_type ) {
@@ -4548,9 +4578,9 @@ class ExactDN extends Page_Parser {
 	}
 
 	/**
-	 * Adds the ExactDN domain to the list of 'local' domains for Autoptimize.
+	 * Adds the ExactDN domain to the list of 'local' domains for other plugins.
 	 *
-	 * @param array $domains A list of domains considered 'local' by Autoptimize.
+	 * @param array $domains A list of domains considered 'local'.
 	 * @return array The same list, with the ExactDN domain appended.
 	 */
 	public function add_cdn_domain( $domains ) {
@@ -4569,7 +4599,7 @@ class ExactDN extends Page_Parser {
 	 */
 	public function savings() {
 		$this->debug_message( '<b>' . __METHOD__ . '()</b>' );
-		$url = 'http://optimize.exactlywww.com/exactdn/savings.php';
+		$url = 'http://api.exactlywww.net/exactdn/savings.php';
 		$ssl = \wp_http_supports( array( 'ssl' ) );
 		if ( $ssl ) {
 			$url = \set_url_scheme( $url, 'https' );
